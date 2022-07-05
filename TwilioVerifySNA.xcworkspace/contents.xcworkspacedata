@@ -2,9 +2,9 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:TwilioVerifySNADemo/TwilioVerifySNADemo.xcodeproj">
+      location = "group:">
    </FileRef>
    <FileRef
-      location = "group:TwilioVerifySNA">
+      location = "group:TwilioVerifySNADemo/TwilioVerifySNADemo.xcodeproj">
    </FileRef>
 </Workspace>

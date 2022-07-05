@@ -12,7 +12,7 @@
 		9797B4F328748E8100951B4C /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9797B4F128748E8100951B4C /* Main.storyboard */; };
 		9797B4F528748E8300951B4C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9797B4F428748E8300951B4C /* Assets.xcassets */; };
 		9797B4F828748E8300951B4C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9797B4F628748E8300951B4C /* LaunchScreen.storyboard */; };
-		9797B505287491A600951B4C /* TwilioVerifySNA in Frameworks */ = {isa = PBXBuildFile; productRef = 9797B504287491A600951B4C /* TwilioVerifySNA */; };
+		97C531FA2874AA2F008CDB7F /* TwilioVerifySNA in Frameworks */ = {isa = PBXBuildFile; productRef = 97C531F92874AA2F008CDB7F /* TwilioVerifySNA */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -30,7 +30,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9797B505287491A600951B4C /* TwilioVerifySNA in Frameworks */,
+				97C531FA2874AA2F008CDB7F /* TwilioVerifySNA in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -100,6 +100,7 @@
 				9797B4E428748E8100951B4C /* Sources */,
 				9797B4E528748E8100951B4C /* Frameworks */,
 				9797B4E628748E8100951B4C /* Resources */,
+				978F30772874E3D70030668F /* SwiftLint */,
 			);
 			buildRules = (
 			);
@@ -107,7 +108,7 @@
 			);
 			name = TwilioVerifySNADemo;
 			packageProductDependencies = (
-				9797B504287491A600951B4C /* TwilioVerifySNA */,
+				97C531F92874AA2F008CDB7F /* TwilioVerifySNA */,
 			);
 			productName = TwilioVerifySNADemo;
 			productReference = 9797B4E828748E8100951B4C /* TwilioVerifySNADemo.app */;
@@ -158,6 +159,27 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		978F30772874E3D70030668F /* SwiftLint */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = SwiftLint;
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "export PATH=\"$PATH:/opt/homebrew/bin\"\nif which swiftlint > /dev/null; then\n  swiftlint\nelse\n  echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		9797B4E428748E8100951B4C /* Sources */ = {
@@ -310,8 +332,9 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Configuration/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -327,6 +350,7 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.twilio.TwilioVerifySNADemo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -338,8 +362,9 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Configuration/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -355,6 +380,7 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.twilio.TwilioVerifySNADemo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -385,7 +411,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		9797B504287491A600951B4C /* TwilioVerifySNA */ = {
+		97C531F92874AA2F008CDB7F /* TwilioVerifySNA */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = TwilioVerifySNA;
 		};

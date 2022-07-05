@@ -1,4 +1,4 @@
-// swift-tools-version: 5.6
+// swift-tools-version: 5.5
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
@@ -12,19 +12,21 @@ let package = Package(
         .library(
             name: "TwilioVerifySNA",
             targets: ["TwilioVerifySNA"]
-        ),
+        )
     ],
     dependencies: [],
     targets: [
         .target(
             name: "TwilioVerifySNA",
             dependencies: [],
-            path: "Sources"
+            path: "Sources",
+            exclude: []
         ),
         .testTarget(
             name: "TwilioVerifySNATests",
             dependencies: ["TwilioVerifySNA"],
-            path: "Tests"
-        ),
+            path: "Tests",
+            exclude: []
+        )
     ]
 )
