@@ -5,6 +5,7 @@ disabled_rules: # rule identifiers to exclude from running
   - no_space_in_method_call
   - type_body_length
   - opening_brace
+  - switch_case_alignment
 function_parameter_count: 10
 line_length: 155
 cyclomatic_complexity: 20

@@ -6,6 +6,7 @@ import PackageDescription
 let package = Package(
     name: "TwilioVerifySNA",
     platforms: [
+        .macOS(.v12),
         .iOS(.v12)
     ],
     products: [
