@@ -1,5 +1,5 @@
 //
-//  RequestManager.swift
+//  TwilioVerifySNAProtocol.swift
 //  TwilioVerifySNA
 //
 //  Copyright © 2022 Twilio.
@@ -19,30 +19,20 @@
 
 import Foundation
 
-final class RequestManager {
-    private let networkProvider: NetworkRequestProviderProtocol
+public typealias ProcessURLResult = (
+    Result<Void, TwilioVerifySNA.Error>
+) -> Void
 
-    public init(
-        networkProvider: NetworkRequestProviderProtocol
-    ) {
-        self.networkProvider = networkProvider
-    }
-}
-
-// MARK: - RequestProcessorProtocol
-extension RequestManager: RequestManagerProtocol {
-    func processEVURL(
+public protocol TwilioVerifySNAProtocol {
+    func processURL(
         _ url: String,
-        onComplete: ProcessEVURLResult
-    ) {
-        onComplete(.success)
-    }
+        onComplete: @escaping ProcessURLResult
+    )
 }
 
-// MARK: - Associated errors and results
-extension RequestManager {
-    /// Docs
-    enum RequestError: LocalizedError {
-        case unableToProcessRequest
+/// This extension allow us to return a void in the 'success' scenario for Result
+public extension Result where Success == Void {
+    static var success: Result {
+        return .success(())
     }
 }

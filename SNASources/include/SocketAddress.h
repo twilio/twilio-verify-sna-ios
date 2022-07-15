@@ -1,5 +1,6 @@
+// Original implementation and credits to BENJAMIN BRYANT BUDIMAN: https://github.com/boku-inc/boku-wifi-ios
 //
-//  NetworkRequestProviderProtocol.swift
+//  SocketAddress.h
 //  TwilioVerifySNA
 //
 //  Copyright © 2022 Twilio.
@@ -17,16 +18,18 @@
 //  limitations under the License.
 //
 
-import Foundation
-import SNANetworking
+#ifndef SocketAddress_h
+#define SocketAddress_h
 
-public typealias NetworkRequestResult = (
-    Result<String, NetworkRequestProvider.RequestError>
-) -> Void
+#import <Foundation/Foundation.h>
 
-public protocol NetworkRequestProviderProtocol {
-    func performRequest(
-        url: URL,
-        onComplete: @escaping NetworkRequestResult
-    )
-}
+typedef struct sockaddr *sockaddr_t;
+
+@interface SocketAddress : NSObject
+@property sockaddr_t sockaddr;
+@property(readonly) socklen_t size;
+
+- (instancetype)initWithSockaddr:(struct sockaddr *)address;
+@end
+
+#endif /* SocketAddress_h */

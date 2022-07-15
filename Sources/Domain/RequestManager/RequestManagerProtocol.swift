@@ -19,19 +19,13 @@
 
 import Foundation
 
-/// Docs
-typealias ProcessEVURLResult = (
+public typealias ProcessEVURLResult = (
     Result<Void, RequestManager.RequestError>
 ) -> Void
 
-/// Docs
-protocol RequestManagerProtocol {
-    init(
-        networkProvider: NetworkRequestProviderProtocol
-    )
-    
+public protocol RequestManagerProtocol {
     func processEVURL(
         _ url: String,
-        onComplete: ProcessEVURLResult
+        onComplete: @escaping ProcessEVURLResult
     )
 }

@@ -18,43 +18,51 @@
 //
 
 import Foundation
+import SNANetworking
 
-final class NetworkRequestProvider {
-    private func isValidNetworkResponse(data: Data) -> Bool {
-        true
-    }
+public final class NetworkRequestProvider {
 
-    private func processRedirection(for url: String) -> Bool {
-        true
+    // MARK: - Properties
+
+    private let cellularSession: CellularSessionProtocol
+
+    // MARK: - Computed properties
+
+    private lazy var networkRequestQueue = DispatchQueue(
+        label: "NetworkRequestQueue"
+    )
+
+    // MARK: - Class lifecycle
+
+    public init(
+        cellularSession: CellularSessionProtocol
+    ) {
+        self.cellularSession = cellularSession
     }
 }
 
 // MARK: - NetworkRequestProviderProtocol
 extension NetworkRequestProvider: NetworkRequestProviderProtocol {
-    func performRequest(
-        method: NetworkRequestProvider.HttpMethod,
-        url: String,
-        onResult: NetworkRequestResult
+    public func performRequest(
+        url: URL,
+        onComplete: @escaping NetworkRequestResult
     ) {
-        onResult(.success(.requestFinished))
-    }
-}
+        networkRequestQueue.async {
+            let networkOperationOnCellularData = self.cellularSession.performGetRequest(url)
 
-// MARK: - Associated errors and results
-extension NetworkRequestProvider {
-    /// Docs
-    enum HttpMethod: String {
-        case get = "GET"
-    }
+            guard case .success = networkOperationOnCellularData.status else {
+                onComplete(
+                    .failure(.cellularRequestError(cause: networkOperationOnCellularData.status))
+                )
+                return
+            }
 
-    /// Docs
-    enum RequestResult {
-        case needsRedirection(url: String)
-        case requestFinished
-    }
+            guard let result = networkOperationOnCellularData.result else {
+                onComplete(.failure(.requestFinishedWithNoResult))
+                return
+            }
 
-    /// Docs
-    enum RequestError: LocalizedError {
-        case requestFailed(error: Error?)
+            onComplete(.success(result))
+        }
     }
 }

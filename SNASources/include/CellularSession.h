@@ -1,5 +1,6 @@
+// Original implementation and credits to BENJAMIN BRYANT BUDIMAN: https://github.com/boku-inc/boku-wifi-ios
 //
-//  NetworkRequestProviderProtocol.swift
+//  CellularSession.h
 //  TwilioVerifySNA
 //
 //  Copyright © 2022 Twilio.
@@ -17,16 +18,15 @@
 //  limitations under the License.
 //
 
-import Foundation
-import SNANetworking
+#ifndef HTTPRequester_h
+#define HTTPRequester_h
 
-public typealias NetworkRequestResult = (
-    Result<String, NetworkRequestProvider.RequestError>
-) -> Void
+#import <Foundation/Foundation.h>
+#import "CellularSessionResult.h"
+#import "CellularSessionProtocol.h"
 
-public protocol NetworkRequestProviderProtocol {
-    func performRequest(
-        url: URL,
-        onComplete: @escaping NetworkRequestResult
-    )
-}
+@interface CellularSession : NSObject <CellularSessionProtocol>
+- (CellularSessionResult * _Nonnull)performGetRequest:(NSURL * _Nonnull)url;
+@end
+
+#endif /* HTTPRequester_h */

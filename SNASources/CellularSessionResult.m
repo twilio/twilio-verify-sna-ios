@@ -1,5 +1,5 @@
 //
-//  NetworkRequestProviderProtocol.swift
+//  CellularSessionResult.m
 //  TwilioVerifySNA
 //
 //  Copyright © 2022 Twilio.
@@ -17,16 +17,8 @@
 //  limitations under the License.
 //
 
-import Foundation
-import SNANetworking
+#import "CellularSessionResult.h"
+#import <Foundation/Foundation.h>
 
-public typealias NetworkRequestResult = (
-    Result<String, NetworkRequestProvider.RequestError>
-) -> Void
-
-public protocol NetworkRequestProviderProtocol {
-    func performRequest(
-        url: URL,
-        onComplete: @escaping NetworkRequestResult
-    )
-}
+@implementation CellularSessionResult
+@end

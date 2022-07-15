@@ -12,15 +12,24 @@ let package = Package(
     products: [
         .library(
             name: "TwilioVerifySNA",
-            targets: ["TwilioVerifySNA"]
+            targets: [
+                "TwilioVerifySNA",
+                "SNANetworking"
+            ]
         )
     ],
     dependencies: [],
     targets: [
         .target(
             name: "TwilioVerifySNA",
-            dependencies: [],
+            dependencies: ["SNANetworking"],
             path: "Sources",
+            exclude: []
+        ),
+        .target(
+            name: "SNANetworking",
+            dependencies: [],
+            path: "SNASources",
             exclude: []
         ),
         .testTarget(

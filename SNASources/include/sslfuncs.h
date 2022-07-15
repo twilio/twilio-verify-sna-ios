@@ -1,5 +1,6 @@
+// Original implementation and credits to BENJAMIN BRYANT BUDIMAN: https://github.com/boku-inc/boku-wifi-ios
 //
-//  TwilioVerifySNAProtocol.swift
+//  sslfuncs.h
 //  TwilioVerifySNA
 //
 //  Copyright © 2022 Twilio.
@@ -17,23 +18,13 @@
 //  limitations under the License.
 //
 
-import Foundation
+#ifndef sslfuncs_h
+#define sslfuncs_h
 
-public typealias ProcessURLResult = (
-    Result<Void, TwilioVerifySNA.Error>
-) -> Void
+#import <CoreFoundation/CoreFoundation.h>
+#import <Security/SecureTransport.h>
 
-/// Docs
-public protocol TwilioVerifySNAProtocol {
-    func processURL(
-        _ url: String,
-        onComplete: ProcessURLResult
-    )
-}
+OSStatus ssl_read(SSLConnectionRef connection, void *data, size_t *data_length);
+OSStatus ssl_write(SSLConnectionRef connection, const void *data, size_t *data_length);
 
-/// This extension allow us to return a void in the 'success' scenario for Result
-public extension Result where Success == Void {
-    static var success: Result {
-        return .success(())
-    }
-}
+#endif /* sslfuncs_h */
