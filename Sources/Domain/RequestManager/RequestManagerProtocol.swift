@@ -19,13 +19,13 @@
 
 import Foundation
 
-public typealias ProcessEVURLResult = (
+public typealias ProcessSNAURLResult = (
     Result<Void, RequestManager.RequestError>
 ) -> Void
 
 public protocol RequestManagerProtocol {
-    func processEVURL(
+    func processSNAURL(
         _ url: String,
-        onComplete: @escaping ProcessEVURLResult
+        onComplete: @escaping ProcessSNAURLResult
     )
 }

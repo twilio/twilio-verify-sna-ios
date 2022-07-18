@@ -40,7 +40,7 @@ final class RequestManagerTests: XCTestCase {
         let expectedError: RequestManager.RequestError = .invalidUrl
 
         // Act
-        sut?.processEVURL(invalidUrl) { result in
+        sut?.processSNAURL(invalidUrl) { result in
             switch result {
                 case .success:
                     XCTFail("This url should be invalid, should not succeed")

@@ -44,11 +44,11 @@ public final class RequestManager {
 
     private func processRequestResult(
         _ result: String,
-        onComplete: @escaping ProcessEVURLResult
+        onComplete: @escaping ProcessSNAURLResult
     ) {
         if result.contains(Constants.redirectionPath), !result.contains(Constants.successPath) {
             let redirectionUrl = getRedirectionUrl(for: result)
-            return processEVURL(redirectionUrl, onComplete: onComplete)
+            return processSNAURL(redirectionUrl, onComplete: onComplete)
         }
 
         guard result.contains(Constants.successPath) else {
@@ -65,9 +65,9 @@ public final class RequestManager {
 
 // MARK: - RequestProcessorProtocol
 extension RequestManager: RequestManagerProtocol {
-    public func processEVURL(
+    public func processSNAURL(
         _ url: String,
-        onComplete: @escaping ProcessEVURLResult
+        onComplete: @escaping ProcessSNAURLResult
     ) {
         guard let url = URL(string: url) else {
             onComplete(.failure(.invalidUrl))
@@ -101,7 +101,7 @@ extension RequestManager {
 
     func processRequestResult_forTesting(
         _ result: String,
-        onComplete: @escaping ProcessEVURLResult
+        onComplete: @escaping ProcessSNAURLResult
     ) {
         processRequestResult(result, onComplete: onComplete)
     }

@@ -50,7 +50,7 @@ extension RequestManager {
                 case .noResultFromUrl:
                     return """
                         Unable to get a redirection path or a result path from the url,
-                        probably the EVURL is corrupted (or maybe expired)
+                        probably the SNAURL is corrupted (or maybe expired)
                     """
 
                 case .instanceNotFound:

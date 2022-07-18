@@ -31,7 +31,7 @@ extension TwilioVerifySNA {
             switch self {
                 case .requestError(let cause):
                     return """
-                        Error processing the EVURL request,
+                        Error processing the SNAURL request,
                         cause: \(cause.errorDescription ?? "Undefined")
                     """
 
@@ -44,7 +44,7 @@ extension TwilioVerifySNA {
             switch self {
                 case .requestError(let cause):
                     return """
-                    Request manager got an error processing the EVURL request,
+                    Request manager got an error processing the SNAURL request,
                     cause: \(cause.technicalError ?? "Undefined")
                     """
 

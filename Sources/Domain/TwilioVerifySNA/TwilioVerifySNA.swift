@@ -124,7 +124,7 @@ open class TwilioVerifySNA {
             return onComplete(.failure(.cellularNetworkNotAvailable))
         }
 
-        requestManager.processEVURL(
+        requestManager.processSNAURL(
             url
         ) { result in
             switch result {
