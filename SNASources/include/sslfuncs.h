@@ -1,5 +1,6 @@
+// Original implementation and credits to BENJAMIN BRYANT BUDIMAN: https://github.com/boku-inc/boku-wifi-ios
 //
-//  RequestProcessorProtocol.swift
+//  sslfuncs.h
 //  TwilioVerifySNA
 //
 //  Copyright © 2022 Twilio.
@@ -17,21 +18,13 @@
 //  limitations under the License.
 //
 
-import Foundation
+#ifndef sslfuncs_h
+#define sslfuncs_h
 
-/// Docs
-typealias ProcessEVURLResult = (
-    Result<Void, RequestManager.RequestError>
-) -> Void
+#import <CoreFoundation/CoreFoundation.h>
+#import <Security/SecureTransport.h>
 
-/// Docs
-protocol RequestManagerProtocol {
-    init(
-        networkProvider: NetworkRequestProviderProtocol
-    )
-    
-    func processEVURL(
-        _ url: String,
-        onComplete: ProcessEVURLResult
-    )
-}
+OSStatus ssl_read(SSLConnectionRef connection, void *data, size_t *data_length);
+OSStatus ssl_write(SSLConnectionRef connection, const void *data, size_t *data_length);
+
+#endif /* sslfuncs_h */

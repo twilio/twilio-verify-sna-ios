@@ -1,5 +1,5 @@
 //
-//  RequestManager.swift
+//  RequestProcessorProtocol.swift
 //  TwilioVerifySNA
 //
 //  Copyright © 2022 Twilio.
@@ -19,30 +19,13 @@
 
 import Foundation
 
-final class RequestManager {
-    private let networkProvider: NetworkRequestProviderProtocol
+public typealias ProcessSNAURLResult = (
+    Result<Void, RequestManager.RequestError>
+) -> Void
 
-    public init(
-        networkProvider: NetworkRequestProviderProtocol
-    ) {
-        self.networkProvider = networkProvider
-    }
-}
-
-// MARK: - RequestProcessorProtocol
-extension RequestManager: RequestManagerProtocol {
-    func processEVURL(
+public protocol RequestManagerProtocol {
+    func processSNAURL(
         _ url: String,
-        onComplete: ProcessEVURLResult
-    ) {
-        onComplete(.success)
-    }
-}
-
-// MARK: - Associated errors and results
-extension RequestManager {
-    /// Docs
-    enum RequestError: LocalizedError {
-        case unableToProcessRequest
-    }
+        onComplete: @escaping ProcessSNAURLResult
+    )
 }

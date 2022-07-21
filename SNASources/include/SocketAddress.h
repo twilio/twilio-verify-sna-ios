@@ -1,5 +1,6 @@
+// Original implementation and credits to BENJAMIN BRYANT BUDIMAN: https://github.com/boku-inc/boku-wifi-ios
 //
-//  TwilioVerifySNAProtocol.swift
+//  SocketAddress.h
 //  TwilioVerifySNA
 //
 //  Copyright © 2022 Twilio.
@@ -17,23 +18,18 @@
 //  limitations under the License.
 //
 
-import Foundation
+#ifndef SocketAddress_h
+#define SocketAddress_h
 
-public typealias ProcessURLResult = (
-    Result<Void, TwilioVerifySNA.Error>
-) -> Void
+#import <Foundation/Foundation.h>
 
-/// Docs
-public protocol TwilioVerifySNAProtocol {
-    func processURL(
-        _ url: String,
-        onComplete: ProcessURLResult
-    )
-}
+typedef struct sockaddr *sockaddr_t;
 
-/// This extension allow us to return a void in the 'success' scenario for Result
-public extension Result where Success == Void {
-    static var success: Result {
-        return .success(())
-    }
-}
+@interface SocketAddress : NSObject
+@property sockaddr_t sockaddr;
+@property(readonly) socklen_t size;
+
+- (instancetype)initWithSockaddr:(struct sockaddr *)address;
+@end
+
+#endif /* SocketAddress_h */

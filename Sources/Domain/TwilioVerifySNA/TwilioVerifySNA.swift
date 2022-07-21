@@ -1,5 +1,5 @@
 //
-//  NetworkRequestProviderProtocol.swift
+//  TwilioVerifySNA.swift
 //  TwilioVerifySNA
 //
 //  Copyright © 2022 Twilio.
@@ -18,15 +18,21 @@
 //
 
 import Foundation
-import SNANetworking
 
-public typealias NetworkRequestResult = (
-    Result<String, NetworkRequestProvider.RequestError>
+public typealias ProcessURLResult = (
+    Result<Void, TwilioVerifySNASession.Error>
 ) -> Void
 
-public protocol NetworkRequestProviderProtocol {
-    func performRequest(
-        url: URL,
-        onComplete: @escaping NetworkRequestResult
+public protocol TwilioVerifySNA {
+    func processURL(
+        _ url: String,
+        onComplete: @escaping ProcessURLResult
     )
+}
+
+/// This extension allow us to return a void in the 'success' scenario for Result
+public extension Result where Success == Void {
+    static var success: Result {
+        return .success(())
+    }
 }

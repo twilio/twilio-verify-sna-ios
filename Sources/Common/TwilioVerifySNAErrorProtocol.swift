@@ -1,5 +1,5 @@
 //
-//  NetworkRequestProviderProtocol.swift
+//  TwilioVerifySNAErrorProtocol.swift
 //  TwilioVerifySNA
 //
 //  Copyright © 2022 Twilio.
@@ -18,15 +18,7 @@
 //
 
 import Foundation
-import SNANetworking
 
-public typealias NetworkRequestResult = (
-    Result<String, NetworkRequestProvider.RequestError>
-) -> Void
-
-public protocol NetworkRequestProviderProtocol {
-    func performRequest(
-        url: URL,
-        onComplete: @escaping NetworkRequestResult
-    )
+protocol TwilioVerifySNAErrorProtocol: LocalizedError {
+    var technicalError: String? { get }
 }
