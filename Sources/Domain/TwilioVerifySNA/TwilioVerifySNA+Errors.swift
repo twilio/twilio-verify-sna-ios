@@ -21,7 +21,7 @@ import Foundation
 
 // MARK: - Associated errors
 
-extension TwilioVerifySNA {
+extension TwilioVerifySNASession {
 
     public enum Error: TwilioVerifySNAErrorProtocol {
         case cellularNetworkNotAvailable
