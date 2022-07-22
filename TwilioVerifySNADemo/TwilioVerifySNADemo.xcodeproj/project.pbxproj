@@ -7,6 +7,17 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		97021B9628870B8400200623 /* NetworkLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97021B9528870B8400200623 /* NetworkLayer.swift */; };
+		97021B9828870D4F00200623 /* PhoneNumberViewController+Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97021B9728870D4F00200623 /* PhoneNumberViewController+Models.swift */; };
+		9757522A2885CCDE0097BB73 /* Inter-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 975752212885CCDE0097BB73 /* Inter-Medium.ttf */; };
+		9757522B2885CCDE0097BB73 /* Inter-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 975752222885CCDE0097BB73 /* Inter-Light.ttf */; };
+		9757522C2885CCDE0097BB73 /* Inter-Thin.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 975752232885CCDE0097BB73 /* Inter-Thin.ttf */; };
+		9757522D2885CCDE0097BB73 /* Inter-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 975752242885CCDE0097BB73 /* Inter-Bold.ttf */; };
+		9757522E2885CCDE0097BB73 /* Inter-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 975752252885CCDE0097BB73 /* Inter-Regular.ttf */; };
+		9757522F2885CCDE0097BB73 /* Inter-ExtraBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 975752262885CCDE0097BB73 /* Inter-ExtraBold.ttf */; };
+		975752302885CCDE0097BB73 /* Inter-ExtraLight.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 975752272885CCDE0097BB73 /* Inter-ExtraLight.ttf */; };
+		975752312885CCDE0097BB73 /* Inter-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 975752282885CCDE0097BB73 /* Inter-Black.ttf */; };
+		975752322885CCDE0097BB73 /* Inter-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 975752292885CCDE0097BB73 /* Inter-SemiBold.ttf */; };
 		9797B4EC28748E8100951B4C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9797B4EB28748E8100951B4C /* AppDelegate.swift */; };
 		9797B4F028748E8100951B4C /* PhoneNumberViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9797B4EF28748E8100951B4C /* PhoneNumberViewController.swift */; };
 		9797B4F328748E8100951B4C /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9797B4F128748E8100951B4C /* Main.storyboard */; };
@@ -16,6 +27,17 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		97021B9528870B8400200623 /* NetworkLayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkLayer.swift; sourceTree = "<group>"; };
+		97021B9728870D4F00200623 /* PhoneNumberViewController+Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PhoneNumberViewController+Models.swift"; sourceTree = "<group>"; };
+		975752212885CCDE0097BB73 /* Inter-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Inter-Medium.ttf"; sourceTree = "<group>"; };
+		975752222885CCDE0097BB73 /* Inter-Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Inter-Light.ttf"; sourceTree = "<group>"; };
+		975752232885CCDE0097BB73 /* Inter-Thin.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Inter-Thin.ttf"; sourceTree = "<group>"; };
+		975752242885CCDE0097BB73 /* Inter-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Inter-Bold.ttf"; sourceTree = "<group>"; };
+		975752252885CCDE0097BB73 /* Inter-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Inter-Regular.ttf"; sourceTree = "<group>"; };
+		975752262885CCDE0097BB73 /* Inter-ExtraBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Inter-ExtraBold.ttf"; sourceTree = "<group>"; };
+		975752272885CCDE0097BB73 /* Inter-ExtraLight.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Inter-ExtraLight.ttf"; sourceTree = "<group>"; };
+		975752282885CCDE0097BB73 /* Inter-Black.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Inter-Black.ttf"; sourceTree = "<group>"; };
+		975752292885CCDE0097BB73 /* Inter-SemiBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Inter-SemiBold.ttf"; sourceTree = "<group>"; };
 		9797B4E828748E8100951B4C /* TwilioVerifySNADemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TwilioVerifySNADemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9797B4EB28748E8100951B4C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		9797B4EF28748E8100951B4C /* PhoneNumberViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneNumberViewController.swift; sourceTree = "<group>"; };
@@ -37,6 +59,39 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		9757521F2885CCDE0097BB73 /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+				975752202885CCDE0097BB73 /* Inter */,
+			);
+			path = Fonts;
+			sourceTree = "<group>";
+		};
+		975752202885CCDE0097BB73 /* Inter */ = {
+			isa = PBXGroup;
+			children = (
+				975752212885CCDE0097BB73 /* Inter-Medium.ttf */,
+				975752222885CCDE0097BB73 /* Inter-Light.ttf */,
+				975752232885CCDE0097BB73 /* Inter-Thin.ttf */,
+				975752242885CCDE0097BB73 /* Inter-Bold.ttf */,
+				975752252885CCDE0097BB73 /* Inter-Regular.ttf */,
+				975752262885CCDE0097BB73 /* Inter-ExtraBold.ttf */,
+				975752272885CCDE0097BB73 /* Inter-ExtraLight.ttf */,
+				975752282885CCDE0097BB73 /* Inter-Black.ttf */,
+				975752292885CCDE0097BB73 /* Inter-SemiBold.ttf */,
+			);
+			path = Inter;
+			sourceTree = "<group>";
+		};
+		975752332885F0C50097BB73 /* PhoneNumber */ = {
+			isa = PBXGroup;
+			children = (
+				9797B4EF28748E8100951B4C /* PhoneNumberViewController.swift */,
+				97021B9728870D4F00200623 /* PhoneNumberViewController+Models.swift */,
+			);
+			path = PhoneNumber;
+			sourceTree = "<group>";
+		};
 		9797B4DF28748E8100951B4C = {
 			isa = PBXGroup;
 			children = (
@@ -76,7 +131,7 @@
 		9797B507287492B200951B4C /* Screens */ = {
 			isa = PBXGroup;
 			children = (
-				9797B4EF28748E8100951B4C /* PhoneNumberViewController.swift */,
+				975752332885F0C50097BB73 /* PhoneNumber */,
 			);
 			path = Screens;
 			sourceTree = "<group>";
@@ -84,8 +139,10 @@
 		9797B508287492C700951B4C /* Common */ = {
 			isa = PBXGroup;
 			children = (
+				9757521F2885CCDE0097BB73 /* Fonts */,
 				9797B4F428748E8300951B4C /* Assets.xcassets */,
 				9797B4F628748E8300951B4C /* LaunchScreen.storyboard */,
+				97021B9528870B8400200623 /* NetworkLayer.swift */,
 			);
 			path = Common;
 			sourceTree = "<group>";
@@ -152,8 +209,17 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				975752322885CCDE0097BB73 /* Inter-SemiBold.ttf in Resources */,
+				9757522B2885CCDE0097BB73 /* Inter-Light.ttf in Resources */,
+				975752302885CCDE0097BB73 /* Inter-ExtraLight.ttf in Resources */,
+				9757522A2885CCDE0097BB73 /* Inter-Medium.ttf in Resources */,
+				9757522F2885CCDE0097BB73 /* Inter-ExtraBold.ttf in Resources */,
+				9757522C2885CCDE0097BB73 /* Inter-Thin.ttf in Resources */,
+				9757522D2885CCDE0097BB73 /* Inter-Bold.ttf in Resources */,
+				975752312885CCDE0097BB73 /* Inter-Black.ttf in Resources */,
 				9797B4F828748E8300951B4C /* LaunchScreen.storyboard in Resources */,
 				9797B4F528748E8300951B4C /* Assets.xcassets in Resources */,
+				9757522E2885CCDE0097BB73 /* Inter-Regular.ttf in Resources */,
 				9797B4F328748E8100951B4C /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -186,7 +252,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				97021B9628870B8400200623 /* NetworkLayer.swift in Sources */,
 				9797B4F028748E8100951B4C /* PhoneNumberViewController.swift in Sources */,
+				97021B9828870D4F00200623 /* PhoneNumberViewController+Models.swift in Sources */,
 				9797B4EC28748E8100951B4C /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
