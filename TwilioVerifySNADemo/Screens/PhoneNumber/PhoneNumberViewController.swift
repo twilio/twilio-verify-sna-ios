@@ -78,7 +78,10 @@ final class PhoneNumberViewController: UIViewController {
             backendUrl: backendUrl
         ) { [weak self] snaUrl in
 
-            // With the SNAURL retrieved, we should that exists and it's is not empty
+            /*
+             With the SNAURL retrieved, we have to make sure that the data
+             exists and it's not empty
+             */
             guard let snaUrl = snaUrl, !snaUrl.isEmpty else {
 
                 // If error:
@@ -128,8 +131,8 @@ final class PhoneNumberViewController: UIViewController {
             switch result {
                 case .success:
                     /*
-                     if the SDK correctly handled the URL, we should ask to our backend (that is communicating with Twilio Verify)
-                     if the validation was completed, so we don't trust in any frontend result.
+                     if the SDK correctly handled the URL, we have ask to the backend
+                     if the validation was completed, we should not trust in any frontend results.
                      */
                     self.continueVerification(
                         countryCode: countryCode,
@@ -234,7 +237,7 @@ final class PhoneNumberViewController: UIViewController {
 
 /**
  In this extension are all the properties and methods that provide this demo extra functionalities,
- please notice that these are not required at all to your SDK implementation to work at all.
+ please notice that these are not required in your SDK implementation.
  */
 extension PhoneNumberViewController {
     /// Segues used for transitions
