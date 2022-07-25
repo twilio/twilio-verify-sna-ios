@@ -56,7 +56,7 @@ final class PhoneNumberViewController: UIViewController {
               let phoneCountryCode = phoneCountryCodeTextField.text else {
 
             // Let's notify the user that some data is missing.
-            showGenericError("Missing phone number or backend url.")
+            showGenericError("Missing country code, phone number or backend URL.")
             return
         }
 
@@ -263,7 +263,7 @@ extension PhoneNumberViewController {
         case backendUrl
     }
 
-    /// Not required for your SDK implementation.
+    /// Not required for the SDK implementation.
     private func toggleLoader() {
         DispatchQueue.main.async {
             self.activityIndicator.isAnimating ?
@@ -276,7 +276,7 @@ extension PhoneNumberViewController {
         }
     }
 
-    /// Not required for your SDK implementation.
+    /// Not required for the SDK implementation.
     private func showGenericError(_ error: String? = nil) {
         let alert = UIAlertController(
             title: "Error",
@@ -291,12 +291,12 @@ extension PhoneNumberViewController {
         }
     }
 
-    /// Not required for your SDK implementation.
+    /// Not required for the SDK implementation.
     @objc private func dismissKeyboard() {
         view.endEditing(true)
     }
 
-    /// Not required for your SDK implementation.
+    /// Not required for the SDK implementation.
     private func configureUI() {
         let borderColor = UIColor(red: 0.533, green: 0.569, blue: 0.667, alpha: 1)
         let textColor = UIColor(red: 0.294, green: 0.337, blue: 0.443, alpha: 1)
@@ -317,7 +317,7 @@ extension PhoneNumberViewController {
         }
     }
 
-    /// Not required for your SDK implementation.
+    /// Not required for the SDK implementation.
     private func retrieveSavedInput() {
         phoneNumberTextField.text = UserDefaults.standard.string(
             forKey: KeysForUserDefaults.phoneNumber.rawValue
@@ -332,7 +332,7 @@ extension PhoneNumberViewController {
         )
     }
 
-    /// Not required for your SDK implementation.
+    /// Not required for the SDK implementation.
     private func saveInput(
         phoneNumber: String,
         phoneCountryCode: String,
