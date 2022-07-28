@@ -23,6 +23,7 @@ import Foundation
 
 extension RequestManager {
 
+    /// `RequestError` used for handling errors between the network layer and the logic layer.
     public enum RequestError: TwilioVerifySNAErrorProtocol, Equatable {
         case invalidUrl
         case noResultFromUrl

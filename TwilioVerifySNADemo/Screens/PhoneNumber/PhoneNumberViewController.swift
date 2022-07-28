@@ -37,7 +37,7 @@ final class PhoneNumberViewController: UIViewController {
      in the best practices you will probably create
      this instance on your ViewModel/Presenter or logic layer
      */
-    private lazy var snaVerification: TwilioVerifySNA = TwilioVerifySNASession()
+    private lazy var twilioVerify: TwilioVerifySNA = TwilioVerifySNASession()
 
     /**
      Network layer to communicate with the backend: (not required for your SDK implementation)
@@ -136,7 +136,7 @@ final class PhoneNumberViewController: UIViewController {
          care of all the redirections and is making sure that all the requests are done via cellular network.
          */
 
-        snaVerification.processURL(
+        twilioVerify.processURL(
             snaUrl
         ) { [weak self] result in
 

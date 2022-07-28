@@ -59,6 +59,8 @@ open class TwilioVerifySNASession: TwilioVerifySNA {
 
     // MARK: - Class lifecycle
 
+    /// Initializer: You could inject your own dependencies here, although this is only recommended for unit testing,
+    /// if you change any of the implementations down here, we can't guarantee the proper functionality of the SDK.
     public init(
         requestManager: RequestManager = RequestManager(
             networkProvider: NetworkRequestProvider(
@@ -76,11 +78,11 @@ open class TwilioVerifySNASession: TwilioVerifySNA {
 
     // MARK: - Protocol implementation
 
-    /**
-     This method will process the URL requested from your backend.
-     Please notice that this method will work entirely on a background thread and will respond on a background thread,
-     so if you decide to update your UI once this method responses make sure to do it on the main thread using GCD.
-     */
+    /// This method will process the SNA URL via different layers in order to provide a trusted validation of the identity of the user via the SNA URL.
+    ///  - Note: This method work entirely on a background thread and will respond on a background thread.
+    /// - Parameters:
+    ///   - url: SNA URL provided by your backend.
+    ///   - onComplete: Closure with `Result<Void, TwilioVerifySNASession.Error>`.
     public func processURL(
         _ url: String,
         onComplete: @escaping ProcessURLResult
@@ -92,6 +94,7 @@ open class TwilioVerifySNASession: TwilioVerifySNA {
 
     // MARK: - Private methods
 
+    /// This method uses a `NWPathMonitor` to validate if the device has cellular network available.
     private func startMonitoringNetwork() {
         monitor.pathUpdateHandler = { [weak self] pathUpdateHandler in
             self?.networkStatus = pathUpdateHandler.status == .satisfied ?
@@ -104,9 +107,12 @@ open class TwilioVerifySNASession: TwilioVerifySNA {
         )
     }
 
-    /**
-     This method will wait until the NWPathMonitor gets a result for the networking result.
-     */
+    /// This method will wait until the NWPathMonitor gets a result for the networking result and then continue the `processURL` request.
+    /// - Note: When the developer runs for the fist time the method `processURL`, the monitor has not started yet, therefore it is necessary to suspend
+    /// for a moment the execution of the method in order to wait the network status.
+    /// - Parameters:
+    ///   - url: SNA URL provided by your backend
+    ///   - completionHandler: Closure with `Result<Void, TwilioVerifySNASession.Error>`
     private func waitForConnectionResultAndContinue(
         with url: String,
         and completionHandler: @escaping ProcessURLResult
@@ -123,6 +129,10 @@ open class TwilioVerifySNASession: TwilioVerifySNA {
         }
     }
 
+    /// This method will process the SNA URL request and validate that the network is in optimal conditions to perform the network request.
+    /// - Parameters:
+    ///   - url: SNA URL provided by your backend
+    ///   - onComplete: Closure with `Result<Void, TwilioVerifySNASession.Error>`
     private func handleURLRequest(
         _ url: String,
         onComplete: @escaping ProcessURLResult
