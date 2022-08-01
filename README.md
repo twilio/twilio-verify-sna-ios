@@ -109,18 +109,39 @@ private lazy var twilioVerify: TwilioVerifySNA = TwilioVerifySNASession()
 3. Process the SNA URL by calling the method:
 
 ```swift
-func processURL(_ url: String, onComplete: @escaping ProcessURLResult)
+func processURL(
+  _ url: String,
+  onComplete: @escaping ProcessURLCallback
+)
 ```
 
 ```swift
 twilioVerify.processURL(snaUrl) { result in
     switch result {
-        case .success:
-          // Handle success scenario
+      case .success:
+      // Handle success scenario
 
-        case .failure(let error):
-        // Handle error scenario
+      case .failure(let error):
+      // Handle error scenario
     }
+}
+```
+
+_Async alternative:_
+
+```swift
+func processURL(_ url: String) async -> ProcessURLResult
+```
+
+```swift
+let result = await twilioVerify.processURL(snaUrl)
+
+switch result {
+  case .success:
+  // Handle success scenario
+
+  case .failure(let error):
+  // Handle error scenario
 }
 ```
 

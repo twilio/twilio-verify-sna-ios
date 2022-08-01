@@ -21,13 +21,6 @@ import Foundation
 import Network
 import SNANetworking
 
-/// Private enum to validate and handle current network status
-private enum NetworkStatus {
-    case connected
-    case disconnected
-    case unknown
-}
-
 open class TwilioVerifySNASession: TwilioVerifySNA {
 
     // MARK: - Properties
@@ -35,6 +28,12 @@ open class TwilioVerifySNASession: TwilioVerifySNA {
     private var networkStatus: NetworkStatus = .unknown
     private let requestManager: RequestManagerProtocol
     private var waitForConnectionAccumulatedTime: Double = .zero
+
+    enum NetworkStatus {
+        case connected
+        case disconnected
+        case unknown
+    }
 
     // MARK: - Constants
 
@@ -62,7 +61,7 @@ open class TwilioVerifySNASession: TwilioVerifySNA {
     /// Initializer: You could inject your own dependencies here, although this is only recommended for unit testing,
     /// if you change any of the implementations down here, we can't guarantee the proper functionality of the SDK.
     public init(
-        requestManager: RequestManager = RequestManager(
+        requestManager: RequestManagerProtocol = RequestManager(
             networkProvider: NetworkRequestProvider(
                 cellularSession: CellularSession()
             )
@@ -85,10 +84,20 @@ open class TwilioVerifySNASession: TwilioVerifySNA {
     ///   - onComplete: Closure with `Result<Void, TwilioVerifySNASession.Error>`.
     public func processURL(
         _ url: String,
-        onComplete: @escaping ProcessURLResult
+        onComplete: @escaping ProcessURLCallback
     ) {
         urlRequestQueue.async {
             self.handleURLRequest(url, onComplete: onComplete)
+        }
+    }
+
+    /// `processURL` method  async support.
+    @available(iOS 13, *)
+    public func processURL(_ url: String) async -> ProcessURLResult {
+        return await withCheckedContinuation { continuation in
+            processURL(url) { result in
+                continuation.resume(returning: result)
+            }
         }
     }
 
@@ -115,7 +124,7 @@ open class TwilioVerifySNASession: TwilioVerifySNA {
     ///   - completionHandler: Closure with `Result<Void, TwilioVerifySNASession.Error>`
     private func waitForConnectionResultAndContinue(
         with url: String,
-        and completionHandler: @escaping ProcessURLResult
+        and completionHandler: @escaping ProcessURLCallback
     ) {
         guard waitForConnectionAccumulatedTime < Constants.waitForConnectionToleranceInSeconds else {
             return completionHandler(.failure(.cellularNetworkNotAvailable))
@@ -135,7 +144,7 @@ open class TwilioVerifySNASession: TwilioVerifySNA {
     ///   - onComplete: Closure with `Result<Void, TwilioVerifySNASession.Error>`
     private func handleURLRequest(
         _ url: String,
-        onComplete: @escaping ProcessURLResult
+        onComplete: @escaping ProcessURLCallback
     ) {
         if networkStatus == .unknown {
             return waitForConnectionResultAndContinue(
@@ -163,3 +172,13 @@ open class TwilioVerifySNASession: TwilioVerifySNA {
         }
     }
 }
+
+#if DEBUG
+extension TwilioVerifySNASession {
+    func set(networkStatus: NetworkStatus) {
+        monitor.pathUpdateHandler = nil
+        monitor.cancel()
+        self.networkStatus = networkStatus
+    }
+}
+#endif

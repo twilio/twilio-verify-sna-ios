@@ -47,6 +47,8 @@ final class RequestManagerTests: XCTestCase {
 
                 case .failure(let cause):
                     // Assert
+                    XCTAssertNotNil(cause.errorDescription)
+                    XCTAssertNotNil(cause.technicalError)
                     XCTAssertTrue(cause == expectedError, "Unexpected result")
             }
         }

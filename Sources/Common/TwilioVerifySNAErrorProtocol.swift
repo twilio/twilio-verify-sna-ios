@@ -22,5 +22,5 @@ import Foundation
 /// This protocol should be used to create any SDK related error
 /// - Note: `technicalError` should be implemented if possible.
 protocol TwilioVerifySNAErrorProtocol: LocalizedError {
-    var technicalError: String? { get }
+    var technicalError: String { get }
 }

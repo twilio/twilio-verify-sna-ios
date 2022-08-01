@@ -46,7 +46,7 @@ extension RequestManager {
             }
         }
 
-        public var technicalError: String? {
+        public var technicalError: String {
             switch self {
                 case .noResultFromUrl:
                     return """
@@ -62,7 +62,7 @@ extension RequestManager {
                         """
 
                 case .networkingError:
-                    return errorDescription
+                    return errorDescription ?? .init()
 
                 case .invalidUrl:
                     return "Unable to convert the url string to an Apple URL struct"
