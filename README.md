@@ -207,14 +207,7 @@ Currently it's not possible to test the functionality using a simulator.
 
 ---
 
-- Configure a [Verify Service](https://www.twilio.com/docs/verify/quickstarts/push-ios#create-a-verify-service-and-add-the-push-credential)
-- Go to: https://www.twilio.com/code-exchange/verify-sna-backend
-- Use the `Quick Deploy to Twilio` option
-- You should log in to your Twilio account
-- Enter the Verify Service Sid you created above, you can find it [here](https://www.twilio.com/console/verify/services)
-- Deploy the application
-- Press `Go to live application`
-- You will see the start page. Copy the url save it. This will be your `Backend url` on the sample app
+To be added once the sample backend gets released.
 
 <a name='UsingSampleApp'></a>
 
@@ -254,12 +247,12 @@ See `NetworkResult.h`
   <tr>
     <td>CannotFindRemoteAddressOfRemoteUrl</td>
     <td>Cannot find remote address of requested URL	</td>
-    <td>The url is corrupted, try generate a new one</td>
+    <td>The url is corrupted, try generating a new one</td>
   </tr>
     <tr>
     <td>CannotFindRoutesForHttpRequest</td>
     <td>No routes found for HTTP request</td>
-    <td>The url is corrupted, try generate a new one</td>
+    <td>The url is corrupted, try generating a new one</td>
   </tr>
     <tr>
     <td>UnableToInstantiateSockets</td>
@@ -274,7 +267,7 @@ See `NetworkResult.h`
     <tr>
     <td>CannotSpecifySSLFunctionsNeeded</td>
     <td>Cannot specify SSL functions needed to perform the network I/O operations</td>
-    <td>The url is corrupted, try generate a new one</td>
+    <td>The url is corrupted, try generating a new one</td>
   </tr>
     <tr>
     <td>CannotSpecifySSLIOConnection</td>
@@ -294,12 +287,12 @@ See `NetworkResult.h`
     <tr>
     <td>ErrorPerformingSSLWriteOperation</td>
     <td>Error occurred while performing SSL write operation</td>
-    <td>The url is corrupted, try generate a new one</td>
+    <td>The url is corrupted, try generating a new one</td>
   </tr>
     <tr>
     <td>SSLSessionDidNotCloseGracefullyAfterPerformingSSLReadOperation</td>
     <td>Cannot specify SSL functions needed to perform the network I/O operations</td>
-    <td>The url is corrupted, try generate a new one</td>
+    <td>The url is corrupted, try generating a new one</td>
   </tr>
   <tr>
     <td>UnknownHttpResponse</td>
@@ -353,7 +346,7 @@ See `RequestManager+Errors.swift`
   <tr>
     <td>InstanceNotFound</td>
     <td>Unable to continue url process, instance not found.</td>
-    <td> weak self was nil, make sure that you are instantiating as a dependency this SDK or lazy loading it, do not use this SDK as a computed property.</td>
+    <td>Weak self was nil, make sure that you are instantiating as a dependency this SDK or lazy loading it, do not use this SDK as a computed property.</td>
   </tr>
   <tr>
     <td>NetworkingError</td>

@@ -56,7 +56,7 @@ extension RequestManager {
 
                 case .instanceNotFound:
                     return """
-                        weak self was nil, make sure that you are
+                        Weak self was nil, make sure that you are
                         instantiating as a dependency this SDK or lazy loading it,
                         do not use this SDK as a computed property.
                         """
