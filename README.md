@@ -116,7 +116,7 @@ func processURL(
 ```
 
 ```swift
-twilioVerify.processURL(snaUrl) { result in
+twilioVerify.processURL(snaUrlFromBackend) { result in
     switch result {
       case .success:
       // Handle success scenario
@@ -134,7 +134,7 @@ func processURL(_ url: String) async -> ProcessURLResult
 ```
 
 ```swift
-let result = await twilioVerify.processURL(snaUrl)
+let result = await twilioVerify.processURL(snaUrlFromBackend)
 
 switch result {
   case .success:
@@ -159,9 +159,9 @@ class ViewController: UIViewController {
     }
 
     private func validateSNAURL() async {
-        let urlFromBackend = await asyncMethodToGetSNAUrl()
+        let snaUrlFromBackend = await asyncMethodToGetSNAUrl()
 
-        twilioVerify.processURL(snaUrl) { result in
+        twilioVerify.processURL(snaUrlFromBackend) { result in
             switch result {
                 case .success:
                 // Handle success scenario
@@ -216,6 +216,10 @@ To be added once the sample backend gets released.
 **To validate a phone number:**
 
 - Set the phone number
+  - Available carriers during this phase:
+    - US - Verizon, TMO
+    - UK - EE, Vodafone, O2 and ThreeUK
+    - CA - Bell, Rogers and Telus
 - Set the country code (only US during pilot stage)
 - Set your sample backend url
 - Subit the form by using the CTA button

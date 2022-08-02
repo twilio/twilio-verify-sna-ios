@@ -46,9 +46,9 @@ class ViewController: UIViewController {
     }
 
     private func validateSNAURL() async {
-        let urlFromBackend = await asyncMethodToGetSNAUrl()
+        let snaUrlFromBackend = await asyncMethodToGetSNAUrl()
 
-        twilioVerify.processURL(snaUrl) { result in
+        twilioVerify.processURL(snaUrlFromBackend) { result in
             switch result {
                 case .success:
                 // Handle success scenario
