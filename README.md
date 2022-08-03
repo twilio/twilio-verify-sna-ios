@@ -457,6 +457,21 @@ twilioVerify.processURL(snaUrl) { result in
 }
 ```
 
+Error description and technical discussion:
+
+```swift
+twilioVerify.processURL(snaUrl) { result in
+    switch result {
+        case .success:
+          return
+
+        case .failure(let error):
+          let errorDescription = cause.description
+          let technicalError = cause.technicalError
+    }
+}
+```
+
 <a name='Contributing'></a>
 
 ## Contributing

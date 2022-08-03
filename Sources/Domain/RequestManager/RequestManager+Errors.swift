@@ -30,7 +30,7 @@ extension RequestManager {
         case instanceNotFound
         case networkingError(cause: NetworkRequestProvider.RequestError)
 
-        public var errorDescription: String? {
+        public var description: String {
             switch self {
                 case .noResultFromUrl:
                     return "Unable to get a valid result from the requested URL."
@@ -62,7 +62,7 @@ extension RequestManager {
                         """
 
                 case .networkingError:
-                    return errorDescription ?? .init()
+                    return description
 
                 case .invalidUrl:
                     return "Unable to convert the url string to an Apple URL struct"

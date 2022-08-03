@@ -1,4 +1,4 @@
-#  Getting the error cause
+# Getting the error cause
 
 You can get the cause for an error accessing the associated error
 
@@ -70,6 +70,21 @@ twilioVerify.processURL(snaUrl) { result in
                 case .requestError(.networkingError(.cellularRequestError(.sslSessionDidNotCloseGracefullyAfterPerformingSSLReadOperation))):
                     return
             }
+    }
+}
+```
+
+Error description and technical discussion:
+
+```swift
+twilioVerify.processURL(snaUrl) { result in
+    switch result {
+        case .success:
+          return
+
+        case .failure(let error):
+          let errorDescription = cause.description
+          let technicalError = cause.technicalError
     }
 }
 ```

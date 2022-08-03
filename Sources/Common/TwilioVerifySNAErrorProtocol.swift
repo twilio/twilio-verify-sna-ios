@@ -23,4 +23,9 @@ import Foundation
 /// - Note: `technicalError` should be implemented if possible.
 protocol TwilioVerifySNAErrorProtocol: LocalizedError {
     var technicalError: String { get }
+    var description: String { get }
+}
+
+extension TwilioVerifySNAErrorProtocol {
+    public var errorDescription: String? { description }
 }

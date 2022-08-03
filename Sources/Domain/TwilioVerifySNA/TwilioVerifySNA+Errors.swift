@@ -27,7 +27,7 @@ extension TwilioVerifySNASession {
         case cellularNetworkNotAvailable
         case requestError(cause: RequestManager.RequestError)
 
-        public var errorDescription: String? {
+        public var description: String {
             switch self {
                 case .requestError(let cause):
                     return """

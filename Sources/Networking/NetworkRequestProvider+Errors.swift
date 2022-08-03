@@ -28,7 +28,7 @@ extension NetworkRequestProvider {
         case requestFinishedWithNoResult
         case cellularRequestError(cause: CellularSessionStatus)
 
-        public var errorDescription: String? {
+        public var description: String {
             switch self {
                 case .requestFinishedWithNoResult:
                     return "No response from request"
@@ -47,7 +47,7 @@ extension NetworkRequestProvider {
                     """
 
                 case .cellularRequestError:
-                    return errorDescription ?? .init()
+                    return description
             }
         }
 
