@@ -31,6 +31,10 @@ Twilio Silent Network Auth will protect you against account takeovers (ATOs) tha
 
 This SDK will help you with process the SNA URL's provided by our `Verify services` to silently validate a phone number.
 
+See <a href="https://www.twilio.com/docs/verify/sna/tech-overview">Technical Overview</a>
+
+See <a href="https://www.twilio.com/docs/verify/sna">Silent Network Auth Overview</a>
+
 <a name='Dependencies'></a>
 
 ## Dependencies
