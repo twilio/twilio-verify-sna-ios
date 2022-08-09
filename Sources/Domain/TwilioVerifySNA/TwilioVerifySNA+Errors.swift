@@ -23,11 +23,11 @@ import Foundation
 
 extension TwilioVerifySNASession {
 
-    public enum Error: TwilioVerifySNAErrorProtocol {
+    public enum Error: TwilioVerifySNAErrorProtocol, Equatable {
         case cellularNetworkNotAvailable
         case requestError(cause: RequestManager.RequestError)
 
-        public var errorDescription: String? {
+        public var description: String {
             switch self {
                 case .requestError(let cause):
                     return """
@@ -40,12 +40,12 @@ extension TwilioVerifySNASession {
             }
         }
 
-        public var technicalError: String? {
+        public var technicalError: String {
             switch self {
                 case .requestError(let cause):
                     return """
                     Request manager got an error processing the SNAURL request,
-                    cause: \(cause.technicalError ?? "Undefined")
+                    cause: \(cause.technicalError)
                     """
 
                 case .cellularNetworkNotAvailable:
@@ -55,6 +55,13 @@ extension TwilioVerifySNASession {
                         use the `setEnvironment()` method.
                         """
             }
+        }
+
+        public static func == (
+            lhs: TwilioVerifySNASession.Error,
+            rhs: TwilioVerifySNASession.Error
+        ) -> Bool {
+            String(describing: lhs) == String(describing: rhs)
         }
     }
 }

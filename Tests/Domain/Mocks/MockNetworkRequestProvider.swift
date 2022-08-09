@@ -5,7 +5,11 @@ import SNANetworking
 
 struct MockNetworkRequestProvider: NetworkRequestProviderProtocol {
 
-    private let session: CellularSessionProtocol = MockCellularSession()
+    let session: CellularSessionProtocol
+
+    init(session: CellularSessionProtocol = MockCellularSession()) {
+        self.session = session
+    }
 
     func performRequest(url: URL, onComplete: @escaping NetworkRequestResult) {
         let request = session.performGetRequest(url)

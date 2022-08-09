@@ -23,13 +23,14 @@ import Foundation
 
 extension RequestManager {
 
+    /// `RequestError` used for handling errors between the network layer and the logic layer.
     public enum RequestError: TwilioVerifySNAErrorProtocol, Equatable {
         case invalidUrl
         case noResultFromUrl
         case instanceNotFound
         case networkingError(cause: NetworkRequestProvider.RequestError)
 
-        public var errorDescription: String? {
+        public var description: String {
             switch self {
                 case .noResultFromUrl:
                     return "Unable to get a valid result from the requested URL."
@@ -45,7 +46,7 @@ extension RequestManager {
             }
         }
 
-        public var technicalError: String? {
+        public var technicalError: String {
             switch self {
                 case .noResultFromUrl:
                     return """
@@ -55,13 +56,13 @@ extension RequestManager {
 
                 case .instanceNotFound:
                     return """
-                        weak self was nil, make sure that you are
+                        Weak self was nil, make sure that you are
                         instantiating as a dependency this SDK or lazy loading it,
                         do not use this SDK as a computed property.
                         """
 
                 case .networkingError:
-                    return errorDescription
+                    return description
 
                 case .invalidUrl:
                     return "Unable to convert the url string to an Apple URL struct"

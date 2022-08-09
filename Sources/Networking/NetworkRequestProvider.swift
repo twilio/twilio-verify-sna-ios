@@ -43,6 +43,12 @@ public final class NetworkRequestProvider {
 
 // MARK: - NetworkRequestProviderProtocol
 extension NetworkRequestProvider: NetworkRequestProviderProtocol {
+
+    /// This method will perform a regular GET operation via network using the cellular layer.
+    /// - Note: This method **will not** work if you are using a simulator or a device with no SIM-CARD (and internet working).
+    /// - Parameters:
+    ///   - url: SNA URL provided by your backend.
+    ///   - onComplete: Closure with `Result<Void, NetworkRequestProvider.RequestError>`.
     public func performRequest(
         url: URL,
         onComplete: @escaping NetworkRequestResult

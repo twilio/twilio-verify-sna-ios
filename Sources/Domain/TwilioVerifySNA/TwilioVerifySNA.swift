@@ -19,15 +19,17 @@
 
 import Foundation
 
-public typealias ProcessURLResult = (
-    Result<Void, TwilioVerifySNASession.Error>
-) -> Void
+public typealias ProcessURLResult = Result<Void, TwilioVerifySNASession.Error>
+public typealias ProcessURLCallback = (ProcessURLResult) -> Void
 
 public protocol TwilioVerifySNA {
     func processURL(
         _ url: String,
-        onComplete: @escaping ProcessURLResult
+        onComplete: @escaping ProcessURLCallback
     )
+
+    @available(iOS 13, *)
+    func processURL(_ url: String) async -> ProcessURLResult
 }
 
 /// This extension allow us to return a void in the 'success' scenario for Result

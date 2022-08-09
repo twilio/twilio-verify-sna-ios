@@ -36,6 +36,7 @@ final class NetworkLayer {
         var urlRequest = URLRequest(url: url)
         urlRequest.httpMethod = "POST"
         urlRequest.httpBody = try? JSONEncoder().encode(request)
+        urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
 
         URLSession.shared.dataTask(with: urlRequest) { data, _, error in
             guard let data = data, error == nil else {

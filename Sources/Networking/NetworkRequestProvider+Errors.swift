@@ -24,11 +24,11 @@ import SNANetworking
 
 extension NetworkRequestProvider {
 
-    public enum RequestError: TwilioVerifySNAErrorProtocol {
+    public enum RequestError: TwilioVerifySNAErrorProtocol, Equatable {
         case requestFinishedWithNoResult
         case cellularRequestError(cause: CellularSessionStatus)
 
-        public var errorDescription: String? {
+        public var description: String {
             switch self {
                 case .requestFinishedWithNoResult:
                     return "No response from request"
@@ -38,7 +38,7 @@ extension NetworkRequestProvider {
             }
         }
 
-        public var technicalError: String? {
+        public var technicalError: String {
             switch self {
                 case .requestFinishedWithNoResult:
                     return """
@@ -47,8 +47,15 @@ extension NetworkRequestProvider {
                     """
 
                 case .cellularRequestError:
-                    return errorDescription
+                    return description
             }
+        }
+
+        public static func == (
+            lhs: NetworkRequestProvider.RequestError,
+            rhs: NetworkRequestProvider.RequestError
+        ) -> Bool {
+            String(describing: lhs) == String(describing: rhs)
         }
     }
 }

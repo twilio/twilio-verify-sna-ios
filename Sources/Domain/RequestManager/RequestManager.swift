@@ -19,14 +19,19 @@
 
 import Foundation
 
+/// RequestManager:
+/// Handles the SNA URL validation logic, communicates with `NetworkRequestProvider` and `TwilioVerifySession`.
 public final class RequestManager {
 
     // MARK: - Properties
-    
+
+    /// Network provider used for handling networking operations,
+    /// you could inject your own but you have to make sure that it will use only cellular network.
     private let networkProvider: NetworkRequestProviderProtocol
 
     // MARK: - Constants
 
+    /// Constants used for validating the SNA URL results, this may change if the provider changes the implementation.
     private enum Constants {
         static let redirectionPath = "REDIRECT:"
         static let successPath = "ErrorCode=0&ErrorDescription=Success"
@@ -42,6 +47,11 @@ public final class RequestManager {
 
     // MARK: - Private Methods
 
+    /// Method to process the SNA URL result (that is a string url), this method will determine if the
+    /// result needs to be redirected and processed again, or if it is completed.
+    /// - Parameters:
+    ///   - result: Result received from previous request.
+    ///   - onComplete: Callback used for notify the request result, no return is needed.
     private func processRequestResult(
         _ result: String,
         onComplete: @escaping ProcessSNAURLResult
@@ -58,6 +68,11 @@ public final class RequestManager {
         onComplete(.success)
     }
 
+    /// When a SNA URL request finishes, it returns a string url with a possible redirect url,
+    /// for instance: `REDIRECT:https://google.com`, so this method deletes the `redirect` part and
+    /// returns a clean url.
+    /// - Parameter url: Redirection URL
+    /// - Returns: Clean URL
     private func getRedirectionUrl(for url: String) -> String {
         url.replacingOccurrences(of: Constants.redirectionPath, with: String())
     }
@@ -65,6 +80,11 @@ public final class RequestManager {
 
 // MARK: - RequestProcessorProtocol
 extension RequestManager: RequestManagerProtocol {
+
+    /// Method to process the SNA URL. This method will handle the url via cellular network using the `NetworkRequestProviderProtocol` dependency.
+    /// - Parameters:
+    ///   - url: SNA URL retrieved from backend
+    ///   - onComplete: Closure with Result<Void, Error> to handle scenarios.
     public func processSNAURL(
         _ url: String,
         onComplete: @escaping ProcessSNAURLResult
