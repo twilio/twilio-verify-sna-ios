@@ -19,49 +19,44 @@
 
 import Foundation
 
-// MARK: - Associated errors
+public enum TwilioVerifySNAError: TwilioVerifySNAErrorProtocol, Equatable {
+    case cellularNetworkNotAvailable
+    case requestError(cause: RequestManager.RequestError)
 
-extension TwilioVerifySNASession {
-
-    public enum Error: TwilioVerifySNAErrorProtocol, Equatable {
-        case cellularNetworkNotAvailable
-        case requestError(cause: RequestManager.RequestError)
-
-        public var description: String {
-            switch self {
-                case .requestError(let cause):
-                    return """
+    public var description: String {
+        switch self {
+            case .requestError(let cause):
+                return """
                         Error processing the SNAURL request,
                         cause: \(cause.errorDescription ?? "Undefined")
                     """
 
-                case .cellularNetworkNotAvailable:
-                    return "Cellular network not available"
-            }
+            case .cellularNetworkNotAvailable:
+                return "Cellular network not available"
         }
+    }
 
-        public var technicalError: String {
-            switch self {
-                case .requestError(let cause):
-                    return """
+    public var technicalError: String {
+        switch self {
+            case .requestError(let cause):
+                return """
                     Request manager got an error processing the SNAURL request,
                     cause: \(cause.technicalError)
                     """
 
-                case .cellularNetworkNotAvailable:
-                    return """
+            case .cellularNetworkNotAvailable:
+                return """
                         "The network monitor established that a cellular network is not available,
                         if you are running on a simulator or a device with no sim card for development
                         use the `setEnvironment()` method.
                         """
-            }
         }
+    }
 
-        public static func == (
-            lhs: TwilioVerifySNASession.Error,
-            rhs: TwilioVerifySNASession.Error
-        ) -> Bool {
-            String(describing: lhs) == String(describing: rhs)
-        }
+    public static func == (
+        lhs: TwilioVerifySNAError,
+        rhs: TwilioVerifySNAError
+    ) -> Bool {
+        String(describing: lhs) == String(describing: rhs)
     }
 }

@@ -39,7 +39,7 @@ import UIKit
 import TwilioVerifySNA
 
 class ViewController: UIViewController {
-    private lazy var twilioVerify: TwilioVerifySNA = TwilioVerifySNASession()
+    private lazy var twilioVerify: TwilioVerifySNA = TwilioVerifySNABuilder.build()
 
      override func viewDidLoad() {
         super.viewDidLoad()

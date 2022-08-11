@@ -107,7 +107,7 @@ import TwilioVerifySNA
 2. Instantiate the SDK
 
 ```swift
-private lazy var twilioVerify: TwilioVerifySNA = TwilioVerifySNASession()
+private lazy var twilioVerify: TwilioVerifySNA = TwilioVerifySNABuilder.build()
 ```
 
 3. Process the SNA URL by calling the method:
@@ -156,7 +156,7 @@ import UIKit
 import TwilioVerifySNA
 
 class ViewController: UIViewController {
-    private lazy var twilioVerify: TwilioVerifySNA = TwilioVerifySNASession()
+  private lazy var twilioVerify: TwilioVerifySNA = TwilioVerifySNABuilder.build()
 
      override func viewDidLoad() {
         super.viewDidLoad()

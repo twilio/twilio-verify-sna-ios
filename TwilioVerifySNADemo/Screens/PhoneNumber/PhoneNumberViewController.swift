@@ -37,7 +37,7 @@ final class PhoneNumberViewController: UIViewController {
      in the best practices you will probably create
      this instance on your ViewModel/Presenter or logic layer
      */
-    private lazy var twilioVerify: TwilioVerifySNA = TwilioVerifySNASession()
+    private lazy var twilioVerify: TwilioVerifySNA = TwilioVerifySNABuilder.build()
 
     /**
      Network layer to communicate with the backend: (not required for your SDK implementation)

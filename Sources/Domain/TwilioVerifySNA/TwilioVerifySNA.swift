@@ -19,7 +19,7 @@
 
 import Foundation
 
-public typealias ProcessURLResult = Result<Void, TwilioVerifySNASession.Error>
+public typealias ProcessURLResult = Result<Void, TwilioVerifySNAError>
 public typealias ProcessURLCallback = (ProcessURLResult) -> Void
 
 public protocol TwilioVerifySNA {

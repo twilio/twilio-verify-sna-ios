@@ -27,7 +27,7 @@ final class TwilioVerifySNASessionTests: XCTestCase {
 
     func test_invalidNetworkStatus_shouldResponseWithExpectedError() async {
         // Arrange
-        let expectedError: TwilioVerifySNASession.Error = .cellularNetworkNotAvailable
+        let expectedError: TwilioVerifySNAError = .cellularNetworkNotAvailable
         let mockUrl = "https://google.com"
         sut.set(networkStatus: .disconnected)
 
@@ -66,6 +66,8 @@ final class TwilioVerifySNASessionTests: XCTestCase {
             case .failure(.requestError(let  cause)):
                 // Assert
                 XCTAssertEqual(cause, expectedError)
+                XCTAssertFalse(expectedError.description.isEmpty)
+                XCTAssertFalse(expectedError.technicalError.isEmpty)
 
             default:
                 XCTFail("Unexpected error received ")
