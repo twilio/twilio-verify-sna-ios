@@ -107,7 +107,7 @@ import TwilioVerifySNA
 2. Instantiate the SDK
 
 ```swift
-private lazy var twilioVerify: TwilioVerifySNA = TwilioVerifySNASession()
+private lazy var twilioVerify: TwilioVerifySNA = TwilioVerifySNABuilder.build()
 ```
 
 3. Process the SNA URL by calling the method:
@@ -156,7 +156,7 @@ import UIKit
 import TwilioVerifySNA
 
 class ViewController: UIViewController {
-    private lazy var twilioVerify: TwilioVerifySNA = TwilioVerifySNASession()
+  private lazy var twilioVerify: TwilioVerifySNA = TwilioVerifySNABuilder.build()
 
      override func viewDidLoad() {
         super.viewDidLoad()
@@ -226,10 +226,10 @@ To be added once the sample backend gets released.
     - CA - Bell, Rogers and Telus
 - Set the country code (only US during pilot stage)
 - Set your sample backend url
-- Subit the form by using the CTA button
+- Submit the form by using the CTA button
 
 **Expected behavior:**
-The app will ask the network carrier if the provided phone number is the same used on the network request, if the phone number is correct, then the app will redirect to a sucess screen.
+The app will ask the network carrier if the provided phone number is the same used on the network request, if the phone number is correct, then the app will redirect to a success screen.
 
 <a name='Errors'></a>
 

@@ -21,7 +21,7 @@ import Foundation
 import Network
 import SNANetworking
 
-open class TwilioVerifySNASession: TwilioVerifySNA {
+final class TwilioVerifySNASession: TwilioVerifySNA {
 
     // MARK: - Properties
 
@@ -58,9 +58,7 @@ open class TwilioVerifySNASession: TwilioVerifySNA {
 
     // MARK: - Class lifecycle
 
-    /// Initializer: You could inject your own dependencies here, although this is only recommended for unit testing,
-    /// if you change any of the implementations down here, we can't guarantee the proper functionality of the SDK.
-    public init(
+    init(
         requestManager: RequestManagerProtocol = RequestManager(
             networkProvider: NetworkRequestProvider(
                 cellularSession: CellularSession()
@@ -82,7 +80,7 @@ open class TwilioVerifySNASession: TwilioVerifySNA {
     /// - Parameters:
     ///   - url: SNA URL provided by your backend.
     ///   - onComplete: Closure with `Result<Void, TwilioVerifySNASession.Error>`.
-    public func processURL(
+    func processURL(
         _ url: String,
         onComplete: @escaping ProcessURLCallback
     ) {
@@ -93,7 +91,7 @@ open class TwilioVerifySNASession: TwilioVerifySNA {
 
     /// `processURL` method  async support.
     @available(iOS 13, *)
-    public func processURL(_ url: String) async -> ProcessURLResult {
+    func processURL(_ url: String) async -> ProcessURLResult {
         return await withCheckedContinuation { continuation in
             processURL(url) { result in
                 continuation.resume(returning: result)
