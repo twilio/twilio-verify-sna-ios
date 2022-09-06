@@ -19,6 +19,7 @@
 
 import UIKit
 import TwilioVerifySNA
+import CoreTelephony
 
 final class PhoneNumberViewController: UIViewController {
 
@@ -76,6 +77,18 @@ final class PhoneNumberViewController: UIViewController {
 
             // Let's notify the user that some data is missing.
             showGenericError("Missing country code, phone number or backend URL.")
+            return
+        }
+
+        /*
+         Recommended: validate if the user does have a working sim card
+         */
+        guard hasCellularCoverage() else {
+            /*
+             Let's notify the user that the sim card is missing.
+             For real world use cases you probably would use a secondary verification method instead of showing an error.
+             */
+            showGenericError("For silent network authentication, you will need a working sim card.")
             return
         }
 
@@ -371,5 +384,17 @@ extension PhoneNumberViewController {
             backendUrl,
             forKey: KeysForUserDefaults.backendUrl.rawValue
         )
+    }
+
+    /// Not required for the SDK implementation.
+    private func hasCellularCoverage() -> Bool {
+        let networkInfo = CTTelephonyNetworkInfo()
+        let carriers = networkInfo.serviceSubscriberCellularProviders ?? [:]
+
+        let validCarriers = carriers.values.compactMap() {
+            $0.isoCountryCode
+        }
+
+        return !validCarriers.isEmpty
     }
 }
