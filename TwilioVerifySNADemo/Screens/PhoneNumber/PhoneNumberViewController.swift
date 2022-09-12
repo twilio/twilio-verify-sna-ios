@@ -391,7 +391,7 @@ extension PhoneNumberViewController {
         let networkInfo = CTTelephonyNetworkInfo()
         let carriers = networkInfo.serviceSubscriberCellularProviders ?? [:]
 
-        let validCarriers = carriers.values.compactMap() {
+        let validCarriers = carriers.values.compactMap {
             $0.isoCountryCode
         }
 
