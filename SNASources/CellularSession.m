@@ -180,7 +180,7 @@
     
     // Create the HTTP request string
     NSString *requestString = [NSString
-                               stringWithFormat:@"GET %@%@ HTTP/1.2\r\nHost: %@%@\r\n",
+                               stringWithFormat:@"POST %@%@ HTTP/1.2\r\nHost: %@%@\r\nAccept: */*\r\nContent-Type: application/json\r\nContent-Length: 0\r\n",
                                [url path],
                                [url query] ? [@"?" stringByAppendingString:[url query]] : @"",
                                [url host],
