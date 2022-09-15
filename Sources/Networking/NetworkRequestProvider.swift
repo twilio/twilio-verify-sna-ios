@@ -54,7 +54,7 @@ extension NetworkRequestProvider: NetworkRequestProviderProtocol {
         onComplete: @escaping NetworkRequestResult
     ) {
         networkRequestQueue.async {
-            let networkOperationOnCellularData = self.cellularSession.performGetRequest(url)
+            let networkOperationOnCellularData = self.cellularSession.performRequest(url)
 
             guard case .success = networkOperationOnCellularData.status else {
                 onComplete(

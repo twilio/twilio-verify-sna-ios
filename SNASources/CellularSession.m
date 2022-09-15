@@ -42,7 +42,7 @@
  @param url The URL to be requested
  @return A string response from the request to the URL
  */
-- (CellularSessionResult * _Nonnull)performGetRequest:(NSURL * _Nonnull)url {
+- (CellularSessionResult * _Nonnull)performRequest:(NSURL * _Nonnull)url {
     // Prepare a class to return results.
     CellularSessionResult *sessionResult = [[CellularSessionResult alloc] init];
     sessionResult.result = nil;

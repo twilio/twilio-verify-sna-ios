@@ -26,7 +26,7 @@
 #import "CellularSessionProtocol.h"
 
 @interface CellularSession : NSObject <CellularSessionProtocol>
-- (CellularSessionResult * _Nonnull)performGetRequest:(NSURL * _Nonnull)url;
+- (CellularSessionResult * _Nonnull)performRequest:(NSURL * _Nonnull)url;
 @end
 
 #endif /* HTTPRequester_h */
