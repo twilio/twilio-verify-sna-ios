@@ -25,6 +25,7 @@ final class PhoneNumberViewController: UIViewController {
 
     // MARK: - IBOutlets
 
+    @IBOutlet private var appVersionLabel: UILabel!
     @IBOutlet private var backendUrlTextField: UITextField!
     @IBOutlet private var phoneNumberTextField: UITextField!
     @IBOutlet private var phoneCountryCodeTextField: UITextField!
@@ -347,6 +348,9 @@ extension PhoneNumberViewController {
             )
             $0?.layer.borderColor = borderColor.cgColor
         }
+
+        /// Only used for reference
+        appVersionLabel.text = "\(appVersionLabel.text ?? "") \(TwilioVerifySNAConfig.version)"
     }
 
     /// Not required for the SDK implementation.
