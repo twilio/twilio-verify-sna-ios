@@ -19,5 +19,5 @@
 
 @protocol CellularSessionProtocol
 @required
-- (CellularSessionResult * _Nonnull)performGetRequest:(NSURL * _Nonnull)url;
+- (CellularSessionResult * _Nonnull)performRequest:(NSURL * _Nonnull)url;
 @end

@@ -42,7 +42,7 @@
  @param url The URL to be requested
  @return A string response from the request to the URL
  */
-- (CellularSessionResult * _Nonnull)performGetRequest:(NSURL * _Nonnull)url {
+- (CellularSessionResult * _Nonnull)performRequest:(NSURL * _Nonnull)url {
     // Prepare a class to return results.
     CellularSessionResult *sessionResult = [[CellularSessionResult alloc] init];
     sessionResult.result = nil;
@@ -180,7 +180,7 @@
     
     // Create the HTTP request string
     NSString *requestString = [NSString
-                               stringWithFormat:@"GET %@%@ HTTP/1.2\r\nHost: %@%@\r\n",
+                               stringWithFormat:@"POST %@%@ HTTP/1.2\r\nHost: %@%@\r\nAccept: */*\r\nContent-Type: application/json\r\nContent-Length: 0\r\n",
                                [url path],
                                [url query] ? [@"?" stringByAppendingString:[url query]] : @"",
                                [url host],

@@ -12,7 +12,7 @@ struct MockNetworkRequestProvider: NetworkRequestProviderProtocol {
     }
 
     func performRequest(url: URL, onComplete: @escaping NetworkRequestResult) {
-        let request = session.performGetRequest(url)
+        let request = session.performRequest(url)
 
         guard let result = request.result else {
             return onComplete(.failure(.requestFinishedWithNoResult))

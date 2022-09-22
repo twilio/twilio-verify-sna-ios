@@ -11,7 +11,7 @@ class MockCellularSession: CellularSessionProtocol {
         self.status = status
     }
 
-    func performGetRequest(_ url: URL) -> CellularSessionResult {
+    func performRequest(_ url: URL) -> CellularSessionResult {
         let result = CellularSessionResult()
         result.status = status
         result.result = String(describing: status)
