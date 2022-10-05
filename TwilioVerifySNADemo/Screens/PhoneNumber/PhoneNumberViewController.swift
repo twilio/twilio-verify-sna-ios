@@ -345,7 +345,7 @@ extension PhoneNumberViewController {
         }
 
         /// Only used for reference
-        appVersionLabel.text = "\(appVersionLabel.text ?? "") \(TwilioVerifySNAConfig.version)"
+        appVersionLabel.text = "\(appVersionLabel.text ?? "") | SDK: \(TwilioVerifySNAConfig.version) | SAMPLE: \(sampleAppVersion)"
     }
 
     /// Not required for the SDK implementation.
@@ -397,3 +397,6 @@ extension PhoneNumberViewController {
         return !validCarriers.isEmpty
     }
 }
+
+/// Not required for the SDK implementation.
+private let sampleAppVersion = "0.0.3"
