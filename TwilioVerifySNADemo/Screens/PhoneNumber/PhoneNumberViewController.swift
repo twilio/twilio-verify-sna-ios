@@ -87,7 +87,8 @@ final class PhoneNumberViewController: UIViewController {
         guard hasCellularCoverage() else {
             /*
              Let's notify the user that the sim card is missing.
-             For real world use cases you probably would use a secondary verification method instead of showing an error.
+             For real world use cases you probably would use a secondary
+             verification method instead of showing an error.
              */
             showGenericError("For silent network authentication, you will need a working sim card.")
             return
@@ -103,11 +104,14 @@ final class PhoneNumberViewController: UIViewController {
             backendUrl: backendUrl
         )
 
+        // Backend requires a E.164 phone number, so we prepare it by
+        // appending the country code and number in the same string.
+        let completePhoneNumber = phoneCountryCode.appending(phoneNumber)
+
         // Lets start a user verification by requesting it to our custom backend (that will call Twilio Verify services)
 
         startVerification(
-            countryCode: phoneCountryCode,
-            phoneNumber: phoneNumber,
+            phoneNumber: completePhoneNumber,
             backendUrl: backendUrl
         ) { [weak self] snaUrl in
 
@@ -131,8 +135,7 @@ final class PhoneNumberViewController: UIViewController {
             // if the SNAURL is valid, we have to use TwilioVerifySDK to process the url
             self?.processUrl(
                 snaUrl: snaUrl,
-                countryCode: phoneCountryCode,
-                phoneNumber: phoneNumber,
+                phoneNumber: completePhoneNumber,
                 backendUrl: backendUrl
             )
         }
@@ -140,7 +143,6 @@ final class PhoneNumberViewController: UIViewController {
 
     private func processUrl(
         snaUrl: String,
-        countryCode: String,
         phoneNumber: String,
         backendUrl: String
     ) {
@@ -168,7 +170,6 @@ final class PhoneNumberViewController: UIViewController {
                      if the validation was completed, we should not trust in any frontend results.
                      */
                     self.continueVerification(
-                        countryCode: countryCode,
                         phoneNumber: phoneNumber,
                         backendUrl: backendUrl
                     )
@@ -181,12 +182,10 @@ final class PhoneNumberViewController: UIViewController {
     }
 
     private func continueVerification(
-        countryCode: String,
         phoneNumber: String,
         backendUrl: String
     ) {
         checkVerificationStatus(
-            countryCode: countryCode,
             phoneNumber: phoneNumber,
             backendUrl: backendUrl
         ) { [weak self] success in
@@ -220,13 +219,11 @@ final class PhoneNumberViewController: UIViewController {
     }
 
     private func startVerification(
-        countryCode: String,
         phoneNumber: String,
         backendUrl: String,
         onComplete: @escaping (_ snaUrl: String?) -> Void
     ) {
         let request = VerificationRequest(
-            countryCode: countryCode,
             phoneNumber: phoneNumber
         )
 
@@ -244,13 +241,11 @@ final class PhoneNumberViewController: UIViewController {
     }
 
     private func checkVerificationStatus(
-        countryCode: String,
         phoneNumber: String,
         backendUrl: String,
         onComplete: @escaping (_ success: Bool) -> Void
     ) {
         let request = VerificationRequest(
-            countryCode: countryCode,
             phoneNumber: phoneNumber
         )
 
