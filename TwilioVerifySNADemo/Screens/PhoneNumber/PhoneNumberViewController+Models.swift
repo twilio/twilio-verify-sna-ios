@@ -1,7 +1,6 @@
 import Foundation
 
 struct VerificationRequest: Encodable {
-    let countryCode: String
     let phoneNumber: String
 }
 
