@@ -1,4 +1,3 @@
-// Original implementation and credits to BENJAMIN BRYANT BUDIMAN: https://github.com/boku-inc/boku-wifi-ios
 //
 //  SocketAddress.m
 //  TwilioVerifySNA
@@ -17,6 +16,8 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 //
+
+// Original implementation: https://github.com/boku-inc/boku-wifi-ios
 
 #import "SocketAddress.h"
 #import <Foundation/Foundation.h>
