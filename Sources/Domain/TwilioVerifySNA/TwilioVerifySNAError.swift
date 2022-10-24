@@ -1,5 +1,5 @@
 //
-//  TwilioVerifySNA+Errors.swift
+//  TwilioVerifySNAError.swift
 //  TwilioVerifySNA
 //
 //  Copyright © 2022 Twilio.
