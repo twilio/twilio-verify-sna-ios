@@ -1,4 +1,3 @@
-// Original implementation and credits to BENJAMIN BRYANT BUDIMAN: https://github.com/boku-inc/boku-wifi-ios
 //
 //  sslfuncs.h
 //  TwilioVerifySNA
@@ -17,6 +16,8 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 //
+
+// Original implementation: https://github.com/boku-inc/boku-wifi-ios
 
 #ifndef sslfuncs_h
 #define sslfuncs_h

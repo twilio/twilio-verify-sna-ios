@@ -1,5 +1,5 @@
 //
-//  RequestProcessorProtocol.swift
+//  RequestManagerProtocol.swift
 //  TwilioVerifySNA
 //
 //  Copyright © 2022 Twilio.
