@@ -29,7 +29,7 @@
 
 Twilio Silent Network Auth will protect you against account takeovers (ATOs) that target your user's phone number by streamlining your methods for verifying mobile number possession. Instead of sending one-time passcodes (OTPs) that can be stolen or forcing users to implement complicated app-based solutions, Twilio Silent Network Auth will verify mobile number possession directly on the device by using its built-in connectivity to the mobile operators’ wireless network.
 
-This SDK will help you with process the SNA URL's provided by our `Verify services` to silently validate a phone number.
+This SDK will help you with processing the SNA URL's provided by our `Verify services` to silently validate a phone number.
 
 See <a href="https://www.twilio.com/docs/verify/sna/tech-overview">Technical Overview</a>
 
@@ -270,7 +270,7 @@ See `NetworkResult.h`
     <tr>
     <td>ErrorReadingHttpResponse</td>
     <td>Error occurred while reading HTTP response</td>
-    <td>No bytes recieved from the request</td>
+    <td>No bytes received from the request</td>
   </tr>
     <tr>
     <td>CannotSpecifySSLFunctionsNeeded</td>
@@ -279,7 +279,7 @@ See `NetworkResult.h`
   </tr>
     <tr>
     <td>CannotSpecifySSLIOConnection</td>
-    <td>Error ocurred while specifying SSL I/O connection with peer	</td>
+    <td>Error occurred while specifying SSL I/O connection with peer	</td>
     <td>Probably you are using a simulator or a device with no sim-card</td>
   </tr>
     <tr>
@@ -290,7 +290,7 @@ See `NetworkResult.h`
     <tr>
     <td>ErrorPerformingSSLHandshake</td>
     <td>Error occurred while performing SSL handshake</td>
-    <td>The device probably lost internet conenection during the operation</td>
+    <td>The device probably lost internet connection during the operation</td>
   </tr>
     <tr>
     <td>ErrorPerformingSSLWriteOperation</td>

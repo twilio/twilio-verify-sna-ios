@@ -233,7 +233,7 @@
         if (status) {
             SSLClose(context);
             CFRelease(context);
-            NSString *errorMessage = @"Error ocurred while specifying SSL I/O connection with peer, error code:";
+            NSString *errorMessage = @"Error occurred while specifying SSL I/O connection with peer, error code:";
             errorMessage = [errorMessage stringByAppendingString:[@(status) stringValue]];
             printf("%s", [errorMessage UTF8String]);
             sessionResult.status = CellularSessionCannotSpecifySSLIOConnection;
