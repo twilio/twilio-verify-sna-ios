@@ -42,7 +42,7 @@ final class NetworkRequestProviderTests: XCTestCase {
         // Arrange
         let urlString = "https://mi-sbox.dnlsrv.com/msbox/id/t20AHVnl?data=l%2BPA0m5y5sPgPl2"
 
-        guard let url = URL(string: urlString) else {
+        guard let url = URLComponents(string: urlString)?.url else {
             XCTFail("invalid URL")
             return
         }
@@ -70,7 +70,7 @@ final class NetworkRequestProviderTests: XCTestCase {
             .cellularRequestError(cause: .cannotFindRoutesForHttpRequest)
         )
 
-        guard let url = URL(string: urlString) else {
+        guard let url = URLComponents(string: urlString)?.url else {
             XCTFail("invalid URL")
             return
         }
@@ -93,7 +93,7 @@ final class NetworkRequestProviderTests: XCTestCase {
 
         let urlString = "https://mi-sbox.dnlsrv.com/msbox/id/t20AHVnl?data=l%2BPA0m5y5sPgPl2"
         
-        guard let url = URL(string: urlString) else {
+        guard let url = URLComponents(string: urlString)?.url else {
             XCTFail("invalid URL")
             return
         }
