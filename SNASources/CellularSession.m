@@ -192,7 +192,8 @@
     const char* request = [requestString UTF8String];
 
     char buffer[4096];
-    
+    NSMutableData *responseData = [NSMutableData dataWithCapacity:0];
+
     // Step 4). Invoke the HTTP request using the instantiated socket
     
     if ([[url scheme] isEqualToString:@"http"]) {
@@ -282,14 +283,21 @@
         do {
             // SSLRead performs a typical application-level read operation.
             status = SSLRead(context, buffer, sizeof(buffer) - 1, &processed);
-            buffer[processed] = 0;
-            
-            // If the buffer was filled, then continue reading
-            if (processed == sizeof(buffer) - 1) {
-                status = errSSLWouldBlock;
+
+            if (status == noErr && processed > 0) {
+                [responseData appendBytes:buffer length:processed]; // Append the received data to responseData
+            } else if (status == errSSLWouldBlock) {
+                // No more data available
+                SSLClose(context);
+                CFRelease(context);
+                status = noErr;
+                break;
+            } else {
+                // No data received
+                break;
             }
-        } while (status == errSSLWouldBlock);
-        
+        } while (status == noErr);
+
         if (status && status != errSSLClosedGraceful) {
             SSLClose(context);
             CFRelease(context);
@@ -301,9 +309,9 @@
 
         }
     }
-    
-    NSString *response = [[NSString alloc] initWithBytes:buffer length:sizeof(buffer) encoding:NSASCIIStringEncoding];
-    
+
+    NSString *response = [[NSString alloc] initWithData:responseData encoding:NSASCIIStringEncoding];
+
     // Step 5). Parse the HTTP response and check whether it contains a redirect HTTP code
     
     if ([response rangeOfString:@"HTTP/"].location == NSNotFound) {
