@@ -1,3 +1,9 @@
+# 0.0.3 (26–12-2023)
+
+### Fixes
+
+- Continuously read from buffer while no errors occur. The buffer was closing itself after being put on hold, rather than waiting to read the entire package from the SSLRead.
+
 # 0.0.2 (09–26-2022)
 
 ### Improvements

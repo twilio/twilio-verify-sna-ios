@@ -20,5 +20,5 @@
 import Foundation
 
 public struct TwilioVerifySNAConfig {
-    public static let version = "0.0.2"
+    public static let version = "0.0.4"
 }
