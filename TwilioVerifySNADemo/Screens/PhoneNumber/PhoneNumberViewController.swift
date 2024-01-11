@@ -19,6 +19,7 @@
 
 import UIKit
 import TwilioVerifySNA
+import SNANetworking
 import CoreTelephony
 
 final class PhoneNumberViewController: UIViewController {
@@ -68,6 +69,13 @@ final class PhoneNumberViewController: UIViewController {
         )
     }
 
+    @IBAction func didTapOnLoggerButton(_ sender: Any) {
+        performSegue(
+            withIdentifier: Segues.loggerViewScreen.rawValue,
+            sender: nil
+        )
+    }
+    
     @IBAction private func submitButtonAction() {
         /*
          Let's validate the user input is not empty.
@@ -109,6 +117,8 @@ final class PhoneNumberViewController: UIViewController {
         let completePhoneNumber = phoneCountryCode.appending(phoneNumber)
 
         // Lets start a user verification by requesting it to our custom backend (that will call Twilio Verify services)
+
+        Logger.startNewSession()
 
         startVerification(
             phoneNumber: completePhoneNumber,
@@ -272,6 +282,7 @@ extension PhoneNumberViewController {
     private enum Segues: String {
         case verificationSuccessfulScreen
         case verificationErrorScreen
+        case loggerViewScreen
     }
 
     /**

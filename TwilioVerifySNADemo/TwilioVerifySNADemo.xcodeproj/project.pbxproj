@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8672E3A42B509915009F2646 /* LoggerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8672E3A32B509915009F2646 /* LoggerViewController.swift */; };
 		97021B9628870B8400200623 /* NetworkLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97021B9528870B8400200623 /* NetworkLayer.swift */; };
 		97021B9828870D4F00200623 /* PhoneNumberViewController+Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97021B9728870D4F00200623 /* PhoneNumberViewController+Models.swift */; };
 		9757522A2885CCDE0097BB73 /* Inter-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 975752212885CCDE0097BB73 /* Inter-Medium.ttf */; };
@@ -27,6 +28,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		8672E3A32B509915009F2646 /* LoggerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoggerViewController.swift; sourceTree = "<group>"; };
 		97021B9528870B8400200623 /* NetworkLayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkLayer.swift; sourceTree = "<group>"; };
 		97021B9728870D4F00200623 /* PhoneNumberViewController+Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PhoneNumberViewController+Models.swift"; sourceTree = "<group>"; };
 		975752212885CCDE0097BB73 /* Inter-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Inter-Medium.ttf"; sourceTree = "<group>"; };
@@ -59,6 +61,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		8672E3A02B5097F6009F2646 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				8672E3A32B509915009F2646 /* LoggerViewController.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
 		9757521F2885CCDE0097BB73 /* Fonts */ = {
 			isa = PBXGroup;
 			children = (
@@ -95,6 +105,7 @@
 		9797B4DF28748E8100951B4C = {
 			isa = PBXGroup;
 			children = (
+				8672E3A02B5097F6009F2646 /* Components */,
 				9797B508287492C700951B4C /* Common */,
 				9797B507287492B200951B4C /* Screens */,
 				9797B506287492A600951B4C /* Configuration */,
@@ -255,6 +266,7 @@
 			files = (
 				97021B9628870B8400200623 /* NetworkLayer.swift in Sources */,
 				9797B4F028748E8100951B4C /* PhoneNumberViewController.swift in Sources */,
+				8672E3A42B509915009F2646 /* LoggerViewController.swift in Sources */,
 				97021B9828870D4F00200623 /* PhoneNumberViewController+Models.swift in Sources */,
 				9797B4EC28748E8100951B4C /* AppDelegate.swift in Sources */,
 			);
