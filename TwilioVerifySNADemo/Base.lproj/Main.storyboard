@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="21225" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="22505" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21207"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="22504"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -177,6 +177,14 @@
                                     </userDefinedRuntimeAttribute>
                                 </userDefinedRuntimeAttributes>
                             </view>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6FB-r0-kOC">
+                                <rect key="frame" x="20" y="58" width="61" height="34.5"/>
+                                <state key="normal" title="Button"/>
+                                <buttonConfiguration key="configuration" style="filled" title="Logs"/>
+                                <connections>
+                                    <action selector="didTapOnLoggerButton:" destination="BYZ-38-t0r" eventType="touchUpInside" id="rGQ-H8-nfX"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
@@ -196,7 +204,9 @@
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="bHd-rk-Syb" secondAttribute="trailing" constant="16" id="cUO-4B-rq3"/>
                             <constraint firstAttribute="trailing" secondItem="Kdq-dB-RAv" secondAttribute="trailing" constant="16" id="mme-xf-Rkp"/>
                             <constraint firstItem="Kdq-dB-RAv" firstAttribute="top" secondItem="2gK-Ag-gLS" secondAttribute="bottom" constant="16" id="nkn-5N-UXZ"/>
+                            <constraint firstItem="6FB-r0-kOC" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="10" id="ok4-EE-hJk"/>
                             <constraint firstItem="V4x-jT-dtz" firstAttribute="top" secondItem="1Eg-dp-Jps" secondAttribute="bottom" constant="16" id="rsc-0P-Ldt"/>
+                            <constraint firstItem="6FB-r0-kOC" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="20" id="vzz-dF-wax"/>
                             <constraint firstItem="Kdq-dB-RAv" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="16" id="x2E-T6-nOm"/>
                         </constraints>
                     </view>
@@ -208,6 +218,7 @@
                         <outlet property="phoneNumberTextField" destination="dyu-Nh-WNX" id="ajh-Q6-IAO"/>
                         <segue destination="keJ-ds-0Uo" kind="show" identifier="verificationSuccessfulScreen" id="Mj6-oM-4sD"/>
                         <segue destination="tpH-68-J4o" kind="show" identifier="verificationErrorScreen" id="neE-Xm-Ll1"/>
+                        <segue destination="qJd-0a-nbE" kind="show" identifier="loggerViewScreen" id="p2w-Af-dPX"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
@@ -219,17 +230,17 @@
             <objects>
                 <viewController id="keJ-ds-0Uo" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="ptw-AG-7nP">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="838"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="886"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Successful verification" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hC9-lL-OjA">
-                                <rect key="frame" x="16" y="344.5" width="382" height="39"/>
+                                <rect key="frame" x="16" y="368.5" width="382" height="39"/>
                                 <fontDescription key="fontDescription" name="Inter-Bold" family="Inter" pointSize="32"/>
                                 <color key="textColor" red="0.070588235289999995" green="0.10980392160000001" blue="0.1764705882" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Vh6-1w-AXD">
-                                <rect key="frame" x="16" y="306.5" width="80" height="22"/>
+                                <rect key="frame" x="16" y="330.5" width="80" height="22"/>
                                 <subviews>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="new_icon" translatesAutoresizingMaskIntoConstraints="NO" id="4B6-XN-UQv">
                                         <rect key="frame" x="5" y="3" width="16" height="16"/>
@@ -262,13 +273,13 @@
                                 </userDefinedRuntimeAttributes>
                             </view>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="We were able to verify your phone number automatically, now you can continue, welcome!" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="e7y-SX-bYI">
-                                <rect key="frame" x="16" y="399.5" width="382" height="39"/>
+                                <rect key="frame" x="16" y="423.5" width="382" height="39"/>
                                 <fontDescription key="fontDescription" name="Inter-Medium" family="Inter" pointSize="16"/>
                                 <color key="textColor" red="0.070588235289999995" green="0.10980392160000001" blue="0.1764705882" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="hello" translatesAutoresizingMaskIntoConstraints="NO" id="lkB-5A-yI0">
-                                <rect key="frame" x="0.0" y="631" width="267" height="207"/>
+                                <rect key="frame" x="0.0" y="679" width="267" height="207"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="207" id="0Gr-Nr-ShF"/>
                                     <constraint firstAttribute="width" constant="267" id="UvM-7r-c5n"/>
@@ -296,16 +307,62 @@
             </objects>
             <point key="canvasLocation" x="1104" y="-96"/>
         </scene>
+        <!--Logs-->
+        <scene sceneID="Z6U-M3-XZx">
+            <objects>
+                <viewController title="Logs" id="qJd-0a-nbE" customClass="LoggerViewController" customModule="TwilioVerifySNADemo" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="HOE-IX-4XM">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="886"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="rd3-jm-R2r">
+                                <rect key="frame" x="20" y="20" width="374" height="791"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <string key="text">Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda.</string>
+                                <color key="textColor" systemColor="labelColor"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                            </textView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="frN-l2-aDe">
+                                <rect key="frame" x="175" y="831" width="64" height="35"/>
+                                <state key="normal" title="Button"/>
+                                <buttonConfiguration key="configuration" style="filled" title="Copy"/>
+                                <connections>
+                                    <action selector="didTapCopyButton:" destination="qJd-0a-nbE" eventType="touchUpInside" id="BSW-rG-i6i"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="N8r-JE-cwe"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="rd3-jm-R2r" firstAttribute="leading" secondItem="N8r-JE-cwe" secondAttribute="leading" constant="20" id="1ZG-g2-9TD"/>
+                            <constraint firstItem="frN-l2-aDe" firstAttribute="top" secondItem="rd3-jm-R2r" secondAttribute="bottom" constant="20" id="5or-MG-3IM"/>
+                            <constraint firstItem="frN-l2-aDe" firstAttribute="centerX" secondItem="HOE-IX-4XM" secondAttribute="centerX" id="BVb-jp-eiY"/>
+                            <constraint firstItem="rd3-jm-R2r" firstAttribute="top" secondItem="N8r-JE-cwe" secondAttribute="top" constant="20" id="Uod-7G-31w"/>
+                            <constraint firstItem="N8r-JE-cwe" firstAttribute="bottom" secondItem="frN-l2-aDe" secondAttribute="bottom" constant="20" id="bye-N6-u84"/>
+                            <constraint firstItem="N8r-JE-cwe" firstAttribute="trailing" secondItem="rd3-jm-R2r" secondAttribute="trailing" constant="20" id="ys9-GC-j4C"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" id="lfa-sr-Wy5"/>
+                    <connections>
+                        <outlet property="copyButton" destination="frN-l2-aDe" id="XZm-CI-zDk"/>
+                        <outlet property="loggerTextView" destination="rd3-jm-R2r" id="9iE-ss-Hql"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="uEP-GC-rfw" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="138" y="853"/>
+        </scene>
         <!--View Controller-->
         <scene sceneID="uAC-lb-ym5">
             <objects>
                 <viewController id="tpH-68-J4o" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="fXs-E1-v7z">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="838"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="886"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="3Ng-dL-5GW">
-                                <rect key="frame" x="16" y="297" width="80" height="22"/>
+                                <rect key="frame" x="16" y="333" width="75" height="22"/>
                                 <subviews>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="new_icon" translatesAutoresizingMaskIntoConstraints="NO" id="6Zk-Kk-lJ0">
                                         <rect key="frame" x="5" y="3" width="16" height="16"/>
@@ -315,7 +372,7 @@
                                         </constraints>
                                     </imageView>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Test app" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4GH-ak-8Su">
-                                        <rect key="frame" x="24" y="3.5" width="51" height="15"/>
+                                        <rect key="frame" x="24" y="4" width="46" height="14"/>
                                         <fontDescription key="fontDescription" name="Inter-Bold" family="Inter" pointSize="12"/>
                                         <color key="textColor" red="0.3686274886" green="0.2352941036" blue="0.7607843876" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                         <nil key="highlightedColor"/>
@@ -338,13 +395,13 @@
                                 </userDefinedRuntimeAttributes>
                             </view>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Verification failed" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="H1L-1E-mDT">
-                                <rect key="frame" x="16" y="335" width="382" height="39"/>
+                                <rect key="frame" x="16" y="371" width="382" height="37.5"/>
                                 <fontDescription key="fontDescription" name="Inter-Bold" family="Inter" pointSize="32"/>
                                 <color key="textColor" red="0.070588235289999995" green="0.10980392160000001" blue="0.1764705882" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="We were unable to verify your phone number automatically, please try another verification method." textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="e2T-qI-OEs">
-                                <rect key="frame" x="16" y="390" width="382" height="58.5"/>
+                                <rect key="frame" x="16" y="424.5" width="382" height="37.5"/>
                                 <fontDescription key="fontDescription" name="Inter-Medium" family="Inter" pointSize="16"/>
                                 <color key="textColor" red="0.070588235289999995" green="0.10980392160000001" blue="0.1764705882" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                 <nil key="highlightedColor"/>
@@ -445,6 +502,9 @@
     <resources>
         <image name="hello" width="129" height="100"/>
         <image name="new_icon" width="16" height="16"/>
+        <systemColor name="labelColor">
+            <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
