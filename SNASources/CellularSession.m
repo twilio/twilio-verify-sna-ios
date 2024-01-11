@@ -28,6 +28,7 @@
 #import <netdb.h>
 #include <arpa/inet.h>
 #import "CellularGetAddrinfo.h"
+#import "Logger.h"
 
 @implementation CellularSession
 
@@ -77,8 +78,10 @@
     // and stores the address of the first item of the list in *ifaddrPointer.
     // A zero return value for getaddrinfo() indicates successful completion; a non-zero return value indicates failure.
     // For more information, go to https://man7.org/linux/man-pages/man3/getifaddrs.3.html
+    [Logger log:@"Step 1. Obtaining network interface of the local system." lineNumber:__LINE__];
     status = getifaddrs(&ifaddrPointer);
     if (status) {
+        [Logger log:@"Step 1. Error occurred, cannot obtain network interfaces of the local system." lineNumber:__LINE__];
         printf("Error occurred, cannot obtain network interfaces of the local system");
         sessionResult.status = CellularSessionCannotObtainNetworkInterfaces;
         return sessionResult;
@@ -94,7 +97,9 @@
             if (strcmp(ifaddrs->ifa_name, "pdp_ip0") == 0) {
                 switch (ifaddrs->ifa_addr->sa_family) {
                     case AF_INET:  // IPv4
+                        [Logger log:@"Step 1. Found Network Interface Address using IPv4." lineNumber:__LINE__];
                     case AF_INET6: // IPv6
+                        [Logger log:@"Step 1. Found Network Interface Address using IPv6." lineNumber:__LINE__];
                         [localAddresses addObject:[[SocketAddress alloc] initWithSockaddr:ifaddrs->ifa_addr]];
                         break;
                 }
@@ -118,7 +123,9 @@
         NSString *portString = [NSString stringWithFormat: @"%@", [url port]];
         service = [portString UTF8String];
     }
-    
+
+    [Logger log:@"Step 2. Find the address of the URL requested" lineNumber:__LINE__];
+
     // Step 2). Find the address of the URL requested
     
     // The getaddrinfo() function shall translate the name of a service location (for example, a host name) and/or a service name, and it shall return a set of socket addresses and associated information to be used in creating a socket with which to address the specified service.
@@ -177,6 +184,7 @@
 
     if (status || addrinfoPointer == NULL) {
         freeifaddrs(ifaddrPointer);
+        [Logger log:@"Step 2. Error occurred, cannot find remote address of requested URL" lineNumber:__LINE__];
         printf("Error occurred, cannot find remote address of requested URL");
         sessionResult.status = CellularSessionCannotFindRemoteAddressOfRemoteUrl;
         return sessionResult;
@@ -187,7 +195,9 @@
     while (addrinfo) {
         switch (addrinfo->ai_addr->sa_family) {
             case AF_INET: // IPv4
+                [Logger log:@"Step 2. Found URL Request using IPv4." lineNumber:__LINE__];
             case AF_INET6: // IPv6
+                [Logger log:@"Step 2. Found URL Request using IPv6." lineNumber:__LINE__];
                 [remoteAddresses addObject:[[SocketAddress alloc] initWithSockaddr:addrinfo->ai_addr]];
                 break;
         }
@@ -197,12 +207,15 @@
     // Define the local address (which is the cellular data IP address) and define the remote address (which is the URL we're trying to reach)
     if ((localAddress = [[localAddresses filteredArrayUsingPredicate:ipv6Predicate] lastObject]) && (remoteAddress = [[remoteAddresses filteredArrayUsingPredicate:ipv6Predicate] lastObject])) {
         // Select the IPv6 route, if possible
+        [Logger log:@"Select the IPv6 route" lineNumber:__LINE__];
     } else if ((localAddress = [[localAddresses filteredArrayUsingPredicate:ipv4Predicate] lastObject]) && (remoteAddress = [[remoteAddresses filteredArrayUsingPredicate:ipv4Predicate] lastObject])) {
         // Select the IPv4 route, if possible (and no IPv6 route is available)
+        [Logger log:@"Select the IPv4 route" lineNumber:__LINE__];
     } else {
         // No route found, abort
         freeaddrinfo(addrinfoPointer);
         printf("Error occurred, no routes found for HTTP request");
+        [Logger log:@"Error occurred, no routes found for HTTP request" lineNumber:__LINE__];
         sessionResult.status = CellularSessionCannotFindRoutesForHttpRequest;
         return sessionResult;
     }
@@ -210,6 +223,7 @@
     // Step 3). Bind and connect socket to the addresses obtained from steps 1) and 2).
     
     // Instantiate a new socket
+    [Logger log:@"Step 3. Instantiate a new socket" lineNumber:__LINE__];
     int sock = socket(localAddress.sockaddr->sa_family, SOCK_STREAM, 0);
     if(sock == -1) {
         printf("Error occurred, cannot instantiate socket");
@@ -218,18 +232,24 @@
     }
     
     // Bind the socket to the local address
+    [Logger log:@"Step 3. Bind the socket to the local address" lineNumber:__LINE__];
     bind(sock, localAddress.sockaddr, localAddress.size);
-    
+
+    [Logger log:@"Step 3. Connect to the remote address using the socket" lineNumber:__LINE__];
     // Connect to the remote address using the socket
+
     status = connect(sock, remoteAddress.sockaddr, remoteAddress.size);
     if (status) {
         freeaddrinfo(addrinfoPointer);
         printf("Error occurred, cannot connect socket to remote address");
+        [Logger log:@"Step 3. Error occurred, cannot connect socket to remote address" lineNumber:__LINE__];
         sessionResult.status = CellularSessionCannotConnectSocketToRemoteAddress;
         return sessionResult;
     }
-    
+
+    [Logger log:@"Step 3. Create the HTTP request string" lineNumber:__LINE__];
     // Create the HTTP request string
+
     NSString *requestString = [NSString
                                stringWithFormat:@"GET %@%@ HTTP/1.1\r\nHost: %@%@\r\nAccept: */*\r\n",
                                [url path],
@@ -238,14 +258,16 @@
                                [url port] ? [@":" stringByAppendingFormat:@"%@", [url port]] : @""];
     
     requestString = [requestString stringByAppendingString:@"Connection: close\r\n\r\n"];
-    
+
+    [Logger log:requestString lineNumber:__LINE__];
+
     const char* request = [requestString UTF8String];
 
     char buffer[4096];
     NSMutableData *responseData = [NSMutableData dataWithCapacity:0];
 
     // Step 4). Invoke the HTTP request using the instantiated socket
-    
+    [Logger log:@"Step 4. Invoke the HTTP request using the instantiated socket" lineNumber:__LINE__];
     if ([[url scheme] isEqualToString:@"http"]) {
         write(sock, request, strlen(request));
         
@@ -254,6 +276,7 @@
         do {
             int bytes = (int)read(sock, buffer+received, total-received);
             if (bytes < 0) {
+                [Logger log:@"Step 4. Error occurred while reading HTTP response" lineNumber:__LINE__];
                 printf("Error occurred while reading HTTP response");
                 sessionResult.status = CellularSessionErrorReadingHttpResponse;
                 return sessionResult;
@@ -276,6 +299,7 @@
             CFRelease(context);
             NSString *errorMessage = @"Error occurred, cannot specify SSL functions needed to perform the network I/O operations, error code:";
             errorMessage = [errorMessage stringByAppendingString:[@(status) stringValue]];
+            [Logger log:errorMessage lineNumber:__LINE__];
             printf("%s", [errorMessage UTF8String]);
             sessionResult.status = CellularSessionCannotSpecifySSLFunctionsNeeded;
             return sessionResult;
@@ -288,6 +312,7 @@
             CFRelease(context);
             NSString *errorMessage = @"Error occurred while specifying SSL I/O connection with peer, error code:";
             errorMessage = [errorMessage stringByAppendingString:[@(status) stringValue]];
+            [Logger log:errorMessage lineNumber:__LINE__];
             printf("%s", [errorMessage UTF8String]);
             sessionResult.status = CellularSessionCannotSpecifySSLIOConnection;
             return sessionResult;
@@ -300,6 +325,7 @@
             CFRelease(context);
             NSString *errorMessage = @"Error occurred, the common name of the peer's certificate doesn't match with URL being requested";
             errorMessage = [errorMessage stringByAppendingString:[@(status) stringValue]];
+            [Logger log:errorMessage lineNumber:__LINE__];
             printf("%s", [errorMessage UTF8String]);
             sessionResult.status = CellularSessionPeersCertificateDoesNotMatchWithRequestedUrl;
             return sessionResult;
@@ -314,6 +340,7 @@
             CFRelease(context);
             NSString *errorMessage = @"Error occurred while performing SSL handshake, error code:";
             errorMessage = [errorMessage stringByAppendingString:[@(status) stringValue]];
+            [Logger log:errorMessage lineNumber:__LINE__];
             printf("%s", [errorMessage UTF8String]);
             sessionResult.status = CellularSessionErrorPerformingSSLHandshake;
             return sessionResult;
@@ -327,11 +354,14 @@
             CFRelease(context);
             NSString *errorMessage = @"Error occurred while performing SSL write operation, error code:";
             errorMessage = [errorMessage stringByAppendingString:[@(status) stringValue]];
+            [Logger log:errorMessage lineNumber:__LINE__];
             printf("%s", [errorMessage UTF8String]);
             sessionResult.status = CellularSessionErrorPerformingSSLWriteOperation;
             return sessionResult;
         }
-        
+
+        [Logger log:@"Step 4. Reading from buffer" lineNumber:__LINE__];
+
         do {
             // SSLRead performs a typical application-level read operation.
             status = SSLRead(context, buffer, sizeof(buffer) - 1, &processed);
@@ -347,6 +377,7 @@
                 break;
             } else {
                 // No data received
+                [Logger log:@"Step 4. No data received from buffer" lineNumber:__LINE__];
                 break;
             }
         } while (status == noErr);
@@ -356,6 +387,7 @@
             CFRelease(context);
             NSString *errorMessage = @"Error occurred, SSL session didn't close gracefully after performing SSL read operation, error code:";
             errorMessage = [errorMessage stringByAppendingString:[@(status) stringValue]];
+            [Logger log:errorMessage lineNumber:__LINE__];
             printf("%s", [errorMessage UTF8String]);
             sessionResult.status = CellularSessionSSLSessionDidNotCloseGracefullyAfterPerformingSSLReadOperation;
             return sessionResult;
@@ -364,6 +396,7 @@
     }
 
     NSString *response = [[NSString alloc] initWithData:responseData encoding:NSASCIIStringEncoding];
+    [Logger log:response lineNumber:__LINE__];
 
     // Step 5). Parse the HTTP response and check whether it contains a redirect HTTP code
     

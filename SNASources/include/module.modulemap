@@ -1,3 +1,4 @@
 module SNANetworking {
     header "CellularSession.h"
+    header "Logger.h"
 }
