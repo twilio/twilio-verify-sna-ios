@@ -213,6 +213,8 @@
             
             received += bytes;
         } while (received < total);
+        // Append the received data to responseData
+        [responseData appendBytes:buffer length:received];
     } else { // Setup SSL if the URL is HTTPS
         // SSLCreateContext allocates and returns a new context.
         SSLContextRef context = SSLCreateContext(kCFAllocatorDefault, kSSLClientSide, kSSLStreamType);
@@ -285,7 +287,8 @@
             status = SSLRead(context, buffer, sizeof(buffer) - 1, &processed);
 
             if (status == noErr && processed > 0) {
-                [responseData appendBytes:buffer length:processed]; // Append the received data to responseData
+                // Append the received data to responseData
+                [responseData appendBytes:buffer length:processed];
             } else if (status == errSSLWouldBlock) {
                 // No more data available
                 SSLClose(context);
