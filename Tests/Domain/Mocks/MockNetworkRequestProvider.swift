@@ -22,15 +22,24 @@ import SNANetworking
 
 @testable import TwilioVerifySNA
 
-struct MockNetworkRequestProvider: NetworkRequestProviderProtocol {
+class MockNetworkRequestProvider: NetworkRequestProviderProtocol {
 
     let session: CellularSessionProtocol
+    var mockedResult: Result<String, NetworkRequestProvider.RequestError>?
 
     init(session: CellularSessionProtocol = MockCellularSession()) {
         self.session = session
     }
 
     func performRequest(url: URL, onComplete: @escaping NetworkRequestResult) {
+        switch mockedResult {
+            case .success(let result):
+                return onComplete(.success(result))
+            case .failure(let error):
+                return onComplete(.failure(error))
+            default: break
+        }
+
         let request = session.performRequest(url)
 
         guard let result = request.result else {
