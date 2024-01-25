@@ -130,9 +130,9 @@ final class TwilioVerifySNASession: TwilioVerifySNA {
 
         DispatchQueue.main.asyncAfter(
             deadline: .now() + Constants.waitForConnectionTimeInSeconds
-        ) {
-            self.waitForConnectionAccumulatedTime += Constants.waitForConnectionTimeInSeconds
-            self.processURL(url, onComplete: completionHandler)
+        ) { [weak self] in
+            self?.waitForConnectionAccumulatedTime += Constants.waitForConnectionTimeInSeconds
+            self?.processURL(url, onComplete: completionHandler)
         }
     }
 
