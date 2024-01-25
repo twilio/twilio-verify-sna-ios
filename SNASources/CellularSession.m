@@ -28,6 +28,7 @@
 #import <netdb.h>
 #include <arpa/inet.h>
 #import "Logger.h"
+#import "CellularGetAddrinfo.h"
 
 @implementation CellularSession
 
@@ -130,9 +131,18 @@
     // The getaddrinfo() function shall translate the name of a service location (for example, a host name) and/or a service name, and it shall return a set of socket addresses and associated information to be used in creating a socket with which to address the specified service.
     // A zero return value for getaddrinfo() indicates successful completion; a non-zero return value indicates failure.
     // For more information, go to https://pubs.opengroup.org/onlinepubs/009696699/functions/getaddrinfo.html
-    status = getaddrinfo([[url host] UTF8String], service, &hints, &addrinfoPointer);
+    DNSServiceRef sdRef = NULL;
+    DNSServiceFlags flags = kDNSServiceFlagsTimeout; // Set flags as needed
 
-    if (status) {
+    status = cellular_getaddrinfo([[url host] UTF8String], service, &hints, &addrinfoPointer, sdRef, flags, kDNSServiceProtocol_IPv4 | kDNSServiceProtocol_IPv6);
+
+    if (status || addrinfoPointer == NULL) {
+        // Retry DNS resolution with IPV6
+        [Logger log:@"Step 2. Did not resolve through ipv4 gonna try with ipv6" lineNumber:__LINE__];
+        status = cellular_getaddrinfo([[url host] UTF8String], service, &hints, &addrinfoPointer, sdRef, flags, kDNSServiceProtocol_IPv6);
+    }
+
+    if (status || addrinfoPointer == NULL) {
         freeifaddrs(ifaddrPointer);
         [Logger log:@"Step 2. Error occurred, cannot find remote address of requested URL" lineNumber:__LINE__];
         printf("Error occurred, cannot find remote address of requested URL");
@@ -153,7 +163,7 @@
         }
         addrinfo = addrinfo->ai_next;
     }
-    
+
     // Define the local address (which is the cellular data IP address) and define the remote address (which is the URL we're trying to reach)
     if ((localAddress = [[localAddresses filteredArrayUsingPredicate:ipv6Predicate] lastObject]) && (remoteAddress = [[remoteAddresses filteredArrayUsingPredicate:ipv6Predicate] lastObject])) {
         // Select the IPv6 route, if possible
@@ -346,6 +356,7 @@
     }
 
     NSString *response = [[NSString alloc] initWithData:responseData encoding:NSASCIIStringEncoding];
+    NSLog(@"%@", response);
     [Logger log:response lineNumber:__LINE__];
 
     // Step 5). Parse the HTTP response and check whether it contains a redirect HTTP code
