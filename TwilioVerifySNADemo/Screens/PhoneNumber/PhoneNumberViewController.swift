@@ -209,10 +209,10 @@ final class PhoneNumberViewController: UIViewController {
              handle the response on the main thread if we are going to update the UI
              */
 
-            DispatchQueue.main.async {
+            DispatchQueue.main.async { [weak self] in
                 guard success else {
                     // if the validation fails, you can customize your app the behavior here
-                    self.performSegue(
+                    self?.performSegue(
                         withIdentifier: Segues.verificationErrorScreen.rawValue,
                         sender: nil
                     )
@@ -220,7 +220,7 @@ final class PhoneNumberViewController: UIViewController {
                 }
 
                 // if the validation succeed, you can customize your app the behavior here
-                self.performSegue(
+                self?.performSegue(
                     withIdentifier: Segues.verificationSuccessfulScreen.rawValue,
                     sender: nil
                 )
@@ -317,16 +317,15 @@ extension PhoneNumberViewController {
 
     /// Not required for the SDK implementation.
     private func showGenericError(_ error: String? = nil) {
-        let alert = UIAlertController(
-            title: "Error",
-            message: error ?? "Unexpected error",
-            preferredStyle: .alert
-        )
+        DispatchQueue.main.async { [weak self] in
+            let alert = UIAlertController(
+                title: "Error",
+                message: error ?? "Unexpected error",
+                preferredStyle: .alert
+            )
 
-        alert.addAction(UIAlertAction(title: "Accept", style: .cancel))
-
-        DispatchQueue.main.async {
-            self.present(alert, animated: true)
+            alert.addAction(UIAlertAction(title: "Accept", style: .cancel))
+            self?.present(alert, animated: true)
         }
     }
 
@@ -410,4 +409,4 @@ extension PhoneNumberViewController {
 }
 
 /// Not required for the SDK implementation.
-private let sampleAppVersion = "0.0.3"
+private let sampleAppVersion = "0.0.5"
