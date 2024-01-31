@@ -18,6 +18,7 @@
 //
 
 import Foundation
+import Network
 import SNANetworking
 
 public final class NetworkRequestProvider {
@@ -25,6 +26,7 @@ public final class NetworkRequestProvider {
     // MARK: - Properties
 
     private let cellularSession: CellularSessionProtocol
+    private let cellularConnection: CellularConnection = .init()
 
     // MARK: - Computed properties
 
@@ -51,24 +53,35 @@ extension NetworkRequestProvider: NetworkRequestProviderProtocol {
     ///   - onComplete: Closure with `Result<Void, NetworkRequestProvider.RequestError>`.
     public func performRequest(
         url: URL,
+        using ipVersion: NWProtocolIP.Options.Version = .any,
         onComplete: @escaping NetworkRequestResult
     ) {
-        networkRequestQueue.async {
-            let networkOperationOnCellularData = self.cellularSession.performRequest(url)
-
-            guard case .success = networkOperationOnCellularData.status else {
-                onComplete(
-                    .failure(.cellularRequestError(cause: networkOperationOnCellularData.status))
-                )
-                return
+        Logger.log("Start cellular connection", lineNumber: #line)
+        cellularConnection.makeRequest(url: url, using: ipVersion) { response in
+            switch response {
+                case .success(let response):
+                    onComplete(.success(response))
+                case .failure(let error):
+                    onComplete(.failure(.cellularRequestError(cause: .unexpectedError)))
+                    Logger.log("Received error: \(error.localizedDescription)", lineNumber: #line)
             }
-
-            guard let result = networkOperationOnCellularData.result else {
-                onComplete(.failure(.requestFinishedWithNoResult))
-                return
-            }
-
-            onComplete(.success(result))
         }
+//        networkRequestQueue.async {
+//            let networkOperationOnCellularData = self.cellularSession.performRequest(url)
+//
+//            guard case .success = networkOperationOnCellularData.status else {
+//                onComplete(
+//                    .failure(.cellularRequestError(cause: networkOperationOnCellularData.status))
+//                )
+//                return
+//            }
+//
+//            guard let result = networkOperationOnCellularData.result else {
+//                onComplete(.failure(.requestFinishedWithNoResult))
+//                return
+//            }
+//
+//            onComplete(.success(result))
+//        }
     }
 }

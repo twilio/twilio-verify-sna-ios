@@ -18,6 +18,7 @@
 //
 
 import Foundation
+import Network
 import SNANetworking
 
 public typealias NetworkRequestResult = (
@@ -27,6 +28,7 @@ public typealias NetworkRequestResult = (
 public protocol NetworkRequestProviderProtocol {
     func performRequest(
         url: URL,
+        using ipVersion: NWProtocolIP.Options.Version,
         onComplete: @escaping NetworkRequestResult
     )
 }

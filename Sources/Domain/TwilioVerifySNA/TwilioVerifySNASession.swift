@@ -158,7 +158,8 @@ final class TwilioVerifySNASession: TwilioVerifySNA {
         }
 
         requestManager.processSNAURL(
-            url
+            url,
+            using: .any
         ) { result in
             switch result {
                 case.failure(let cause):

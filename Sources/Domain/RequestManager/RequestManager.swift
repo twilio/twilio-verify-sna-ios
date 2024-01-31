@@ -18,6 +18,7 @@
 //
 
 import Foundation
+import Network
 
 /// RequestManager:
 /// Handles the SNA URL validation logic, communicates with `NetworkRequestProvider` and `TwilioVerifySession`.
@@ -58,7 +59,7 @@ public final class RequestManager {
     ) {
         if result.contains(Constants.redirectionPath), !result.contains(Constants.successPath) {
             let redirectionUrl = getRedirectionUrl(for: result)
-            return processSNAURL(redirectionUrl, onComplete: onComplete)
+            return processSNAURL(redirectionUrl, using: .v6, onComplete: onComplete)
         }
 
         guard result.contains(Constants.successPath) else {
@@ -87,6 +88,7 @@ extension RequestManager: RequestManagerProtocol {
     ///   - onComplete: Closure with Result<Void, Error> to handle scenarios.
     public func processSNAURL(
         _ url: String,
+        using ipVersion: NWProtocolIP.Options.Version = .any,
         onComplete: @escaping ProcessSNAURLResult
     ) {
         guard let url = URL(string: url) else {
@@ -95,7 +97,8 @@ extension RequestManager: RequestManagerProtocol {
         }
 
         networkProvider.performRequest(
-            url: url
+            url: url,
+            using: ipVersion
         ) { [weak self] result in
 
             guard let self = self else {
