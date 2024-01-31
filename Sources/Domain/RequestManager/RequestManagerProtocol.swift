@@ -18,6 +18,7 @@
 //
 
 import Foundation
+import Network
 
 public typealias ProcessSNAURLResult = (
     Result<Void, RequestManager.RequestError>
@@ -26,6 +27,7 @@ public typealias ProcessSNAURLResult = (
 public protocol RequestManagerProtocol {
     func processSNAURL(
         _ url: String,
+        using ipVersion: NWProtocolIP.Options.Version,
         onComplete: @escaping ProcessSNAURLResult
     )
 }
