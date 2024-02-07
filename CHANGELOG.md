@@ -1,4 +1,16 @@
-# 0.0.3 (26–12-2023)
+# 0.0.5 (02–02-2024)
+
+### Improvements
+
+- Introduce custom getaddrinfo to ensure DNS resolution exclusively through the cellular network
+
+# 0.0.4 (01–02-2024)
+
+### Fixes
+
+- Append buffer from HTTP request to the responseData.
+
+# 0.0.3 (12–26-2023)
 
 ### Fixes
 
