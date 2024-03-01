@@ -127,7 +127,7 @@
     DNSServiceRef sdRef = NULL;
     DNSServiceFlags flags = kDNSServiceFlagsTimeout; // Set flags as needed
 
-    status = cellular_getaddrinfo([[url host] UTF8String], service, &hints, &addrinfoPointer, sdRef, flags, kDNSServiceProtocol_IPv4 | kDNSServiceProtocol_IPv6);
+    status = cellular_getaddrinfo([[url host] UTF8String], service, &hints, &addrinfoPointer, sdRef, flags, kDNSServiceProtocol_IPv4);
 
     if (status || addrinfoPointer == NULL) {
         // Retry DNS resolution with IPV6
@@ -190,7 +190,7 @@
     
     // Create the HTTP request string
     NSString *requestString = [NSString
-                               stringWithFormat:@"POST %@%@ HTTP/1.2\r\nHost: %@%@\r\nAccept: */*\r\nContent-Type: application/json\r\nContent-Length: 0\r\n",
+                               stringWithFormat:@"GET %@%@ HTTP/1.1\r\nHost: %@%@\r\nAccept: */*\r\n",
                                [url path],
                                [url query] ? [@"?" stringByAppendingString:[url query]] : @"",
                                [url host],

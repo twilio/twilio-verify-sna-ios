@@ -85,7 +85,7 @@ During the current phase of this project, we only support SPM. We have plans to 
 dependencies: [
     .package(
         url: "https://github.com/twilio/twilio-verify-sna-ios.git",
-        .upToNextMajor(from: "0.0.5")
+        .upToNextMajor(from: "0.0.6")
     )
 ]
 ```
