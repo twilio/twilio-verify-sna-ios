@@ -85,7 +85,7 @@ During the current phase of this project, we only support SPM. We have plans to 
 dependencies: [
     .package(
         url: "https://github.com/twilio/twilio-verify-sna-ios.git",
-        .upToNextMajor(from: "0.0.6")
+        .upToNextMajor(from: "0.0.7")
     )
 ]
 ```
@@ -475,6 +475,20 @@ twilioVerify.processURL(snaUrl) { result in
     }
 }
 ```
+
+## Privacy Manifest
+
+This document serves as the Privacy Manifest for the Twilio Verify SNA SDK. It outlines the privacy practices implemented in this SDK, providing a comprehensive understanding of how we handle data and respect user privacy.
+
+### Purpose
+
+The primary purpose of this Privacy Manifest is to facilitate developers and organizations in providing Apple with detailed information about the privacy practices employed within this SDK.
+
+### Usage
+
+To use this Privacy Manifest, simply refer to the relevant sections when you need to provide information to Apple or any other interested parties about the privacy practices used in this SDK.
+
+### [Privacy Manifest](Sources/PrivacyInfo.xcprivacy)
 
 <a name='Contributing'></a>
 
