@@ -398,4 +398,4 @@ extension PhoneNumberViewController {
 }
 
 /// Not required for the SDK implementation.
-private let sampleAppVersion = "0.0.6"
+private let sampleAppVersion = "0.0.7"
