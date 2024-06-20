@@ -51,8 +51,8 @@
     sessionResult.status = CellularSessionUnexpectedError;
 
     // Stores any errors that occur during execution
-    OSStatus status;
-    
+    __block OSStatus status;
+
     // All local (cellular interface) IP addresses of this device.
     NSMutableArray<SocketAddress *> *localAddresses = [NSMutableArray array];
     // All remote IP addresses that we're trying to connect to.
@@ -103,7 +103,7 @@
         ifaddrs = ifaddrs->ifa_next;
     }
     
-    struct addrinfo *addrinfoPointer;
+    __block struct addrinfo *addrinfoPointer;
     struct addrinfo *addrinfo;
     
     // Generate "hints" for the DNS lookup (namely, search for both IPv4 and IPv6 addresses)
@@ -127,12 +127,53 @@
     DNSServiceRef sdRef = NULL;
     DNSServiceFlags flags = kDNSServiceFlagsTimeout; // Set flags as needed
 
-    status = cellular_getaddrinfo([[url host] UTF8String], service, &hints, &addrinfoPointer, sdRef, flags, kDNSServiceProtocol_IPv4);
+    dispatch_group_t group = dispatch_group_create();
+    dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
+    dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+    __block BOOL resolutionCompleted = NO;
+    __block struct addrinfo *addrinfoIPv4 = NULL;
+    __block struct addrinfo *addrinfoIPv6 = NULL;
 
-    if (status || addrinfoPointer == NULL) {
-        // Retry DNS resolution with IPV6
-        status = cellular_getaddrinfo([[url host] UTF8String], service, &hints, &addrinfoPointer, sdRef, flags, kDNSServiceProtocol_IPv6);
-    }
+    // Start the IPv4 resolution
+    dispatch_group_async(group, queue, ^{
+        status = cellular_getaddrinfo([[url host] UTF8String], service, &hints, &addrinfoIPv4, sdRef, flags, kDNSServiceProtocol_IPv4);
+        if (status == 0 && addrinfoIPv4 != NULL) {
+            @synchronized (semaphore) {
+                if (!resolutionCompleted) {
+                    addrinfoPointer = addrinfoIPv4;
+                    resolutionCompleted = YES;
+                    dispatch_semaphore_signal(semaphore);
+                }
+            }
+        }
+    });
+
+    // Start the IPv6 resolution
+    dispatch_group_async(group, queue, ^{
+        status = cellular_getaddrinfo([[url host] UTF8String], service, &hints, &addrinfoIPv6, sdRef, flags, kDNSServiceProtocol_IPv6);
+        if (status == 0 && addrinfoIPv6 != NULL) {
+            @synchronized (semaphore) {
+                if (!resolutionCompleted) {
+                    addrinfoPointer = addrinfoIPv6;
+                    resolutionCompleted = YES;
+                    dispatch_semaphore_signal(semaphore);
+                }
+            }
+        }
+    });
+
+    // Wait for the first resolution to complete
+    dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
+
+    // Clean up the other addrinfo if it was also resolved
+    dispatch_group_notify(group, dispatch_get_main_queue(), ^{
+        if (addrinfoIPv4 && addrinfoIPv4 != addrinfoPointer) {
+            freeaddrinfo(addrinfoIPv4);
+        }
+        if (addrinfoIPv6 && addrinfoIPv6 != addrinfoPointer) {
+            freeaddrinfo(addrinfoIPv6);
+        }
+    });
 
     if (status || addrinfoPointer == NULL) {
         freeifaddrs(ifaddrPointer);

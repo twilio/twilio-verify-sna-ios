@@ -1,3 +1,21 @@
+# 0.0.8 (12–06-2024)
+
+### Improvements
+
+- Implement simultaneous DNS resolution to address scenarios where an IP version DNS could take too long to time out due to unavailability
+
+# 0.0.7 (3–05-2024)
+
+### Improvements
+
+- Add Privacy Manifest
+
+# 0.0.6 (07–04-2024)
+
+### Improvements
+
+- Use GET & HTTP version 1.1 for Cellular requests, and forcing IPv4 resolution before try IPv6
+
 # 0.0.5 (02–02-2024)
 
 ### Improvements
