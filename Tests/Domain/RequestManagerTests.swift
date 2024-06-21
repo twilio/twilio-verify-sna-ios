@@ -25,9 +25,11 @@ import SNANetworking
 final class RequestManagerTests: XCTestCase {
 
     private var sut: RequestManager?
+    private var networkProvider: MockNetworkRequestProvider!
 
     override func setUp() {
-        sut = RequestManager(networkProvider: MockNetworkRequestProvider())
+        networkProvider = .init()
+        sut = RequestManager(networkProvider: networkProvider)
     }
 
     override func tearDown() {
@@ -50,6 +52,24 @@ final class RequestManagerTests: XCTestCase {
                     XCTAssertNotNil(cause.errorDescription)
                     XCTAssertNotNil(cause.technicalError)
                     XCTAssertTrue(cause == expectedError, "Unexpected result")
+            }
+        }
+    }
+
+    func test_validUrl_shouldResponseWithSuccess() {
+        // Arrange
+        networkProvider.mockedResult = .success("ErrorCode=0&ErrorDescription=Success")
+        let validURL = """
+        https://mi-sbox.dnlsrv.com/msbox/idbrrecv2/v1?data=$2Eg9s82DAF2&2F+RN×7MI&3D%3D&cipherSalt=f6uZEIaNPTCgildi
+        """
+
+        // Act
+        sut?.processSNAURL(validURL) { result in
+            switch result {
+                // Assert
+                case .success: break
+                case .failure(let error):
+                    XCTFail("This url should be valid, should not fail. error \(error)")
             }
         }
     }

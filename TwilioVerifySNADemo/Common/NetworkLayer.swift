@@ -29,7 +29,7 @@ final class NetworkLayer {
         request: Request,
         onComplete: @escaping (Response?) -> Void
     ) {
-        guard let url = URL(string: url) else {
+        guard let url = URLComponents(string: url)?.url else {
             return onComplete(nil)
         }
 

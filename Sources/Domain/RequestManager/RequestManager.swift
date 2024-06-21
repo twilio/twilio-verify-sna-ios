@@ -89,7 +89,7 @@ extension RequestManager: RequestManagerProtocol {
         _ url: String,
         onComplete: @escaping ProcessSNAURLResult
     ) {
-        guard let url = URL(string: url) else {
+        guard let url = URLComponents(string: url)?.url, !url.absoluteString.isEmpty else {
             onComplete(.failure(.invalidUrl))
             return
         }
