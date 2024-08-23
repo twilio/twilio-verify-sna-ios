@@ -209,9 +209,16 @@ Currently it's not possible to test the functionality using a simulator.
 
 ## Running the Sample backend
 
----
-
-To be added once the sample backend gets released.
+* Configure a [Verify Service](https://console.twilio.com/us1/develop/verify/services).
+* Go to: [Verify SNA Sample Backend](https://www.twilio.com/code-exchange/verify-sna) 
+* Use the `Quick Deploy to Twilio` option
+  * You should log in to your Twilio account.
+  * Enter the `Account Sid`, `Auth Token`, `Verify Service Sid`, `Sync Service Sid` and `Sync Map Sid` you created above.
+    * Create `Sync Map Sid` by clicking on the Service > Maps tab and click the `Create new Sync Map` button in the top right. Once created, copy the Sid.
+  * Deploy the application.
+  * Press `Go to live application`.
+  * You will see the start page. You can check for SNA transactions there, using the `Fetch transactions` button.
+  * Copy the url and remove `index.html`, e.g. `verify-sna-xxxx.twil.io`. This will be the `sample backend URL` to use in the sample app.
 
 <a name='UsingSampleApp'></a>
 
@@ -225,7 +232,7 @@ To be added once the sample backend gets released.
     - UK - EE, Vodafone, O2 and ThreeUK
     - CA - Bell, Rogers and Telus
 - Set the country code (only US during pilot stage)
-- Set your sample backend url
+- Set your [sample backend URL](#running-the-sample-backend)
 - Submit the form by using the CTA button
 
 **Expected behavior:**
