@@ -23,6 +23,7 @@
 #define SocketAddress_h
 
 #import <Foundation/Foundation.h>
+#import <SystemConfiguration/SystemConfiguration.h>
 
 typedef struct sockaddr *sockaddr_t;
 
