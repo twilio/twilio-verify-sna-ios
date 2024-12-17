@@ -250,14 +250,16 @@
     [Logger log:@"Step 3. Create the HTTP request string" lineNumber:__LINE__];
     // Create the HTTP request string
 
-    NSString *requestString = [NSString
-                               stringWithFormat:@"GET %@%@ HTTP/1.1\r\nHost: %@%@\r\nAccept: */*\r\n",
-                               [url path],
+    NSString *requestString = [NSString stringWithFormat:
+                               @"GET %@%@ HTTP/1.1\r\n"
+                               "Host: %@%@\r\n"
+                               "Accept: */*\r\n"
+                               "Connection: close\r\n"
+                               "\r\n",
+                               [url path].length > 0 ? [url path] : @"/",
                                [url query] ? [@"?" stringByAppendingString:[url query]] : @"",
                                [url host],
                                [url port] ? [@":" stringByAppendingFormat:@"%@", [url port]] : @""];
-    
-    requestString = [requestString stringByAppendingString:@"Connection: close\r\n\r\n"];
 
     [Logger log:requestString lineNumber:__LINE__];
 
