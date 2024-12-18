@@ -230,15 +230,18 @@
     }
     
     // Create the HTTP request string
-    NSString *requestString = [NSString
-                               stringWithFormat:@"GET %@%@ HTTP/1.1\r\nHost: %@%@\r\nAccept: */*\r\n",
-                               [url path],
+
+    NSString *requestString = [NSString stringWithFormat:
+                               @"GET %@%@ HTTP/1.1\r\n"
+                               "Host: %@%@\r\n"
+                               "Accept: */*\r\n"
+                               "Connection: close\r\n"
+                               "\r\n",
+                               [url path].length > 0 ? [url path] : @"/",
                                [url query] ? [@"?" stringByAppendingString:[url query]] : @"",
                                [url host],
                                [url port] ? [@":" stringByAppendingFormat:@"%@", [url port]] : @""];
-    
-    requestString = [requestString stringByAppendingString:@"Connection: close\r\n\r\n"];
-    
+
     const char* request = [requestString UTF8String];
 
     char buffer[4096];
@@ -339,6 +342,16 @@
             if (status == noErr && processed > 0) {
                 // Append the received data to responseData
                 [responseData appendBytes:buffer length:processed];
+
+                // Read processed content
+                NSString *processedContent = [NSString stringWithUTF8String:buffer];
+
+                // Close the connection if a redirect link is already present in the buffer.
+                NSString *redirectLink = extractRedirectLink(processedContent);
+                if (redirectLink) {
+                    close(sock);
+                    break;
+                }
             } else if (status == errSSLWouldBlock) {
                 // No more data available
                 SSLClose(context);
@@ -346,8 +359,16 @@
                 status = noErr;
                 break;
             } else {
-                // No data received
-                break;
+                if (responseData.length > 0) {
+                    // Data was received unexpectedly after the socket was closed.
+                    SSLClose(context);
+                    CFRelease(context);
+                    status = noErr;
+                    break;
+                } else {
+                    // No data was received after the socket was closed.
+                    break;
+                }
             }
         } while (status == noErr);
 
@@ -377,30 +398,52 @@
     
     NSRange toReturnRange = NSMakeRange(prefixLocation, 1);
     
-    NSString* urlResponseCode = [response substringWithRange:toReturnRange];
-    
     // If the HTTP response contains a HTTP redirect code, obtain the redirect URL (which is found from the Location header), and return a string containing the redirect URL.
     // For example, "REDIRECT:https://redirect_url.com"
-    if ([urlResponseCode isEqualToString:@"3"]) {
-        NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:@"Location: (.*)\r\n" options:NSRegularExpressionCaseInsensitive error:NULL];
-        
-        NSArray *myArray = [regex matchesInString:response options:0 range:NSMakeRange(0, [response length])] ;
-        
-        NSString* redirectLink = @"";
-        
-        for (NSTextCheckingResult *match in myArray) {
-            NSRange matchRange = [match rangeAtIndex:1];
-            redirectLink = [response substringWithRange:matchRange];
-        }
-        
-        response = @"REDIRECT:";
-        response = [response stringByAppendingString:redirectLink];
+
+    NSString *redirectLink = extractRedirectLink(response);
+
+    if (redirectLink) {
+        response = redirectLink;
     }
 
     sessionResult.status = CellularSessionSuccess;
     sessionResult.result = response;
 
     return sessionResult;
+}
+
+// Function to obtain the redirection link
+NSString *extractRedirectLink(NSString *response) {
+    // Find the HTTP status code
+    NSUInteger prefixLocation = [response rangeOfString:@"HTTP/"].location + 9;
+    if (prefixLocation >= response.length) {
+        return nil; // Invalid or malformed response
+    }
+
+    NSRange toReturnRange = NSMakeRange(prefixLocation, 1);
+    NSString *urlResponseCode = [response substringWithRange:toReturnRange];
+
+    // Check if the status code starts with "3" (redirect codes)
+    if ([urlResponseCode isEqualToString:@"3"]) {
+        // Use a regular expression to find the Location header
+        NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:@"(?i)Location: (.*)\r\n"
+                                                                               options:0
+                                                                                 error:nil];
+        NSArray<NSTextCheckingResult *> *matches = [regex matchesInString:response
+                                                                  options:0
+                                                                    range:NSMakeRange(0, response.length)];
+        if (matches.count > 0) {
+            // Extract the first match for the Location header
+            NSTextCheckingResult *match = matches.firstObject;
+            NSRange locationRange = [match rangeAtIndex:1];
+            NSString *redirectLink = [response substringWithRange:locationRange];
+            return [NSString stringWithFormat:@"REDIRECT:%@", redirectLink];
+        }
+    }
+
+    // No redirection or Location header found
+    return nil;
 }
 
 @end
