@@ -1,3 +1,10 @@
+# 0.0.9 (18–12-2024)
+
+### Improvements
+
+- Fixed Redirect Handling with Keep-Alive Connections: Resolved an issue where redirects could fail due to persistent keep-alive connections. The fix ensures the connection is proactively closed upon detecting a redirection in the buffer, preventing inconsistencies and ensuring smooth redirection handling.
+- Added Default Path for HTTP/1.1 Requests: Introduced a default path ("/") for HTTP/1.1 requests to ensure compatibility with servers when no explicit path is specified in the request URL.
+
 # 0.0.8 (12–06-2024)
 
 ### Improvements
