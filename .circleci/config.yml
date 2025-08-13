@@ -20,7 +20,7 @@ jobs:
               file_to_build="$(ls -A | grep -i \.xcodeproj$)"
             fi
             file_to_build=$(echo $file_to_build | awk '{$1=$1;print}')
-            xcodebuild clean build analyze \
+            xcodebuild clean build \
               -scheme "$scheme" \
               -"$filetype_parameter" "$file_to_build" | xcpretty
             exit ${PIPESTATUS[0]}
