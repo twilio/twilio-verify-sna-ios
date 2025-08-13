@@ -24,6 +24,10 @@ jobs:
               -scheme "$scheme" \
               -"$filetype_parameter" "$file_to_build" | xcpretty
             exit ${PIPESTATUS[0]}
+      - run:
+          name: Run Unit Tests for TwilioVerifySNA
+          command: |
+            swift test --package-path TwilioVerifySNA
 
 workflows:
   build:
