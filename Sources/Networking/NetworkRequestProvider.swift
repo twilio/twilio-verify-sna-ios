@@ -25,8 +25,7 @@ public final class NetworkRequestProvider {
 
     // MARK: - Properties
 
-    private let cellularSession: CellularSessionProtocol
-    private let cellularConnection: CellularConnection = .init()
+    private let cellularConnection: CellularConnectionProtocol
 
     // MARK: - Computed properties
 
@@ -37,9 +36,9 @@ public final class NetworkRequestProvider {
     // MARK: - Class lifecycle
 
     public init(
-        cellularSession: CellularSessionProtocol
+        cellularConnection: CellularConnectionProtocol = CellularConnection()
     ) {
-        self.cellularSession = cellularSession
+        self.cellularConnection = cellularConnection
     }
 }
 
@@ -55,33 +54,16 @@ extension NetworkRequestProvider: NetworkRequestProviderProtocol {
         url: URL,
         using ipVersion: NWProtocolIP.Options.Version = .any,
         onComplete: @escaping NetworkRequestResult
-    ) {
+    ) { 
         Logger.log("Start cellular connection", lineNumber: #line)
-        cellularConnection.makeRequest(url: url, using: ipVersion) { response in
+        cellularConnection.makeRequest(url: url, options: .init(), using: ipVersion) { response in
             switch response {
                 case .success(let response):
                     onComplete(.success(response))
                 case .failure(let error):
-                    onComplete(.failure(.cellularRequestError(cause: .unexpectedError)))
+                    onComplete(.failure(error))
                     Logger.log("Received error: \(error.localizedDescription)", lineNumber: #line)
             }
         }
-//        networkRequestQueue.async {
-//            let networkOperationOnCellularData = self.cellularSession.performRequest(url)
-//
-//            guard case .success = networkOperationOnCellularData.status else {
-//                onComplete(
-//                    .failure(.cellularRequestError(cause: networkOperationOnCellularData.status))
-//                )
-//                return
-//            }
-//
-//            guard let result = networkOperationOnCellularData.result else {
-//                onComplete(.failure(.requestFinishedWithNoResult))
-//                return
-//            }
-//
-//            onComplete(.success(result))
-//        }
     }
 }

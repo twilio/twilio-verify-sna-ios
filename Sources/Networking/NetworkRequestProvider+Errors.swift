@@ -26,13 +26,12 @@ extension NetworkRequestProvider {
 
     public enum RequestError: TwilioVerifySNAErrorProtocol, Equatable {
         case requestFinishedWithNoResult
-        case cellularRequestError(cause: CellularSessionStatus)
+        case cellularRequestError(cause: ConnectionError)
 
         public var description: String {
             switch self {
                 case .requestFinishedWithNoResult:
                     return "No response from request"
-
                 case .cellularRequestError(let cause):
                     return "Error processing the URL via cellular network, cause: \(cause)"
             }

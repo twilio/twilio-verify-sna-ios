@@ -22,7 +22,7 @@ import Network
 import SNANetworking
 
 public typealias NetworkRequestResult = (
-    Result<String, NetworkRequestProvider.RequestError>
+    Result<String, ConnectionError>
 ) -> Void
 
 public protocol NetworkRequestProviderProtocol {

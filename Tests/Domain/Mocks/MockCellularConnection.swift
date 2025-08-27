@@ -1,5 +1,5 @@
 //
-//  CellularSessionProtocol.h
+//  MockCellularSession.swift
 //  TwilioVerifySNA
 //
 //  Copyright © 2022 Twilio.
@@ -17,7 +17,26 @@
 //  limitations under the License.
 //
 
-@protocol CellularSessionProtocol
-@required
-- (CellularSessionResult * _Nonnull)performRequest:(NSURL * _Nonnull)url;
-@end
+import XCTest
+import Network
+import SNANetworking
+
+@testable import TwilioVerifySNA
+
+class MockCellularConnection: CellularConnectionProtocol {
+
+    var result: Result<String, ConnectionError>?
+
+    func makeRequest(
+        url: URL,
+        options: RequestOptions,
+        using ipVersion: NWProtocolIP.Options.Version,
+        completion: @escaping (Result<String, ConnectionError>) -> Void
+    ) {
+        if let result {
+            completion(result)
+        } else {
+            completion(.success(""))
+        }
+    }
+}

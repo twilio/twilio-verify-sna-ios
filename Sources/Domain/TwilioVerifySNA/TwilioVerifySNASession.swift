@@ -61,7 +61,7 @@ final class TwilioVerifySNASession: TwilioVerifySNA {
     init(
         requestManager: RequestManagerProtocol = RequestManager(
             networkProvider: NetworkRequestProvider(
-                cellularSession: CellularSession()
+                cellularConnection: CellularConnection()
             )
         )
     ) {

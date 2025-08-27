@@ -23,12 +23,13 @@ import SNANetworking
 
 final class NetworkRequestProviderTests: XCTestCase {
     private var sut: NetworkRequestProvider?
+    private var mockCellularConnection: MockCellularConnection?
 
     override func setUp() {
         super.setUp()
-
+        mockCellularConnection = MockCellularConnection()
         sut = NetworkRequestProvider(
-            cellularSession: MockCellularSession()
+            cellularConnection: mockCellularConnection!
         )
     }
 
@@ -51,24 +52,21 @@ final class NetworkRequestProviderTests: XCTestCase {
         sut?.performRequest(
             url: url,
             onComplete: { result in
-                // Assert
-                let status = String(describing: CellularSessionStatus.success)
-                let expectedBehavior = Result<String, NetworkRequestProvider.RequestError>.success(status)
-                XCTAssertEqual(result, expectedBehavior)
+                switch result {
+                    case .success: break;
+                    case .failure:
+                        XCTFail("Should not fail")
+                }
             }
         )
     }
 
     func test_networkProvider_withInvalidRequest_shouldRespondWithExpectedError() {
         // Arrange
-        sut = NetworkRequestProvider(
-            cellularSession: MockCellularSession(status: .cannotFindRoutesForHttpRequest)
-        )
+        mockCellularConnection?.result = .failure(.invalidURL)
 
         let urlString = "https://mi-sbox.dnlsrv.com/msbox/id/t20AHVnl?data=l%2BPA0m5y5sPgPl2"
-        let expectedError = Result<String, NetworkRequestProvider.RequestError>.failure(
-            .cellularRequestError(cause: .cannotFindRoutesForHttpRequest)
-        )
+        let expectedError = ConnectionError.invalidURL
 
         guard let url = URL(string: urlString) else {
             XCTFail("invalid URL")
@@ -79,17 +77,19 @@ final class NetworkRequestProviderTests: XCTestCase {
         sut?.performRequest(
             url: url,
             onComplete: { result in
-                // Assert
-                XCTAssertEqual(result, expectedError)
+                switch result {
+                    case .success:
+                        XCTFail("Should not succeed")
+                    case .failure(let cause):
+                        XCTAssertEqual(expectedError, cause)
+                }
             }
         )
     }
 
     func test_errorAssociatedValues_shouldHaveValues() {
         // Arrange
-        sut = NetworkRequestProvider(
-            cellularSession: MockCellularSession(status: .cannotFindRoutesForHttpRequest)
-        )
+        mockCellularConnection?.result = .failure(.httpResponseParsingFailed)
 
         let urlString = "https://mi-sbox.dnlsrv.com/msbox/id/t20AHVnl?data=l%2BPA0m5y5sPgPl2"
         
@@ -106,7 +106,7 @@ final class NetworkRequestProviderTests: XCTestCase {
                 switch result {
                     case .failure(let cause):
                         XCTAssertNotNil(cause.errorDescription)
-                        XCTAssertNotNil(cause.technicalError)
+                        XCTAssertEqual(cause.localizedDescription, "HTTP response parsing failed")
                     default:
                         XCTFail("Unexpected success scenario.")
                 }
