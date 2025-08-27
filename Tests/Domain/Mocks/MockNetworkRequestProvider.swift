@@ -18,6 +18,7 @@
 //
 
 import XCTest
+import Network
 import SNANetworking
 
 @testable import TwilioVerifySNA
@@ -30,7 +31,7 @@ struct MockNetworkRequestProvider: NetworkRequestProviderProtocol {
         self.session = session
     }
 
-    func performRequest(url: URL, onComplete: @escaping NetworkRequestResult) {
+    func performRequest(url: URL, using ipVersion: NWProtocolIP.Options.Version, onComplete: @escaping NetworkRequestResult) {
         let request = session.performRequest(url)
 
         guard let result = request.result else {

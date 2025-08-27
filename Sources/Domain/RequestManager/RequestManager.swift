@@ -59,7 +59,7 @@ public final class RequestManager {
     ) {
         if result.contains(Constants.redirectionPath), !result.contains(Constants.successPath) {
             let redirectionUrl = getRedirectionUrl(for: result)
-            return processSNAURL(redirectionUrl, using: .v6, onComplete: onComplete)
+            return processSNAURL(redirectionUrl, using: .any, onComplete: onComplete)
         }
 
         guard result.contains(Constants.successPath) else {

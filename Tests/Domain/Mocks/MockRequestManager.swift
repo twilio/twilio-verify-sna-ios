@@ -18,17 +18,18 @@
 //
 
 import XCTest
+import Network
 import SNANetworking
 
 @testable import TwilioVerifySNA
 
 struct MockRequestManager: RequestManagerProtocol {
-
     let shouldFail: Bool
     let expectedError: RequestManager.RequestError?
 
     func processSNAURL(
         _ url: String,
+        using ipVersion: NWProtocolIP.Options.Version,
         onComplete: @escaping ProcessSNAURLResult
     ) {
         if shouldFail {
@@ -38,7 +39,8 @@ struct MockRequestManager: RequestManagerProtocol {
 
         let networkProvider = MockNetworkRequestProvider()
 
-        networkProvider.performRequest(url: URL(string: url)!) { result in
+        networkProvider
+            .performRequest(url: URL(string: url)!, using: .any) { result in
             switch result {
                 case .success:
                     onComplete(.success)

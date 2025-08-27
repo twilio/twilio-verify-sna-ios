@@ -46,7 +46,7 @@ public final class NetworkRequestProvider {
 // MARK: - NetworkRequestProviderProtocol
 extension NetworkRequestProvider: NetworkRequestProviderProtocol {
 
-    /// This method will perform a regular GET operation via network using the cellular layer.
+    /// This method will perform a regular POST operation via network using the cellular layer.
     /// - Note: This method **will not** work if you are using a simulator or a device with no SIM-CARD (and internet working).
     /// - Parameters:
     ///   - url: SNA URL provided by your backend.
@@ -55,7 +55,7 @@ extension NetworkRequestProvider: NetworkRequestProviderProtocol {
         url: URL,
         using ipVersion: NWProtocolIP.Options.Version = .any,
         onComplete: @escaping NetworkRequestResult
-    ) {
+    ) { 
         Logger.log("Start cellular connection", lineNumber: #line)
         cellularConnection.makeRequest(url: url, using: ipVersion) { response in
             switch response {
@@ -66,22 +66,5 @@ extension NetworkRequestProvider: NetworkRequestProviderProtocol {
                     Logger.log("Received error: \(error.localizedDescription)", lineNumber: #line)
             }
         }
-//        networkRequestQueue.async {
-//            let networkOperationOnCellularData = self.cellularSession.performRequest(url)
-//
-//            guard case .success = networkOperationOnCellularData.status else {
-//                onComplete(
-//                    .failure(.cellularRequestError(cause: networkOperationOnCellularData.status))
-//                )
-//                return
-//            }
-//
-//            guard let result = networkOperationOnCellularData.result else {
-//                onComplete(.failure(.requestFinishedWithNoResult))
-//                return
-//            }
-//
-//            onComplete(.success(result))
-//        }
     }
 }

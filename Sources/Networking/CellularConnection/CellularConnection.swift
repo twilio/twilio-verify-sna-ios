@@ -9,77 +9,48 @@ import Foundation
 import Network
 import SNANetworking
 
-class CellularConnection {
+public class CellularConnection {
+
+    // MARK: - Properties
+
     private var connection: NWConnection?
-    private var didConnect: Bool = false
 
-    enum Errors: Error {
-        case unknownResponse
-        case cantFoundHTTPResponse
-    }
+    // MARK: - Public Methods
 
-    func makeRequest(
+    public func makeRequest(
         url: URL,
+        options: RequestOptions = RequestOptions(),
         using ipVersion: NWProtocolIP.Options.Version = .any,
         completion: @escaping (Result<String, Error>) -> Void
     ) {
-        createConnection(url, using: ipVersion)
-        // Set up your request, handle the response, and call the completion handler
-        var requestString = String(format: "POST %@%@ HTTP/1.2\r\nHost: %@%@\r\nAccept: */*\r\nContent-Type: application/json\r\nContent-Length: 0\r\n",
-                                    url.path,
-                                    url.query != nil ? "?" + url.query! : "",
-                                    url.host ?? "",
-                                    url.port != nil ? ":" + String(url.port!) : "")
-
-        requestString += "Connection: close\r\n\r\n"
-
-        connection?.pathUpdateHandler = { path in
-            Logger.log(String(describing: path), lineNumber: #line)
+        guard url.host != nil else {
+            completion(.failure(ConnectionError.invalidURL))
+            return
         }
-
-        connection?.stateUpdateHandler = { newState in
-            Logger.log(String(describing: newState), lineNumber: #line)
-            switch newState {
-            case .ready:
-                self.sendRequest(requestString, completion: completion)
-            case .failed(let error):
-                completion(.failure(error))
-            default:
-                break
-            }
+        
+        do {
+            try createConnection(url, using: ipVersion)
+            prepareRequest(url: url, options: options, completion: completion)
+        } catch {
+            completion(.failure(error))
         }
-
-        connection?.betterPathUpdateHandler = { betterPath in
-            Logger.log("Better preferred over other path: \(String(describing: betterPath))", lineNumber: #line)
-        }
-
-        connection?.viabilityUpdateHandler = { viability in
-            Logger.log("Viability: \(String(describing: viability))", lineNumber: #line)
-        }
-
-        connection?.start(queue: .global())
     }
+
+    // MARK: - Internal Methods
 
     private func createConnection(
         _ url: URL,
         using ipVersion: NWProtocolIP.Options.Version = .any
-    ) {
-        let port: NWEndpoint.Port
-
-        if let URLPort = url.port, let nwPort = NWEndpoint.Port(rawValue: UInt16(URLPort)) {
-            port = url.scheme == "https" ? .https : .http
-        } else {
-            port = url.scheme == "https" ? .https : .http
+    ) throws {
+        let port: NWEndpoint.Port = url.port.map { NWEndpoint.Port(integerLiteral: UInt16($0)) } ?? (url.scheme == "https" ? .https : .http)
+        
+        guard let urlHost = url.host else {
+            throw ConnectionError.invalidURL
         }
 
-        let endpoint = NWEndpoint.hostPort(host: .init(url.host!), port: port)
-
-        let parameters: NWParameters
-        if url.scheme == "https" {
-            parameters = NWParameters(tls: .init())
-        } else {
-            parameters = NWParameters(tls: nil)
-        }
+        let host = NWEndpoint.Host(urlHost)
+        let endpoint = NWEndpoint.hostPort(host: host, port: port)
+        let parameters: NWParameters = url.scheme == "https" ? NWParameters(tls: .init()) : NWParameters(tls: nil)
 
         parameters.requiredInterfaceType = .cellular
         parameters.prohibitedInterfaceTypes = [.wifi, .wiredEthernet, .loopback]
@@ -88,91 +59,151 @@ class CellularConnection {
             protocolOption.version = ipVersion
         }
 
+        Logger.log("NWConnection using host \(host) and port \(port) to \(endpoint), with parameters: \(parameters)", lineNumber: #line)
+
         connection = NWConnection(to: endpoint, using: parameters)
     }
+    
+    private func prepareRequest(
+        url: URL,
+        options: RequestOptions,
+        completion: @escaping (Result<String, Error>) -> Void
+    ) {
+        var requestComponents = [
+            "\(options.method.rawValue) \(url.path)\(url.query.map { "?" + $0 } ?? "") HTTP/1.1",
+            "Host: \(url.host ?? "")",
+            "Accept: */*",
+            "Connection: close"
+        ]
+        
+        // Add custom headers
+        for (key, value) in options.headers {
+            requestComponents.append("\(key): \(value)")
+        }
+        
+        // Handle request body
+        if let body = options.body {
+            requestComponents.append("Content-Length: \(body.count)")
+        }
+        
+        var requestString = requestComponents.joined(separator: "\r\n")
+        requestString += "\r\n\r\n"
+        
+        if let body = options.body {
+            requestString += String(data: body, encoding: .utf8) ?? ""
+        }
 
-    private func sendRequest(_ request: String, completion: @escaping (Result<String, Error>) -> Void) {
-        // Convert the request string to data and send it
+        Logger.log("Request:\n\(requestString)", lineNumber: #line)
+
+        connection?.stateUpdateHandler = { [weak self] newState in
+            switch newState {
+            case .ready:
+                self?.sendRequest(requestString, body: options.body, completion: completion)
+            case .failed(let error):
+                completion(.failure(ConnectionError.connectionFailed(error)))
+            default:
+                break
+            }
+        }
+        
+        connection?.start(queue: .global())
+    }
+    
+    private func sendRequest(
+        _ request: String, 
+        body: Data?,
+        completion: @escaping (Result<String, Error>) -> Void
+    ) {
         let requestData = Data(request.utf8)
-        connection?.send(content: requestData, completion: .contentProcessed { error in
+        var fullRequestData = requestData
+        
+        if let body = body {
+            fullRequestData.append(body)
+        }
+
+        connection?.send(content: fullRequestData, completion: .contentProcessed { error in
             if let error = error {
-                completion(.failure(error))
+                completion(.failure(ConnectionError.requestFailed(error)))
             } else {
                 self.receiveResponse(responseData: .init(), completion: completion)
             }
         })
     }
-
+    
     private func receiveResponse(
         responseData: Data,
         completion: @escaping (Result<String, Error>) -> Void
     ) {
-        // Receive the response data
         var responseData = responseData
-        connection?.receive(minimumIncompleteLength: 1, maximumLength: 40000) { data, _, isComplete, error in
+        connection?.receive(minimumIncompleteLength: 1, maximumLength: 65536) { [weak self] data, _, isComplete, error in
+            guard let self = self else { return }
+            
             if let data = data {
                 responseData.append(data)
             }
-
+            
             if isComplete {
-                self.connection?.cancel()
-                self.connection?.cancelCurrentEndpoint()
-                self.connection = nil
-
-                guard var response = String(data: responseData, encoding: .ascii) else {
-                    completion(.failure(Errors.unknownResponse))
-                    return
-                }
-
-                Logger.log(response, lineNumber: #line)
-
-                if (response as NSString).range(of: "HTTP/").location == NSNotFound {
-                    completion(.failure(Errors.cantFoundHTTPResponse))
-                    return
-                }
-
-                let prefixLocation = (response as NSString).range(of: "HTTP/").location + 9
-
-                let toReturnRange = NSRange(location: prefixLocation, length: 1)
-
-                let urlResponseCode = (response as NSString).substring(with: toReturnRange)
-
-                Logger.log("URL Response code: \(urlResponseCode)", lineNumber: #line)
-//
-//                if self.didConnect == false {
-//                    completion(.success("REDIRECT:https://mi6.dnlsrv.com/m/trecv2/v1?&cipherSalt=bKP2eLmzcqez5iVZ&state=1&SKEY=aFhJymMXemByEl_yEIpE57kroWIchEOo_sVqmS_LABhPlDeJkfYy17wKUIJ-X53s8_euzQuNI0i4xIN95Vg3rQ82loZn07RzvQb6vGM5VtFRvogbMMJV-jhtk_PEoBj4a8SqN4UJ0NIjqsncPKc2rMreRjbh-bCIRVj3L2t9ug2vKvbFJ_3xBvm1iZTz1moy"))
-//                    self.didConnect = true
-//                    return
-//                }
-
-                if urlResponseCode == "3" {
-                    do {
-                        let URLPattern = #"http.?://\S+"#
-                        let regex = try NSRegularExpression(pattern: URLPattern, options: [])
-                        let match = regex.firstMatch(in: response, options: [], range: NSRange(location: 0, length: response.utf16.count))
-
-                        if let match = match, let range = Range(match.range, in: response) {
-                            let url = response[range]
-                            response = "REDIRECT:" + url
-                        } else {
-                            Logger.log("Unable to match URL", lineNumber: #line)
-                        }
-                    } catch {
-                        Logger.log("Error creating regular expression \(error.localizedDescription)", lineNumber: #line)
-                    }
-
-                    Logger.log("Link: \(response)", lineNumber: #line)
-                }
-
-                completion(.success(response))
+                self.processFullResponse(responseData, completion: completion)
             } else if let error = error {
-                completion(.failure(error))
+                completion(.failure(ConnectionError.requestFailed(error)))
             } else {
-                self.receiveResponse(
-                    responseData: responseData,
-                    completion: completion
-                )
+                self.receiveResponse(responseData: responseData, completion: completion)
             }
+        }
+    }
+    
+    private func processFullResponse(
+        _ responseData: Data,
+        completion: @escaping (Result<String, Error>) -> Void
+    ) {
+        connection?.cancel()
+        connection = nil
+        
+        guard let response = String(data: responseData, encoding: .ascii) else {
+            completion(.failure(ConnectionError.invalidResponse))
+            return
+        }
+
+        Logger.log("Response:\n\(response)", lineNumber: #line)
+
+        guard (response as NSString).range(of: "HTTP/").location != NSNotFound else {
+            completion(.failure(ConnectionError.httpResponseParsingFailed))
+            return
+        }
+        
+        let statusCodeRange = NSRange(location: (response as NSString).range(of: "HTTP/").location + 9, length: 3)
+        let statusCode = (response as NSString).substring(with: statusCodeRange)
+        
+        if statusCode.hasPrefix("3") {
+            handleRedirect(response: response, completion: completion)
+        } else {
+            completion(.success(response))
+        }
+    }
+    
+    private func handleRedirect(
+        response: String,
+        completion: @escaping (Result<String, Error>) -> Void
+    ) {
+        do {
+            // Handle redirect for http & https urls
+            let URLPattern = #"https?://\S+"#
+            let regex = try NSRegularExpression(pattern: URLPattern, options: [])
+            let match = regex.firstMatch(
+                in: response, 
+                options: [], 
+                range: NSRange(location: 0, length: response.utf16.count)
+            )
+            
+            if let match = match, let range = Range(match.range, in: response) {
+                let redirectURL = String(response[range])
+                let redirectResponse = "REDIRECT:" + redirectURL
+                completion(.success(redirectResponse))
+            } else {
+                completion(.failure(ConnectionError.httpResponseParsingFailed))
+            }
+        } catch {
+            completion(.failure(error))
         }
     }
 }
