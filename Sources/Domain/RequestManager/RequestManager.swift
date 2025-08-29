@@ -107,7 +107,7 @@ extension RequestManager: RequestManagerProtocol {
 
             switch result {
                 case .failure(let cause):
-                    onComplete(.failure(.networkingError(cause: .cellularRequestError(cause: cause))))
+                    onComplete(.failure(.networkingError(cause: cause)))
                 case .success(let response):
                     self.processRequestResult(response, onComplete: onComplete)
             }

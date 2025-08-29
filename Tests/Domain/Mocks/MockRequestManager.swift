@@ -19,7 +19,6 @@
 
 import XCTest
 import Network
-import SNANetworking
 
 @testable import TwilioVerifySNA
 
@@ -45,7 +44,7 @@ struct MockRequestManager: RequestManagerProtocol {
                 case .success:
                     onComplete(.success)
                 case .failure(let error):
-                    onComplete(.failure(.networkingError(cause: .cellularRequestError(cause: error))))
+                    onComplete(.failure(.networkingError(cause: error)))
             }
         }
     }

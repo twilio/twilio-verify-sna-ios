@@ -47,7 +47,7 @@ See <a href="https://www.twilio.com/docs/verify/sna">Silent Network Auth Overvie
 
 ### Internal dependencies:
 
-- **SNANetworking:** used for cellular networking operations, lives as an internal package.
+- None
 
 <a name='Requirements'></a>
 
@@ -244,9 +244,9 @@ The app will ask the network carrier if the provided phone number is the same us
 
 ---
 
-### Celullar network
+### Cellular Connection errors
 
-See `NetworkResult.h`
+See `CellularConnection+Models.swift`
 
 <table>
   <tr>
@@ -255,64 +255,34 @@ See `NetworkResult.h`
     <th>Technical cause</th>
   </tr>
   <tr>
-    <td>CannotObtainNetworkInterfaces</td>
-    <td>Cannot obtain network interfaces of the local system</td>
-    <td>Probably you are using a simulator or a device with no sim-card</td>
+    <td>invalidURL</td>
+    <td>Invalid URL</td>
+    <td>URL is invalid or cannot be processed</td>
   </tr>
   <tr>
-    <td>CannotFindRemoteAddressOfRemoteUrl</td>
-    <td>Cannot find remote address of requested URL	</td>
-    <td>The url is corrupted, try generating a new one</td>
-  </tr>
-    <tr>
-    <td>CannotFindRoutesForHttpRequest</td>
-    <td>No routes found for HTTP request</td>
-    <td>The url is corrupted, try generating a new one</td>
-  </tr>
-    <tr>
-    <td>UnableToInstantiateSockets</td>
-    <td>Cannot instantiate socket</td>
-    <td>Probably you are using a simulator or a device with no sim-card</td>
-  </tr>
-    <tr>
-    <td>ErrorReadingHttpResponse</td>
-    <td>Error occurred while reading HTTP response</td>
-    <td>No bytes received from the request</td>
-  </tr>
-    <tr>
-    <td>CannotSpecifySSLFunctionsNeeded</td>
-    <td>Cannot specify SSL functions needed to perform the network I/O operations</td>
-    <td>The url is corrupted, try generating a new one</td>
-  </tr>
-    <tr>
-    <td>CannotSpecifySSLIOConnection</td>
-    <td>Error occurred while specifying SSL I/O connection with peer	</td>
-    <td>Probably you are using a simulator or a device with no sim-card</td>
-  </tr>
-    <tr>
-    <td>PeersCertificateDoesNotMatchWithRequestedUrl</td>
-    <td>The common name of the peer's certificate doesn't match with URL being requested</td>
-    <td>Unknown network error, try again</td>
-  </tr>
-    <tr>
-    <td>ErrorPerformingSSLHandshake</td>
-    <td>Error occurred while performing SSL handshake</td>
-    <td>The device probably lost internet connection during the operation</td>
-  </tr>
-    <tr>
-    <td>ErrorPerformingSSLWriteOperation</td>
-    <td>Error occurred while performing SSL write operation</td>
-    <td>The url is corrupted, try generating a new one</td>
-  </tr>
-    <tr>
-    <td>SSLSessionDidNotCloseGracefullyAfterPerformingSSLReadOperation</td>
-    <td>Cannot specify SSL functions needed to perform the network I/O operations</td>
-    <td>The url is corrupted, try generating a new one</td>
+    <td>connectionFailed</td>
+    <td>Connection failed: [error]</td>
+    <td>Connection establishment failed</td>
   </tr>
   <tr>
-    <td>UnknownHttpResponse</td>
-    <td>Unknown HTTP response	</td>
-    <td></td>
+    <td>redirectionFailed</td>
+    <td>Redirection failed: [error]</td>
+    <td>Indicates that a redirection attempt failed and returned an error</td>
+  </tr>
+  <tr>
+    <td>requestFailed</td>
+    <td>Request failed: [error]</td>
+    <td>Request transmission or processing failed</td>
+  </tr>
+  <tr>
+    <td>invalidResponse</td>
+    <td>Invalid response</td>
+    <td>Received response is invalid or cannot be parsed</td>
+  </tr>
+  <tr>
+    <td>httpResponseParsingFailed</td>
+    <td>HTTP response parsing failed</td>
+    <td>HTTP response parsing encountered an error</td>
   </tr>
 </table>
 
@@ -401,69 +371,26 @@ twilioVerify.processURL(snaUrl) { result in
     switch result {
         case .success:
           return
-
         case .failure(let error):
             switch error {
-                case .cellularNetworkNotAvailable:
-                    return
-
-                case .requestError(.instanceNotFound):
-                    return
-
-                case .requestError(.invalidUrl):
-                    return
-
-                case .requestError(.noResultFromUrl):
-                    return
-
-                case .requestError(.networkingError(.requestFinishedWithNoResult)):
-                    return
-
-                case .requestError(.networkingError(.cellularRequestError(.cannotConnectSocketToRemoteAddress))):
-                    return
-
-                case .requestError(.networkingError(.cellularRequestError(.success))):
-                    return
-
-                case .requestError(.networkingError(.cellularRequestError(.unexpectedError))):
-                    return
-
-                case .requestError(.networkingError(.cellularRequestError(.unknownHttpResponse))):
-                    return
-
-                case .requestError(.networkingError(.cellularRequestError(.errorReadingHttpResponse))):
-                    return
-
-                case .requestError(.networkingError(.cellularRequestError(.unableToInstantiateSockets))):
-                    return
-
-                case .requestError(.networkingError(.cellularRequestError(.errorPerformingSSLHandshake))):
-                    return
-
-                case .requestError(.networkingError(.cellularRequestError(.cannotSpecifySSLIOConnection))):
-                    return
-
-                case .requestError(.networkingError(.cellularRequestError(.cannotObtainNetworkInterfaces))):
-                    return
-
-                case .requestError(.networkingError(.cellularRequestError(.cannotFindRoutesForHttpRequest))):
-                    return
-
-                case .requestError(.networkingError(.cellularRequestError(.cannotSpecifySSLFunctionsNeeded))):
-                    return
-
-                case .requestError(.networkingError(.cellularRequestError(.errorPerformingSSLWriteOperation))):
-                    return
-
-                case .requestError(.networkingError(.cellularRequestError(.cannotFindRemoteAddressOfRemoteUrl))):
-                    return
-
-                case .requestError(.networkingError(.cellularRequestError(.peersCertificateDoesNotMatchWithRequestedUrl))):
-                    return
-
-                case .requestError(.networkingError(.cellularRequestError(.sslSessionDidNotCloseGracefullyAfterPerformingSSLReadOperation))):
-                    return
-            }
+                case .cellularNetworkNotAvailable: return
+                case .requestError(let cause):
+                        switch cause {
+                            case .instanceNotFound: return
+                            case .invalidUrl: return
+                            case .noResultFromUrl: return
+                            case .networkingError(let error):
+                                switch error {
+                                    case .invalidURL: return
+                                    case .connectionFailed(let error): return
+                                    case .redirectionFailed(let error): return
+                                    case .requestFailed(let error): return
+                                    case .invalidResponse: return
+                                    case .httpResponseParsingFailed: return
+                                }
+                        }
+                }
+        }
     }
 }
 ```
@@ -475,10 +402,8 @@ twilioVerify.processURL(snaUrl) { result in
     switch result {
         case .success:
           return
-
         case .failure(let error):
-          let errorDescription = cause.description
-          let technicalError = cause.technicalError
+          let errorDescription = cause.localizedDescription
     }
 }
 ```

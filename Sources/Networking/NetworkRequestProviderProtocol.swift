@@ -19,7 +19,6 @@
 
 import Foundation
 import Network
-import SNANetworking
 
 public typealias NetworkRequestResult = (
     Result<String, ConnectionError>

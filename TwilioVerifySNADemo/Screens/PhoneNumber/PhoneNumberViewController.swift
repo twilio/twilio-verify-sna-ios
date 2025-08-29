@@ -19,7 +19,6 @@
 
 import UIKit
 import TwilioVerifySNA
-import SNANetworking
 import CoreTelephony
 
 final class PhoneNumberViewController: UIViewController {

@@ -19,7 +19,6 @@
 
 import XCTest
 import Network
-import SNANetworking
 
 @testable import TwilioVerifySNA
 

@@ -19,7 +19,6 @@
 
 import Foundation
 import Network
-import SNANetworking
 
 final class TwilioVerifySNASession: TwilioVerifySNA {
 

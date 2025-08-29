@@ -6,7 +6,7 @@
 //
 
 import UIKit
-import SNANetworking
+import TwilioVerifySNA
 
 class LoggerViewController: UIViewController {
 

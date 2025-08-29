@@ -18,7 +18,6 @@
 //
 
 import XCTest
-import SNANetworking
 @testable import TwilioVerifySNA
 
 final class NetworkRequestProviderTests: XCTestCase {

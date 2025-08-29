@@ -7,7 +7,6 @@
 
 import Foundation
 import Network
-import SNANetworking
 
 public protocol CellularConnectionProtocol {
 

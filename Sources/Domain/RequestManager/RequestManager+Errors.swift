@@ -28,7 +28,7 @@ extension RequestManager {
         case invalidUrl
         case noResultFromUrl
         case instanceNotFound
-        case networkingError(cause: NetworkRequestProvider.RequestError)
+        case networkingError(cause: ConnectionError)
 
         public var description: String {
             switch self {

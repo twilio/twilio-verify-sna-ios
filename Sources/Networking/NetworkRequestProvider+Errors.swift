@@ -18,7 +18,6 @@
 //
 
 import Foundation
-import SNANetworking
 
 // MARK: - Associated errors
 
