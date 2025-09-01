@@ -101,4 +101,44 @@ final class TwilioVerifySNASessionTests: XCTestCase {
             }
         )
     }
+
+    func test_testConnectivity_withSuccessConnection_shouldReturnTrue() {
+        // Arrange
+        var mockRequestManager = MockRequestManager(shouldFail: false, expectedError: nil)
+        mockRequestManager.testConnectivityResult = true
+        sut = TwilioVerifySNASession(requestManager: mockRequestManager)
+
+        let host = "example.com"
+        let port: UInt16 = 443
+        let expectation = expectation(description: "Test connectivity completed")
+
+        // Act
+        sut.testConnectivity(to: host, port: port) { success in
+            // Assert
+            XCTAssertTrue(success)
+            expectation.fulfill()
+        }
+
+        waitForExpectations(timeout: 1.0)
+    }
+
+    func test_testConnectivity_withFailedConnection_shouldReturnFalse() {
+        // Arrange
+        var mockRequestManager = MockRequestManager(shouldFail: false, expectedError: nil)
+        mockRequestManager.testConnectivityResult = false
+        sut = TwilioVerifySNASession(requestManager: mockRequestManager)
+
+        let host = "example.com"
+        let port: UInt16 = 443
+        let expectation = expectation(description: "Test connectivity completed")
+
+        // Act
+        sut.testConnectivity(to: host, port: port) { success in
+            // Assert
+            XCTAssertFalse(success)
+            expectation.fulfill()
+        }
+
+        waitForExpectations(timeout: 1.0)
+    }
 }

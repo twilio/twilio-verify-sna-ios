@@ -24,7 +24,16 @@ import Network
 
 class MockCellularConnection: CellularConnectionProtocol {
 
-    var result: Result<String, ConnectionError>?
+    var testCellularConnectivityResult: Bool = false
+    var makeResult: Result<String, ConnectionError>?
+
+    func testCellularConnectivity(
+        to host: String,
+        port: UInt16,
+        completion: @escaping (Bool) -> Void
+    ) {
+        completion(testCellularConnectivityResult)
+    }
 
     func makeRequest(
         url: URL,
@@ -32,8 +41,8 @@ class MockCellularConnection: CellularConnectionProtocol {
         using ipVersion: NWProtocolIP.Options.Version,
         completion: @escaping (Result<String, ConnectionError>) -> Void
     ) {
-        if let result {
-            completion(result)
+        if let makeResult {
+            completion(makeResult)
         } else {
             completion(.success(""))
         }

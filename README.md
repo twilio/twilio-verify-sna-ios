@@ -16,6 +16,7 @@
 - [Running the Sample app](#SampleApp)
 - [Running the Sample backend](#SampleBackend)
 - [Using the sample app](#UsingSampleApp)
+- [Logger](#Logger)
 - [Errors](#Errors)
 - [Validate SNA URL](#ValidateSNAURL)
 - [Contributing](#Contributing)
@@ -110,7 +111,29 @@ import TwilioVerifySNA
 private lazy var twilioVerify: TwilioVerifySNA = TwilioVerifySNABuilder.build()
 ```
 
-3. Process the SNA URL by calling the method:
+3. Test cellular connectivity before attempting an SNA authentication (optional):
+
+```swift
+func testConnectivity(
+  to host: String,
+  port: UInt16,
+  completion: @escaping (Bool) -> Void
+)
+```
+
+```swift
+twilioVerify.testConnectivity(to: "apple.com", port: 80) { isConnected in
+    if isConnected {
+        // Proceed with SNA URL processing
+    } else {
+        // Handle the case where cellular connectivity is unavailable
+    }
+}
+```
+
+_Async alternative also available (iOS 13+)._
+
+4. Process the SNA URL by calling the method:
 
 ```swift
 func processURL(
@@ -149,7 +172,7 @@ switch result {
 }
 ```
 
-4. Full implementation demonstration
+5. Full implementation demonstration
 
 ```swift
 import UIKit
@@ -162,18 +185,32 @@ class ViewController: UIViewController {
         super.viewDidLoad()
     }
 
-    private func validateSNAURL() async {
-        let snaUrlFromBackend = await asyncMethodToGetSNAUrl()
+    private func validateSNAURL() {
+        // First check for cellular connectivity
+        twilioVerify.testConnectivity(to: "apple.com", port: 80) { [weak self] isConnected in
+            guard isConnected else {
+                // Handle the case where cellular connectivity is unavailable
+                return
+            }
+            
+            // Get SNA URL from backend
+            self?.getBackendSNAUrl { snaUrlFromBackend in
+                // Process the SNA URL
+                self?.twilioVerify.processURL(snaUrlFromBackend) { result in
+                    switch result {
+                        case .success:
+                        // Handle success scenario
 
-        twilioVerify.processURL(snaUrlFromBackend) { result in
-            switch result {
-                case .success:
-                // Handle success scenario
-
-                case .failure(let error):
-                // Handle error scenario
+                        case .failure(let error):
+                        // Handle error scenario
+                    }
+                }
             }
         }
+    }
+    
+    private func getBackendSNAUrl(completion: @escaping (String) -> Void) {
+        // Implementation to get SNA URL from your backend
     }
 }
 
@@ -237,6 +274,38 @@ Currently it's not possible to test the functionality using a simulator.
 
 **Expected behavior:**
 The app will ask the network carrier if the provided phone number is the same used on the network request, if the phone number is correct, then the app will redirect to a success screen.
+
+<a name='Logger'></a>
+
+## Logger
+
+---
+
+The SDK includes a Logger utility to help with debugging and troubleshooting. You can use it to capture logs during SNA verification attempts.
+
+```swift
+import TwilioVerifySNA
+
+// Start a new logging session (clears previous logs)
+Logger.startNewSession()
+
+// Your SNA verification code here
+// ...
+
+// Retrieve all logs as a string
+let logs = Logger.getText()
+print(logs)  // or display in your UI, send to your backend, etc.
+```
+
+### Available Methods
+
+```swift
+// Clear existing logs and start a new session
+static func startNewSession()
+
+// Get all logs collected in the current session as a single string
+static func getText() -> String
+```
 
 <a name='Errors'></a>
 

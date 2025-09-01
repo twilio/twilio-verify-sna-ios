@@ -25,6 +25,12 @@ public typealias ProcessSNAURLResult = (
 ) -> Void
 
 public protocol RequestManagerProtocol {
+    func testConnectivity(
+        to host: String,
+        port: UInt16,
+        completion: @escaping (Bool) -> Void
+    )
+
     func processSNAURL(
         _ url: String,
         using ipVersion: NWProtocolIP.Options.Version,

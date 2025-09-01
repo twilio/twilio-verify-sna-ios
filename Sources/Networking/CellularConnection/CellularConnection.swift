@@ -9,6 +9,16 @@ import Foundation
 import Network
 
 public protocol CellularConnectionProtocol {
+    /// Tests connectivity over a cellular interface by attempting to connect to the given host and port
+    /// - Parameters:
+    ///   - host: Hostname to probe (e.g., "apple.com")
+    ///   - port: TCP port number (e.g., 80 or 443)
+    ///   - completion: Closure called with a boolean result (success or failure)
+    func testCellularConnectivity(
+        to host: String,
+        port: UInt16,
+        completion: @escaping (Bool) -> Void
+    )
 
     /// Initiates a network request using a cellular connection
     /// - Parameters:
@@ -38,12 +48,52 @@ public class CellularConnection: CellularConnectionProtocol {
 
     // MARK: - Public Methods
 
-    /// Initiates a network request using a cellular connection
-    /// - Parameters:
-    ///   - url: The URL to connect to
-    ///   - options: Custom request configuration options
-    ///   - ipVersion: IP protocol version preference (IPv4/IPv6)
-    ///   - completion: Closure called with request result (success or failure)
+    public func testCellularConnectivity(
+        to host: String,
+        port: UInt16 = 80,
+        completion: @escaping (Bool) -> Void
+    ) {
+        let endpoint = NWEndpoint.hostPort(host: .init(host), port: .init(rawValue: port) ?? 80)
+        let parameters = NWParameters.tcp
+        parameters.requiredInterfaceType = .cellular
+        parameters.prohibitedInterfaceTypes = [.wifi, .wiredEthernet, .loopback]
+
+        let connection = NWConnection(to: endpoint, using: parameters)
+
+        connection.stateUpdateHandler = { state in
+            switch state {
+                case .ready:
+                    // Cellular network is working
+                    Logger.log("Cellular connectivity check to \(host):\(port) is reachable")
+                    completion(true)
+                    connection.cancel()
+                case .failed, .cancelled:
+                    guard connection.state != .cancelled else { break; }
+                    // Cellular not working
+                    Logger.log("Cellular connectivity check to \(host):\(port) has been \(state == .cancelled ? "cancelled" : "failed")")
+                    completion(false)
+                    connection.cancel()
+                case .waiting(let error):
+                    // Cellular network is down
+                    if #available(iOS 16.4, *) {
+                        if error.errorCode == ENETDOWN {
+                            Logger.log("Cellular connectivity check to \(host):\(port) is down.")
+                            completion(false)
+                            connection.cancel()
+                        }
+                    } else if case let .posix(posixError) = error, posixError == .ENETDOWN {
+                        Logger.log("Cellular connectivity check to \(host):\(port) is down.")
+                        completion(false)
+                        connection.cancel()
+                    }
+                default:
+                    break;
+            }
+        }
+
+        connection.start(queue: DispatchQueue.global(qos: .background))
+    }
+
     public func makeRequest(
         url: URL,
         options: RequestOptions = RequestOptions(),
@@ -95,7 +145,6 @@ public class CellularConnection: CellularConnectionProtocol {
         }
 
         Logger.log("NWConnection using host \(host) and port \(port) to \(endpoint), with parameters: \(parameters)", lineNumber: #line)
-
         connection = NWConnection(to: endpoint, using: parameters)
     }
 
@@ -213,6 +262,7 @@ public class CellularConnection: CellularConnectionProtocol {
             if isComplete {
                 self.processFullResponse(responseData, completion: completion)
             } else if let error = error {
+                Logger.log("Received error while receiving response: \(error)")
                 completion(.failure(ConnectionError.requestFailed(error)))
             } else {
                 self.receiveResponse(responseData: responseData, completion: completion)
@@ -233,6 +283,7 @@ public class CellularConnection: CellularConnectionProtocol {
         connection = nil
 
         guard let response = String(data: responseData, encoding: .ascii) else {
+            Logger.log("Invalid response decoding")
             completion(.failure(ConnectionError.invalidResponse))
             return
         }
@@ -240,6 +291,7 @@ public class CellularConnection: CellularConnectionProtocol {
         Logger.log("Response:\n\(response)", lineNumber: #line)
 
         guard (response as NSString).range(of: "HTTP/").location != NSNotFound else {
+            Logger.log("HTTP response parsing failed")
             completion(.failure(ConnectionError.httpResponseParsingFailed))
             return
         }
@@ -276,8 +328,10 @@ public class CellularConnection: CellularConnectionProtocol {
             if let match = match, let range = Range(match.range, in: response) {
                 let redirectURL = String(response[range])
                 let redirectResponse = "REDIRECT:" + redirectURL
+                Logger.log("HTTP redirect to: \(redirectURL)")
                 completion(.success(redirectResponse))
             } else {
+                Logger.log("HTTP response parsing failed")
                 completion(.failure(ConnectionError.httpResponseParsingFailed))
             }
         } catch {

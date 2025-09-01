@@ -24,7 +24,16 @@ import Network
 
 struct MockRequestManager: RequestManagerProtocol {
     let shouldFail: Bool
+    var testConnectivityResult: Bool = false
     let expectedError: RequestManager.RequestError?
+
+    func testConnectivity(
+        to host: String,
+        port: UInt16,
+        completion: @escaping (Bool) -> Void
+    ) {
+        completion(testConnectivityResult)
+    }
 
     func processSNAURL(
         _ url: String,

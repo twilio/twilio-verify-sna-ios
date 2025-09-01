@@ -62,7 +62,7 @@ final class NetworkRequestProviderTests: XCTestCase {
 
     func test_networkProvider_withInvalidRequest_shouldRespondWithExpectedError() {
         // Arrange
-        mockCellularConnection?.result = .failure(.invalidURL)
+        mockCellularConnection?.makeResult = .failure(.invalidURL)
 
         let urlString = "https://mi-sbox.dnlsrv.com/msbox/id/t20AHVnl?data=l%2BPA0m5y5sPgPl2"
         let expectedError = ConnectionError.invalidURL
@@ -88,7 +88,7 @@ final class NetworkRequestProviderTests: XCTestCase {
 
     func test_errorAssociatedValues_shouldHaveValues() {
         // Arrange
-        mockCellularConnection?.result = .failure(.httpResponseParsingFailed)
+        mockCellularConnection?.makeResult = .failure(.httpResponseParsingFailed)
 
         let urlString = "https://mi-sbox.dnlsrv.com/msbox/id/t20AHVnl?data=l%2BPA0m5y5sPgPl2"
         
@@ -111,5 +111,39 @@ final class NetworkRequestProviderTests: XCTestCase {
                 }
             }
         )
+    }
+
+    func test_testCellularConnectivity_withSuccessConnection_shouldReturnTrue() {
+        // Arrange
+        mockCellularConnection?.testCellularConnectivityResult = true
+        let host = "example.com"
+        let port: UInt16 = 443
+        let expectation = expectation(description: "Test cellular connectivity completed")
+
+        // Act
+        sut?.testCellularConnectivity(to: host, port: port) { success in
+            XCTAssertTrue(success)
+            expectation.fulfill()
+        }
+
+        // Assert
+        waitForExpectations(timeout: 1.0)
+    }
+
+    func test_testCellularConnectivity_withFailedConnection_shouldReturnFalse() {
+        // Arrange
+        mockCellularConnection?.testCellularConnectivityResult = false
+        let host = "example.com"
+        let port: UInt16 = 443
+        let expectation = expectation(description: "Test cellular connectivity completed")
+
+        // Act
+        sut?.testCellularConnectivity(to: host, port: port) { success in
+            XCTAssertFalse(success)
+            expectation.fulfill()
+        }
+
+        // Assert
+        waitForExpectations(timeout: 1.0)
     }
 }

@@ -25,6 +25,12 @@ public typealias NetworkRequestResult = (
 ) -> Void
 
 public protocol NetworkRequestProviderProtocol {
+    func testCellularConnectivity(
+        to host: String,
+        port: UInt16,
+        completion: @escaping (Bool) -> Void
+    )
+
     func performRequest(
         url: URL,
         using ipVersion: NWProtocolIP.Options.Version,

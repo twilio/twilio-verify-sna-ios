@@ -116,37 +116,42 @@ final class PhoneNumberViewController: UIViewController {
         let completePhoneNumber = phoneCountryCode.appending(phoneNumber)
 
         // Lets start a user verification by requesting it to our custom backend (that will call Twilio Verify services)
-
         Logger.startNewSession()
 
-        startVerification(
-            phoneNumber: completePhoneNumber,
-            backendUrl: backendUrl
-        ) { [weak self] snaUrl in
+        twilioVerify.testConnectivity(to: "apple.com", port: 80) { [weak self] hasCellularConnectivity in
+            if hasCellularConnectivity {
+                self?.startVerification(
+                    phoneNumber: completePhoneNumber,
+                    backendUrl: backendUrl
+                ) { [weak self] snaUrl in
 
-            /*
-             With the SNAURL retrieved, we have to make sure that the data
-             exists and it's not empty
-             */
-            guard let snaUrl = snaUrl, !snaUrl.isEmpty else {
+                    /*
+                     With the SNAURL retrieved, we have to make sure that the data
+                     exists and it's not empty
+                     */
+                    guard let snaUrl = snaUrl, !snaUrl.isEmpty else {
 
-                // If error:
+                        // If error:
 
-                // 1. Hide loader
-                self?.toggleLoader()
+                        // 1. Hide loader
+                        self?.toggleLoader()
 
-                // 2. Notify the user that something went wrong
-                self?.showGenericError("Unable to get SNA URL from backend.")
+                        // 2. Notify the user that something went wrong
+                        self?.showGenericError("Unable to get SNA URL from backend.")
 
-                return
+                        return
+                    }
+
+                    // if the SNAURL is valid, we have to use TwilioVerifySDK to process the url
+                    self?.processUrl(
+                        snaUrl: snaUrl,
+                        phoneNumber: completePhoneNumber,
+                        backendUrl: backendUrl
+                    )
+                }
+            } else {
+                self?.showGenericError("Can't reach any server using cellular network")
             }
-
-            // if the SNAURL is valid, we have to use TwilioVerifySDK to process the url
-            self?.processUrl(
-                snaUrl: snaUrl,
-                phoneNumber: completePhoneNumber,
-                backendUrl: backendUrl
-            )
         }
     }
 

@@ -82,6 +82,23 @@ public final class RequestManager {
 // MARK: - RequestProcessorProtocol
 extension RequestManager: RequestManagerProtocol {
 
+    /// Tests connectivity over a cellular interface by attempting to connect to the given host and port
+    /// - Parameters:
+    ///   - host: Hostname to probe (e.g., "apple.com")
+    ///   - port: TCP port number (e.g., 80 or 443)
+    ///   - completion: Closure called with a boolean result (success or failure)
+    public func testConnectivity(
+        to host: String,
+        port: UInt16,
+        completion: @escaping (Bool) -> Void
+    ) {
+        networkProvider.testCellularConnectivity(
+            to: host,
+            port: port,
+            completion: completion
+        )
+    }
+
     /// Method to process the SNA URL. This method will handle the url via cellular network using the `NetworkRequestProviderProtocol` dependency.
     /// - Parameters:
     ///   - url: SNA URL retrieved from backend
