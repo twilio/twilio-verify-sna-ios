@@ -82,7 +82,7 @@ public final class RequestManager {
 // MARK: - RequestProcessorProtocol
 extension RequestManager: RequestManagerProtocol {
 
-    /// Tests connectivity over a cellular interface by attempting to connect to the given host and port
+    /// Checks if the SNA service is available over a cellular interface
     /// - Parameters:
     ///   - completion: Closure called with a boolean result (success or failure)
     public func isAvailable(completion: @escaping (Bool) -> Void) {
