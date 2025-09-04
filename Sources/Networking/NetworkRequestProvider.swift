@@ -46,19 +46,11 @@ extension NetworkRequestProvider: NetworkRequestProviderProtocol {
 
     /// Tests connectivity over a cellular interface by attempting to connect to the given host and port
     /// - Parameters:
-    ///   - host: Hostname to probe (e.g., "apple.com")
-    ///   - port: TCP port number (e.g., 80 or 443)
     ///   - completion: Closure called with a boolean result (success or failure)
-    public func testCellularConnectivity(
-        to host: String,
-        port: UInt16,
+    public func isAvailable(
         completion: @escaping (Bool) -> Void
     ) {
-        cellularConnection.testCellularConnectivity(
-            to: host,
-            port: port,
-            completion: completion
-        )
+        cellularConnection.isAvailable(completion: completion)
     }
 
     /// This method will perform a regular GET operation via network using the cellular layer.
@@ -68,11 +60,10 @@ extension NetworkRequestProvider: NetworkRequestProviderProtocol {
     ///   - onComplete: Closure with `Result<Void, NetworkRequestProvider.RequestError>`.
     public func performRequest(
         url: URL,
-        using ipVersion: NWProtocolIP.Options.Version = .any,
         onComplete: @escaping NetworkRequestResult
     ) { 
         Logger.log("Start cellular connection", lineNumber: #line)
-        cellularConnection.makeRequest(url: url, options: .init(), using: ipVersion) { response in
+        cellularConnection.makeRequest(url: url, options: .init(), using: .any) { response in
             switch response {
                 case .success(let response):
                     onComplete(.success(response))

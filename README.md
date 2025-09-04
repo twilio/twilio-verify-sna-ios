@@ -111,19 +111,17 @@ import TwilioVerifySNA
 private lazy var twilioVerify: TwilioVerifySNA = TwilioVerifySNABuilder.build()
 ```
 
-3. Test cellular connectivity before attempting an SNA authentication (optional):
+3. Check cellular connectivity availability before attempting an SNA authentication (optional):
 
 ```swift
-func testConnectivity(
-  to host: String,
-  port: UInt16,
+func isAvailable(
   completion: @escaping (Bool) -> Void
 )
 ```
 
 ```swift
-twilioVerify.testConnectivity(to: "apple.com", port: 80) { isConnected in
-    if isConnected {
+twilioVerify.isAvailable { isAvailable in
+    if isAvailable {
         // Proceed with SNA URL processing
     } else {
         // Handle the case where cellular connectivity is unavailable
@@ -131,7 +129,20 @@ twilioVerify.testConnectivity(to: "apple.com", port: 80) { isConnected in
 }
 ```
 
-_Async alternative also available (iOS 13+)._
+_Async alternative:_
+
+```swift
+func isAvailable() async -> Bool
+```
+
+```swift
+let isAvailable = await twilioVerify.isAvailable()
+if isAvailable {
+    // Proceed with SNA URL processing
+} else {
+    // Handle the case where cellular connectivity is unavailable
+}
+```
 
 4. Process the SNA URL by calling the method:
 
@@ -186,9 +197,9 @@ class ViewController: UIViewController {
     }
 
     private func validateSNAURL() {
-        // First check for cellular connectivity
-        twilioVerify.testConnectivity(to: "apple.com", port: 80) { [weak self] isConnected in
-            guard isConnected else {
+        // First check for cellular connectivity availability
+        twilioVerify.isAvailable { [weak self] isAvailable in
+            guard isAvailable else {
                 // Handle the case where cellular connectivity is unavailable
                 return
             }

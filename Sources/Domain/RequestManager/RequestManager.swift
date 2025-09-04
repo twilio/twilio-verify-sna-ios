@@ -59,7 +59,7 @@ public final class RequestManager {
     ) {
         if result.contains(Constants.redirectionPath), !result.contains(Constants.successPath) {
             let redirectionUrl = getRedirectionUrl(for: result)
-            return processSNAURL(redirectionUrl, using: .any, onComplete: onComplete)
+            return processSNAURL(redirectionUrl, onComplete: onComplete)
         }
 
         guard result.contains(Constants.successPath) else {
@@ -84,19 +84,9 @@ extension RequestManager: RequestManagerProtocol {
 
     /// Tests connectivity over a cellular interface by attempting to connect to the given host and port
     /// - Parameters:
-    ///   - host: Hostname to probe (e.g., "apple.com")
-    ///   - port: TCP port number (e.g., 80 or 443)
     ///   - completion: Closure called with a boolean result (success or failure)
-    public func testConnectivity(
-        to host: String,
-        port: UInt16,
-        completion: @escaping (Bool) -> Void
-    ) {
-        networkProvider.testCellularConnectivity(
-            to: host,
-            port: port,
-            completion: completion
-        )
+    public func isAvailable(completion: @escaping (Bool) -> Void) {
+        networkProvider.isAvailable(completion: completion)
     }
 
     /// Method to process the SNA URL. This method will handle the url via cellular network using the `NetworkRequestProviderProtocol` dependency.
@@ -105,7 +95,6 @@ extension RequestManager: RequestManagerProtocol {
     ///   - onComplete: Closure with Result<Void, Error> to handle scenarios.
     public func processSNAURL(
         _ url: String,
-        using ipVersion: NWProtocolIP.Options.Version = .any,
         onComplete: @escaping ProcessSNAURLResult
     ) {
         guard let url = URL(string: url) else {
@@ -113,11 +102,7 @@ extension RequestManager: RequestManagerProtocol {
             return
         }
 
-        networkProvider.performRequest(
-            url: url,
-            using: ipVersion
-        ) { [weak self] result in
-
+        networkProvider.performRequest(url: url) { [weak self] result in
             guard let self = self else {
                 return onComplete(.failure(.instanceNotFound))
             }

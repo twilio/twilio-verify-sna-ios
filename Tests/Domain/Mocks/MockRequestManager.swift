@@ -24,20 +24,17 @@ import Network
 
 struct MockRequestManager: RequestManagerProtocol {
     let shouldFail: Bool
-    var testConnectivityResult: Bool = false
+    var isAvailableResult: Bool = false
     let expectedError: RequestManager.RequestError?
 
-    func testConnectivity(
-        to host: String,
-        port: UInt16,
+    func isAvailable(
         completion: @escaping (Bool) -> Void
     ) {
-        completion(testConnectivityResult)
+        completion(isAvailableResult)
     }
 
     func processSNAURL(
         _ url: String,
-        using ipVersion: NWProtocolIP.Options.Version,
         onComplete: @escaping ProcessSNAURLResult
     ) {
         if shouldFail {
@@ -47,8 +44,7 @@ struct MockRequestManager: RequestManagerProtocol {
 
         let networkProvider = MockNetworkRequestProvider()
 
-        networkProvider
-            .performRequest(url: URL(string: url)!, using: .any) { result in
+        networkProvider.performRequest(url: URL(string: url)!) { result in
             switch result {
                 case .success:
                     onComplete(.success)

@@ -11,12 +11,8 @@ import Network
 public protocol CellularConnectionProtocol {
     /// Tests connectivity over a cellular interface by attempting to connect to the given host and port
     /// - Parameters:
-    ///   - host: Hostname to probe (e.g., "apple.com")
-    ///   - port: TCP port number (e.g., 80 or 443)
     ///   - completion: Closure called with a boolean result (success or failure)
-    func testCellularConnectivity(
-        to host: String,
-        port: UInt16,
+    func isAvailable(
         completion: @escaping (Bool) -> Void
     )
 
@@ -38,6 +34,13 @@ public protocol CellularConnectionProtocol {
 /// using Network.framework's NWConnection for cellular network requests.
 public class CellularConnection: CellularConnectionProtocol {
 
+    // MARK: - Constants
+
+    private enum Constants {
+        static let isAvailableHost: NWEndpoint.Host = "verify.twilio.com"
+        static let isAvailablePort: NWEndpoint.Port = 443
+    }
+
     // MARK: - Properties
 
     private var connection: NWConnection?
@@ -48,15 +51,12 @@ public class CellularConnection: CellularConnectionProtocol {
 
     // MARK: - Public Methods
 
-    public func testCellularConnectivity(
-        to host: String,
-        port: UInt16 = 80,
+    public func isAvailable(
         completion: @escaping (Bool) -> Void
     ) {
-        let endpoint = NWEndpoint.hostPort(host: .init(host), port: .init(rawValue: port) ?? 80)
+        let endpoint = NWEndpoint.hostPort(host: Constants.isAvailableHost, port: Constants.isAvailablePort)
         let parameters = NWParameters.tcp
-        parameters.requiredInterfaceType = .cellular
-        parameters.prohibitedInterfaceTypes = [.wifi, .wiredEthernet, .loopback]
+        configureParameters(parameters)
 
         let connection = NWConnection(to: endpoint, using: parameters)
 
@@ -64,30 +64,30 @@ public class CellularConnection: CellularConnectionProtocol {
             switch state {
                 case .ready:
                     // Cellular network is working
-                    Logger.log("Cellular connectivity check to \(host):\(port) is reachable")
+                    Logger.log("Cellular connectivity check to \(Constants.isAvailableHost):\(Constants.isAvailablePort) successful - connection is ready")
                     completion(true)
                     connection.cancel()
                 case .failed, .cancelled:
                     guard connection.state != .cancelled else { break; }
                     // Cellular not working
-                    Logger.log("Cellular connectivity check to \(host):\(port) has been \(state == .cancelled ? "cancelled" : "failed")")
+                    Logger.log("Cellular connectivity check to \(Constants.isAvailableHost):\(Constants.isAvailablePort) \(state == .cancelled ? "was cancelled" : "failed to connect")")
                     completion(false)
                     connection.cancel()
                 case .waiting(let error):
                     // Cellular network is down
                     if #available(iOS 16.4, *) {
                         if error.errorCode == ENETDOWN {
-                            Logger.log("Cellular connectivity check to \(host):\(port) is down.")
+                            Logger.log("Cellular connectivity check to \(Constants.isAvailableHost):\(Constants.isAvailablePort) failed - network interface is down (error: \(error))")
                             completion(false)
                             connection.cancel()
                         }
                     } else if case let .posix(posixError) = error, posixError == .ENETDOWN {
-                        Logger.log("Cellular connectivity check to \(host):\(port) is down.")
+                        Logger.log("Cellular connectivity check to \(Constants.isAvailableHost):\(Constants.isAvailablePort) failed - network interface is down (error: \(posixError))")
                         completion(false)
                         connection.cancel()
                     }
                 default:
-                    break;
+                    break
             }
         }
 
@@ -115,6 +115,16 @@ public class CellularConnection: CellularConnectionProtocol {
 
     // MARK: - Internal Methods
 
+    /// Configures network parameters to ensure cellular-only connectivity
+    /// - Parameter parameters: The NWParameters object to configure
+    /// - Note: Sets cellular as required interface, prohibits other interfaces, allows expired DNS, and enables interactive multipath
+    private func configureParameters(_ parameters: NWParameters) {
+        parameters.requiredInterfaceType = .cellular
+        parameters.prohibitedInterfaceTypes = [.wifi, .wiredEthernet, .loopback]
+        parameters.expiredDNSBehavior = .allow
+        parameters.multipathServiceType = .interactive
+    }
+
     /// Creates a cellular network connection using Network framework
     /// - Parameters:
     ///   - url: The target URL for the connection
@@ -127,18 +137,12 @@ public class CellularConnection: CellularConnectionProtocol {
     ) throws(ConnectionError) {
         let port: NWEndpoint.Port = url.port.map { NWEndpoint.Port(integerLiteral: UInt16($0)) } ?? (url.scheme == "https" ? .https : .http)
 
-        guard let urlHost = url.host else {
-            throw ConnectionError.invalidURL
-        }
+        guard let urlHost = url.host else { throw ConnectionError.invalidURL }
 
         let host = NWEndpoint.Host(urlHost)
         let endpoint = NWEndpoint.hostPort(host: host, port: port)
         let parameters: NWParameters = url.scheme == "https" ? NWParameters(tls: .init()) : NWParameters(tls: nil)
-
-        parameters.requiredInterfaceType = .cellular
-        parameters.prohibitedInterfaceTypes = [.wifi, .wiredEthernet, .loopback]
-        parameters.expiredDNSBehavior = .allow
-        parameters.multipathServiceType = .interactive
+        configureParameters(parameters)
 
         if let protocolOption = parameters.defaultProtocolStack.internetProtocol as? NWProtocolIP.Options {
             protocolOption.version = ipVersion

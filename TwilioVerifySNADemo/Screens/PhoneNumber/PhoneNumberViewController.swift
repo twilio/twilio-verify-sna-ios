@@ -118,8 +118,8 @@ final class PhoneNumberViewController: UIViewController {
         // Lets start a user verification by requesting it to our custom backend (that will call Twilio Verify services)
         Logger.startNewSession()
 
-        twilioVerify.testConnectivity(to: "apple.com", port: 80) { [weak self] hasCellularConnectivity in
-            if hasCellularConnectivity {
+        twilioVerify.isAvailable { [weak self] isAvailable in
+            if isAvailable {
                 self?.startVerification(
                     phoneNumber: completePhoneNumber,
                     backendUrl: backendUrl

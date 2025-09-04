@@ -76,19 +76,9 @@ final class TwilioVerifySNASession: TwilioVerifySNA {
 
     /// Tests connectivity over a cellular interface by attempting to connect to the given host and port
     /// - Parameters:
-    ///   - host: Hostname to probe (e.g., "apple.com")
-    ///   - port: TCP port number (e.g., 80 or 443)
     ///   - completion: Closure called with a boolean result (success or failure)
-    public func testConnectivity(
-        to host: String = "apple.com",
-        port: UInt16 = 80,
-        completion: @escaping (Bool) -> Void
-    ) {
-        requestManager.testConnectivity(
-            to: host,
-            port: port,
-            completion: completion
-        )
+    public func isAvailable(completion: @escaping (Bool) -> Void) {
+        requestManager.isAvailable(completion: completion)
     }
 
     /// This method will process the SNA URL via different layers in order to provide a trusted validation of the identity of the user via the SNA URL.
@@ -105,14 +95,11 @@ final class TwilioVerifySNASession: TwilioVerifySNA {
         }
     }
 
-    /// `testConnectivity` method  async support.
+    /// `isAvailable` method async support.
     @available(iOS 13, *)
-    func testConnectivity(
-        to host: String = "apple.com",
-        port: UInt16 = 80
-    ) async -> Bool {
+    func isAvailable() async -> Bool {
         return await withCheckedContinuation { continuation in
-            testConnectivity(to: host, port: port) { result in
+            isAvailable { result in
                 continuation.resume(returning: result)
             }
         }
@@ -186,14 +173,10 @@ final class TwilioVerifySNASession: TwilioVerifySNA {
             return onComplete(.failure(.cellularNetworkNotAvailable))
         }
 
-        requestManager.processSNAURL(
-            url,
-            using: .any
-        ) { result in
+        requestManager.processSNAURL(url) { result in
             switch result {
                 case.failure(let cause):
                     onComplete(.failure(.requestError(cause: cause)))
-
                 case .success:
                     onComplete(.success)
             }

@@ -24,15 +24,13 @@ import Network
 
 class MockCellularConnection: CellularConnectionProtocol {
 
-    var testCellularConnectivityResult: Bool = false
+    var isAvailableResult: Bool = false
     var makeResult: Result<String, ConnectionError>?
 
-    func testCellularConnectivity(
-        to host: String,
-        port: UInt16,
+    func isAvailable(
         completion: @escaping (Bool) -> Void
     ) {
-        completion(testCellularConnectivityResult)
+        completion(isAvailableResult)
     }
 
     func makeRequest(

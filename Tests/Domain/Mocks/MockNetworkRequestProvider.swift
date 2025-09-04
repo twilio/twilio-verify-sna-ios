@@ -36,15 +36,11 @@ struct MockNetworkRequestProvider: NetworkRequestProviderProtocol {
 
     // MARK: - Public Methods
 
-    func testCellularConnectivity(
-        to host: String,
-        port: UInt16,
-        completion: @escaping (Bool) -> Void
-    ) {
-        connection.testCellularConnectivity(to: host, port: port, completion: completion)
+    func isAvailable(completion: @escaping (Bool) -> Void) {
+        connection.isAvailable(completion: completion)
     }
 
-    func performRequest(url: URL, using ipVersion: NWProtocolIP.Options.Version, onComplete: @escaping NetworkRequestResult) {
+    func performRequest(url: URL, onComplete: @escaping NetworkRequestResult) {
         connection.makeRequest(url: url, options: .init(), using: .any, completion: onComplete)
     }
 }

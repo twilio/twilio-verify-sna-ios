@@ -52,7 +52,7 @@ final class NetworkRequestProviderTests: XCTestCase {
             url: url,
             onComplete: { result in
                 switch result {
-                    case .success: break;
+                    case .success: break
                     case .failure:
                         XCTFail("Should not fail")
                 }
@@ -113,15 +113,13 @@ final class NetworkRequestProviderTests: XCTestCase {
         )
     }
 
-    func test_testCellularConnectivity_withSuccessConnection_shouldReturnTrue() {
+    func test_isAvailable_withSuccessConnection_shouldReturnTrue() {
         // Arrange
-        mockCellularConnection?.testCellularConnectivityResult = true
-        let host = "example.com"
-        let port: UInt16 = 443
+        mockCellularConnection?.isAvailableResult = true
         let expectation = expectation(description: "Test cellular connectivity completed")
 
         // Act
-        sut?.testCellularConnectivity(to: host, port: port) { success in
+        sut?.isAvailable { success in
             XCTAssertTrue(success)
             expectation.fulfill()
         }
@@ -130,15 +128,13 @@ final class NetworkRequestProviderTests: XCTestCase {
         waitForExpectations(timeout: 1.0)
     }
 
-    func test_testCellularConnectivity_withFailedConnection_shouldReturnFalse() {
+    func test_isAvailable_withFailedConnection_shouldReturnFalse() {
         // Arrange
-        mockCellularConnection?.testCellularConnectivityResult = false
-        let host = "example.com"
-        let port: UInt16 = 443
+        mockCellularConnection?.isAvailableResult = false
         let expectation = expectation(description: "Test cellular connectivity completed")
 
         // Act
-        sut?.testCellularConnectivity(to: host, port: port) { success in
+        sut?.isAvailable { success in
             XCTAssertFalse(success)
             expectation.fulfill()
         }
