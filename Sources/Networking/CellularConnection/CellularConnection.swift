@@ -39,6 +39,7 @@ public class CellularConnection: CellularConnectionProtocol {
     private enum Constants {
         static let isAvailableHost: NWEndpoint.Host = "verify.twilio.com"
         static let isAvailablePort: NWEndpoint.Port = 443
+        static let isAvailableTimeout: TimeInterval = 3
     }
 
     // MARK: - Properties
@@ -60,31 +61,40 @@ public class CellularConnection: CellularConnectionProtocol {
 
         let connection = NWConnection(to: endpoint, using: parameters)
 
+        // Set timeout for connectivity check
+        let timeoutWorkItem = DispatchWorkItem {
+            Logger.log("Cellular connectivity check timed out after \(Constants.isAvailableTimeout)s, with last state: \(connection.state)")
+            completion(false)
+            connection.cancel()
+        }
+
+        let completeConnection: (_ isAvailable: Bool) -> Void = { isAvailable in
+            completion(isAvailable)
+            connection.cancel()
+            timeoutWorkItem.cancel()
+        }
+
         connection.stateUpdateHandler = { state in
             switch state {
                 case .ready:
                     // Cellular network is working
                     Logger.log("Cellular connectivity check to \(Constants.isAvailableHost):\(Constants.isAvailablePort) successful - connection is ready")
-                    completion(true)
-                    connection.cancel()
+                    completeConnection(true)
                 case .failed, .cancelled:
                     guard connection.state != .cancelled else { break; }
                     // Cellular not working
                     Logger.log("Cellular connectivity check to \(Constants.isAvailableHost):\(Constants.isAvailablePort) \(state == .cancelled ? "was cancelled" : "failed to connect")")
-                    completion(false)
-                    connection.cancel()
+                    completeConnection(false)
                 case .waiting(let error):
                     // Cellular network is down
                     if #available(iOS 16.4, *) {
                         if error.errorCode == ENETDOWN {
                             Logger.log("Cellular connectivity check to \(Constants.isAvailableHost):\(Constants.isAvailablePort) failed - network interface is down (error: \(error))")
-                            completion(false)
-                            connection.cancel()
+                            completeConnection(false)
                         }
                     } else if case let .posix(posixError) = error, posixError == .ENETDOWN {
                         Logger.log("Cellular connectivity check to \(Constants.isAvailableHost):\(Constants.isAvailablePort) failed - network interface is down (error: \(posixError))")
-                        completion(false)
-                        connection.cancel()
+                        completeConnection(false)
                     }
                 default:
                     break
@@ -92,6 +102,9 @@ public class CellularConnection: CellularConnectionProtocol {
         }
 
         connection.start(queue: DispatchQueue.global(qos: .background))
+
+        // Append timeout to the same background threat
+        DispatchQueue.global(qos: .background).asyncAfter(deadline: .now() + Constants.isAvailableTimeout, execute: timeoutWorkItem)
     }
 
     public func makeRequest(
