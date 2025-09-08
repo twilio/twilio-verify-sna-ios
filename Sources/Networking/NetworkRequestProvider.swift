@@ -18,13 +18,13 @@
 //
 
 import Foundation
-import SNANetworking
+import Network
 
 public final class NetworkRequestProvider {
 
     // MARK: - Properties
 
-    private let cellularSession: CellularSessionProtocol
+    private let cellularConnection: CellularConnectionProtocol
 
     // MARK: - Computed properties
 
@@ -35,14 +35,23 @@ public final class NetworkRequestProvider {
     // MARK: - Class lifecycle
 
     public init(
-        cellularSession: CellularSessionProtocol
+        cellularConnection: CellularConnectionProtocol = CellularConnection()
     ) {
-        self.cellularSession = cellularSession
+        self.cellularConnection = cellularConnection
     }
 }
 
 // MARK: - NetworkRequestProviderProtocol
 extension NetworkRequestProvider: NetworkRequestProviderProtocol {
+
+    /// Checks if the SNA service is available over a cellular interface
+    /// - Parameters:
+    ///   - completion: Closure called with a boolean result (success or failure)
+    public func isAvailable(
+        completion: @escaping (Bool) -> Void
+    ) {
+        cellularConnection.isAvailable(completion: completion)
+    }
 
     /// This method will perform a regular GET operation via network using the cellular layer.
     /// - Note: This method **will not** work if you are using a simulator or a device with no SIM-CARD (and internet working).
@@ -52,23 +61,16 @@ extension NetworkRequestProvider: NetworkRequestProviderProtocol {
     public func performRequest(
         url: URL,
         onComplete: @escaping NetworkRequestResult
-    ) {
-        networkRequestQueue.async {
-            let networkOperationOnCellularData = self.cellularSession.performRequest(url)
-
-            guard case .success = networkOperationOnCellularData.status else {
-                onComplete(
-                    .failure(.cellularRequestError(cause: networkOperationOnCellularData.status))
-                )
-                return
+    ) { 
+        Logger.log("Start cellular connection", lineNumber: #line)
+        cellularConnection.makeRequest(url: url, options: .init(), using: .any) { response in
+            switch response {
+                case .success(let response):
+                    onComplete(.success(response))
+                case .failure(let error):
+                    onComplete(.failure(error))
+                    Logger.log("Received error: \(error.localizedDescription)", lineNumber: #line)
             }
-
-            guard let result = networkOperationOnCellularData.result else {
-                onComplete(.failure(.requestFinishedWithNoResult))
-                return
-            }
-
-            onComplete(.success(result))
         }
     }
 }

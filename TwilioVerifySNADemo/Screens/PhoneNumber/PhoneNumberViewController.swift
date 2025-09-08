@@ -68,6 +68,13 @@ final class PhoneNumberViewController: UIViewController {
         )
     }
 
+    @IBAction func didTapOnLoggerButton(_ sender: Any) {
+        performSegue(
+            withIdentifier: Segues.loggerViewScreen.rawValue,
+            sender: nil
+        )
+    }
+    
     @IBAction private func submitButtonAction() {
         /*
          Let's validate the user input is not empty.
@@ -109,35 +116,42 @@ final class PhoneNumberViewController: UIViewController {
         let completePhoneNumber = phoneCountryCode.appending(phoneNumber)
 
         // Lets start a user verification by requesting it to our custom backend (that will call Twilio Verify services)
+        Logger.startNewSession()
 
-        startVerification(
-            phoneNumber: completePhoneNumber,
-            backendUrl: backendUrl
-        ) { [weak self] snaUrl in
+        twilioVerify.isAvailable { [weak self] isAvailable in
+            if isAvailable {
+                self?.startVerification(
+                    phoneNumber: completePhoneNumber,
+                    backendUrl: backendUrl
+                ) { [weak self] snaUrl in
 
-            /*
-             With the SNAURL retrieved, we have to make sure that the data
-             exists and it's not empty
-             */
-            guard let snaUrl = snaUrl, !snaUrl.isEmpty else {
+                    /*
+                     With the SNAURL retrieved, we have to make sure that the data
+                     exists and it's not empty
+                     */
+                    guard let snaUrl = snaUrl, !snaUrl.isEmpty else {
 
-                // If error:
+                        // If error:
 
-                // 1. Hide loader
-                self?.toggleLoader()
+                        // 1. Hide loader
+                        self?.toggleLoader()
 
-                // 2. Notify the user that something went wrong
-                self?.showGenericError("Unable to get SNA URL from backend.")
+                        // 2. Notify the user that something went wrong
+                        self?.showGenericError("Unable to get SNA URL from backend.")
 
-                return
+                        return
+                    }
+
+                    // if the SNAURL is valid, we have to use TwilioVerifySDK to process the url
+                    self?.processUrl(
+                        snaUrl: snaUrl,
+                        phoneNumber: completePhoneNumber,
+                        backendUrl: backendUrl
+                    )
+                }
+            } else {
+                self?.showGenericError("Can't reach any server using cellular network")
             }
-
-            // if the SNAURL is valid, we have to use TwilioVerifySDK to process the url
-            self?.processUrl(
-                snaUrl: snaUrl,
-                phoneNumber: completePhoneNumber,
-                backendUrl: backendUrl
-            )
         }
     }
 
@@ -272,6 +286,7 @@ extension PhoneNumberViewController {
     private enum Segues: String {
         case verificationSuccessfulScreen
         case verificationErrorScreen
+        case loggerViewScreen
     }
 
     /**
@@ -398,4 +413,4 @@ extension PhoneNumberViewController {
 }
 
 /// Not required for the SDK implementation.
-private let sampleAppVersion = "0.0.9"
+private let sampleAppVersion = "1.0.0"

@@ -18,22 +18,31 @@
 //
 
 import XCTest
-import SNANetworking
+import Network
 
 @testable import TwilioVerifySNA
 
-class MockCellularSession: CellularSessionProtocol {
-    let status: CellularSessionStatus
+class MockCellularConnection: CellularConnectionProtocol {
 
-    init(status: CellularSessionStatus = .success) {
-        self.status = status
+    var isAvailableResult: Bool = false
+    var makeResult: Result<String, ConnectionError>?
+
+    func isAvailable(
+        completion: @escaping (Bool) -> Void
+    ) {
+        completion(isAvailableResult)
     }
 
-    func performRequest(_ url: URL) -> CellularSessionResult {
-        let result = CellularSessionResult()
-        result.status = status
-        result.result = String(describing: status)
-
-        return result
+    func makeRequest(
+        url: URL,
+        options: RequestOptions,
+        using ipVersion: NWProtocolIP.Options.Version,
+        completion: @escaping (Result<String, ConnectionError>) -> Void
+    ) {
+        if let makeResult {
+            completion(makeResult)
+        } else {
+            completion(.success(""))
+        }
     }
 }

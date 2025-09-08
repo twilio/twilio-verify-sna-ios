@@ -19,7 +19,6 @@
 
 import Foundation
 import Network
-import SNANetworking
 
 final class TwilioVerifySNASession: TwilioVerifySNA {
 
@@ -61,7 +60,7 @@ final class TwilioVerifySNASession: TwilioVerifySNA {
     init(
         requestManager: RequestManagerProtocol = RequestManager(
             networkProvider: NetworkRequestProvider(
-                cellularSession: CellularSession()
+                cellularConnection: CellularConnection()
             )
         )
     ) {
@@ -75,6 +74,13 @@ final class TwilioVerifySNASession: TwilioVerifySNA {
 
     // MARK: - Protocol implementation
 
+    /// Checks if the SNA service is available over a cellular interface
+    /// - Parameters:
+    ///   - completion: Closure called with a boolean result (success or failure)
+    public func isAvailable(completion: @escaping (Bool) -> Void) {
+        requestManager.isAvailable(completion: completion)
+    }
+
     /// This method will process the SNA URL via different layers in order to provide a trusted validation of the identity of the user via the SNA URL.
     ///  - Note: This method work entirely on a background thread and will respond on a background thread.
     /// - Parameters:
@@ -86,6 +92,16 @@ final class TwilioVerifySNASession: TwilioVerifySNA {
     ) {
         urlRequestQueue.async {
             self.handleURLRequest(url, onComplete: onComplete)
+        }
+    }
+
+    /// `isAvailable` method async support.
+    @available(iOS 13, *)
+    func isAvailable() async -> Bool {
+        return await withCheckedContinuation { continuation in
+            isAvailable { result in
+                continuation.resume(returning: result)
+            }
         }
     }
 
@@ -157,13 +173,10 @@ final class TwilioVerifySNASession: TwilioVerifySNA {
             return onComplete(.failure(.cellularNetworkNotAvailable))
         }
 
-        requestManager.processSNAURL(
-            url
-        ) { result in
+        requestManager.processSNAURL(url) { result in
             switch result {
                 case.failure(let cause):
                     onComplete(.failure(.requestError(cause: cause)))
-
                 case .success:
                     onComplete(.success)
             }

@@ -23,10 +23,17 @@ public typealias ProcessURLResult = Result<Void, TwilioVerifySNAError>
 public typealias ProcessURLCallback = (ProcessURLResult) -> Void
 
 public protocol TwilioVerifySNA {
+    func isAvailable(
+        completion: @escaping (Bool) -> Void
+    )
+
     func processURL(
         _ url: String,
         onComplete: @escaping ProcessURLCallback
     )
+
+    @available(iOS 13, *)
+    func isAvailable() async -> Bool
 
     @available(iOS 13, *)
     func processURL(_ url: String) async -> ProcessURLResult

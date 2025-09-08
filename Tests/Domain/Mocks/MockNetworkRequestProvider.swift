@@ -18,25 +18,29 @@
 //
 
 import XCTest
-import SNANetworking
+import Network
 
 @testable import TwilioVerifySNA
 
 struct MockNetworkRequestProvider: NetworkRequestProviderProtocol {
 
-    let session: CellularSessionProtocol
+    // MARK: - Properties
 
-    init(session: CellularSessionProtocol = MockCellularSession()) {
-        self.session = session
+    let connection: CellularConnectionProtocol
+
+    // MARK: - Initializer
+
+    init(connection: CellularConnectionProtocol = MockCellularConnection()) {
+        self.connection = connection
+    }
+
+    // MARK: - Public Methods
+
+    func isAvailable(completion: @escaping (Bool) -> Void) {
+        connection.isAvailable(completion: completion)
     }
 
     func performRequest(url: URL, onComplete: @escaping NetworkRequestResult) {
-        let request = session.performRequest(url)
-
-        guard let result = request.result else {
-            return onComplete(.failure(.requestFinishedWithNoResult))
-        }
-
-        onComplete(.success(result))
+        connection.makeRequest(url: url, options: .init(), using: .any, completion: onComplete)
     }
 }

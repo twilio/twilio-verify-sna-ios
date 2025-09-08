@@ -18,6 +18,7 @@
 //
 
 import Foundation
+import Network
 
 /// RequestManager:
 /// Handles the SNA URL validation logic, communicates with `NetworkRequestProvider` and `TwilioVerifySession`.
@@ -81,6 +82,13 @@ public final class RequestManager {
 // MARK: - RequestProcessorProtocol
 extension RequestManager: RequestManagerProtocol {
 
+    /// Checks if the SNA service is available over a cellular interface
+    /// - Parameters:
+    ///   - completion: Closure called with a boolean result (success or failure)
+    public func isAvailable(completion: @escaping (Bool) -> Void) {
+        networkProvider.isAvailable(completion: completion)
+    }
+
     /// Method to process the SNA URL. This method will handle the url via cellular network using the `NetworkRequestProviderProtocol` dependency.
     /// - Parameters:
     ///   - url: SNA URL retrieved from backend
@@ -94,10 +102,7 @@ extension RequestManager: RequestManagerProtocol {
             return
         }
 
-        networkProvider.performRequest(
-            url: url
-        ) { [weak self] result in
-
+        networkProvider.performRequest(url: url) { [weak self] result in
             guard let self = self else {
                 return onComplete(.failure(.instanceNotFound))
             }
@@ -105,7 +110,6 @@ extension RequestManager: RequestManagerProtocol {
             switch result {
                 case .failure(let cause):
                     onComplete(.failure(.networkingError(cause: cause)))
-
                 case .success(let response):
                     self.processRequestResult(response, onComplete: onComplete)
             }

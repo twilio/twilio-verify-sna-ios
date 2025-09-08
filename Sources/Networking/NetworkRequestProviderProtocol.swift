@@ -18,13 +18,17 @@
 //
 
 import Foundation
-import SNANetworking
+import Network
 
 public typealias NetworkRequestResult = (
-    Result<String, NetworkRequestProvider.RequestError>
+    Result<String, ConnectionError>
 ) -> Void
 
 public protocol NetworkRequestProviderProtocol {
+    func isAvailable(
+        completion: @escaping (Bool) -> Void
+    )
+
     func performRequest(
         url: URL,
         onComplete: @escaping NetworkRequestResult

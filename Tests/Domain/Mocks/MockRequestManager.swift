@@ -18,14 +18,20 @@
 //
 
 import XCTest
-import SNANetworking
+import Network
 
 @testable import TwilioVerifySNA
 
 struct MockRequestManager: RequestManagerProtocol {
-
     let shouldFail: Bool
+    var isAvailableResult: Bool = false
     let expectedError: RequestManager.RequestError?
+
+    func isAvailable(
+        completion: @escaping (Bool) -> Void
+    ) {
+        completion(isAvailableResult)
+    }
 
     func processSNAURL(
         _ url: String,

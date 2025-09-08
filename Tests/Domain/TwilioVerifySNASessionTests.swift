@@ -101,4 +101,38 @@ final class TwilioVerifySNASessionTests: XCTestCase {
             }
         )
     }
+
+    func test_isAvailable_withSuccessConnection_shouldReturnTrue() {
+        // Arrange
+        var mockRequestManager = MockRequestManager(shouldFail: false, expectedError: nil)
+        mockRequestManager.isAvailableResult = true
+        sut = TwilioVerifySNASession(requestManager: mockRequestManager)
+        let expectation = expectation(description: "Test isAvailable completed")
+
+        // Act
+        sut.isAvailable { success in
+            // Assert
+            XCTAssertTrue(success)
+            expectation.fulfill()
+        }
+
+        waitForExpectations(timeout: 1.0)
+    }
+
+    func test_isAvailable_withFailedConnection_shouldReturnFalse() {
+        // Arrange
+        var mockRequestManager = MockRequestManager(shouldFail: false, expectedError: nil)
+        mockRequestManager.isAvailableResult = false
+        sut = TwilioVerifySNASession(requestManager: mockRequestManager)
+        let expectation = expectation(description: "Test isAvailable completed")
+
+        // Act
+        sut.isAvailable { success in
+            // Assert
+            XCTAssertFalse(success)
+            expectation.fulfill()
+        }
+
+        waitForExpectations(timeout: 1.0)
+    }
 }

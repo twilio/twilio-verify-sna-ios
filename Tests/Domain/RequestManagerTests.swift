@@ -18,7 +18,6 @@
 //
 
 import XCTest
-import SNANetworking
 
 @testable import TwilioVerifySNA
 

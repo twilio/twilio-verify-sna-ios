@@ -18,12 +18,17 @@
 //
 
 import Foundation
+import Network
 
 public typealias ProcessSNAURLResult = (
     Result<Void, RequestManager.RequestError>
 ) -> Void
 
 public protocol RequestManagerProtocol {
+    func isAvailable(
+        completion: @escaping (Bool) -> Void
+    )
+
     func processSNAURL(
         _ url: String,
         onComplete: @escaping ProcessSNAURLResult
