@@ -144,42 +144,68 @@ if isAvailable {
 }
 ```
 
-4. Process the SNA URL by calling the method:
+4. Process the SNA URL
 
-```swift
-func processURL(
-  _ url: String,
-  onComplete: @escaping ProcessURLCallback
-)
-```
+There are **4 ways** to call `processURL`, combining callback/async with an optional timeout:
+
+| Style | Timeout | Method |
+|-------|---------|--------|
+| Callback | No | `processURL(_:onComplete:)` |
+| Callback | Yes | `processURL(_:timeout:onComplete:)` |
+| Async | No | `processURL(_:) async` |
+| Async | Yes | `processURL(_:timeout:) async` |
+
+> **Note:** The `timeout` parameter (in seconds) applies to **each individual request hop** (including redirects). When omitted or `nil`, requests have no timeout limit.
+
+#### 4.1 Callback without timeout
 
 ```swift
 twilioVerify.processURL(snaUrlFromBackend) { result in
     switch result {
       case .success:
-      // Handle success scenario
-
+        // Handle success scenario
       case .failure(let error):
-      // Handle error scenario
+        // Handle error scenario
     }
 }
 ```
 
-_Async alternative:_
+#### 4.2 Callback with timeout
 
 ```swift
-func processURL(_ url: String) async -> ProcessURLResult
+twilioVerify.processURL(snaUrlFromBackend, timeout: 10) { result in
+    switch result {
+      case .success:
+        // Handle success scenario
+      case .failure(let error):
+        // Handle error scenario (may be a .timeout error)
+    }
+}
 ```
+
+#### 4.3 Async without timeout (iOS 13+)
 
 ```swift
 let result = await twilioVerify.processURL(snaUrlFromBackend)
 
 switch result {
   case .success:
-  // Handle success scenario
-
+    // Handle success scenario
   case .failure(let error):
-  // Handle error scenario
+    // Handle error scenario
+}
+```
+
+#### 4.4 Async with timeout (iOS 13+)
+
+```swift
+let result = await twilioVerify.processURL(snaUrlFromBackend, timeout: 10)
+
+switch result {
+  case .success:
+    // Handle success scenario
+  case .failure(let error):
+    // Handle error scenario (may be a .timeout error)
 }
 ```
 
@@ -364,6 +390,11 @@ See `CellularConnection+Models.swift`
     <td>HTTP response parsing failed</td>
     <td>HTTP response parsing encountered an error</td>
   </tr>
+  <tr>
+    <td>timeout</td>
+    <td>Request timed out</td>
+    <td>The request did not complete within the specified timeout interval</td>
+  </tr>
 </table>
 
 ### Networking
@@ -467,6 +498,7 @@ twilioVerify.processURL(snaUrl) { result in
                                     case .requestFailed(let error): return
                                     case .invalidResponse: return
                                     case .httpResponseParsingFailed: return
+                                    case .timeout: return
                                 }
                         }
                 }

@@ -57,13 +57,15 @@ extension NetworkRequestProvider: NetworkRequestProviderProtocol {
     /// - Note: This method **will not** work if you are using a simulator or a device with no SIM-CARD (and internet working).
     /// - Parameters:
     ///   - url: SNA URL provided by your backend.
+    ///   - timeout: Optional timeout in seconds for the request.
     ///   - onComplete: Closure with `Result<Void, NetworkRequestProvider.RequestError>`.
     public func performRequest(
         url: URL,
+        timeout: TimeInterval? = nil,
         onComplete: @escaping NetworkRequestResult
-    ) { 
+    ) {
         Logger.log("Start cellular connection", lineNumber: #line)
-        cellularConnection.makeRequest(url: url, options: .init(), using: .any) { response in
+        cellularConnection.makeRequest(url: url, options: .init(timeout: timeout), using: .any) { response in
             switch response {
                 case .success(let response):
                     onComplete(.success(response))

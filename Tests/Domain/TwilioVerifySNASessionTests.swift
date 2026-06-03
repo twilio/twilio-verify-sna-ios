@@ -104,7 +104,7 @@ final class TwilioVerifySNASessionTests: XCTestCase {
 
     func test_isAvailable_withSuccessConnection_shouldReturnTrue() {
         // Arrange
-        var mockRequestManager = MockRequestManager(shouldFail: false, expectedError: nil)
+        let mockRequestManager = MockRequestManager(shouldFail: false, expectedError: nil)
         mockRequestManager.isAvailableResult = true
         sut = TwilioVerifySNASession(requestManager: mockRequestManager)
         let expectation = expectation(description: "Test isAvailable completed")
@@ -121,7 +121,7 @@ final class TwilioVerifySNASessionTests: XCTestCase {
 
     func test_isAvailable_withFailedConnection_shouldReturnFalse() {
         // Arrange
-        var mockRequestManager = MockRequestManager(shouldFail: false, expectedError: nil)
+        let mockRequestManager = MockRequestManager(shouldFail: false, expectedError: nil)
         mockRequestManager.isAvailableResult = false
         sut = TwilioVerifySNASession(requestManager: mockRequestManager)
         let expectation = expectation(description: "Test isAvailable completed")
@@ -134,5 +134,56 @@ final class TwilioVerifySNASessionTests: XCTestCase {
         }
 
         waitForExpectations(timeout: 1.0)
+    }
+
+    func test_processURL_withTimeout_shouldPassTimeoutToRequestManager() async {
+        // Arrange
+        let mockRequestManager = MockRequestManager(shouldFail: false, expectedError: nil)
+        sut = TwilioVerifySNASession(requestManager: mockRequestManager)
+        sut.set(networkStatus: .connected)
+        let snaUrl = "https://mi-sbox.dnlsrv.com/msbox/id/t20AHVnl?data=test"
+        let expectedTimeout: TimeInterval = 10.0
+
+        // Act
+        _ = await sut.processURL(snaUrl, timeout: expectedTimeout)
+
+        // Assert
+        XCTAssertEqual(mockRequestManager.lastReceivedTimeout, expectedTimeout)
+    }
+
+    func test_processURL_withNilTimeout_shouldPassNilToRequestManager() async {
+        // Arrange
+        let mockRequestManager = MockRequestManager(shouldFail: false, expectedError: nil)
+        sut = TwilioVerifySNASession(requestManager: mockRequestManager)
+        sut.set(networkStatus: .connected)
+        let snaUrl = "https://mi-sbox.dnlsrv.com/msbox/id/t20AHVnl?data=test"
+
+        // Act
+        _ = await sut.processURL(snaUrl)
+
+        // Assert
+        XCTAssertNil(mockRequestManager.lastReceivedTimeout)
+    }
+
+    func test_processURL_withTimeout_whenTimeoutError_shouldReturnRequestError() async {
+        // Arrange
+        let mockRequestManager = MockRequestManager(
+            shouldFail: true,
+            expectedError: .networkingError(cause: .timeout)
+        )
+        sut = TwilioVerifySNASession(requestManager: mockRequestManager)
+        sut.set(networkStatus: .connected)
+        let snaUrl = "https://mi-sbox.dnlsrv.com/msbox/id/t20AHVnl?data=test"
+
+        // Act
+        let result = await sut.processURL(snaUrl, timeout: 5.0)
+
+        // Assert
+        switch result {
+            case .failure(.requestError(let cause)):
+                XCTAssertEqual(cause, .networkingError(cause: .timeout))
+            default:
+                XCTFail("Expected timeout error")
+        }
     }
 }

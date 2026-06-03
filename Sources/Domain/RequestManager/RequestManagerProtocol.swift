@@ -31,6 +31,16 @@ public protocol RequestManagerProtocol {
 
     func processSNAURL(
         _ url: String,
+        timeout: TimeInterval?,
         onComplete: @escaping ProcessSNAURLResult
     )
+}
+
+public extension RequestManagerProtocol {
+    func processSNAURL(
+        _ url: String,
+        onComplete: @escaping ProcessSNAURLResult
+    ) {
+        processSNAURL(url, timeout: nil, onComplete: onComplete)
+    }
 }

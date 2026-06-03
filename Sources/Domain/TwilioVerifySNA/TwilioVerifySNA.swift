@@ -29,6 +29,7 @@ public protocol TwilioVerifySNA {
 
     func processURL(
         _ url: String,
+        timeout: TimeInterval?,
         onComplete: @escaping ProcessURLCallback
     )
 
@@ -36,7 +37,21 @@ public protocol TwilioVerifySNA {
     func isAvailable() async -> Bool
 
     @available(iOS 13, *)
-    func processURL(_ url: String) async -> ProcessURLResult
+    func processURL(_ url: String, timeout: TimeInterval?) async -> ProcessURLResult
+}
+
+public extension TwilioVerifySNA {
+    func processURL(
+        _ url: String,
+        onComplete: @escaping ProcessURLCallback
+    ) {
+        processURL(url, timeout: nil, onComplete: onComplete)
+    }
+
+    @available(iOS 13, *)
+    func processURL(_ url: String) async -> ProcessURLResult {
+        await processURL(url, timeout: nil)
+    }
 }
 
 /// This extension allow us to return a void in the 'success' scenario for Result

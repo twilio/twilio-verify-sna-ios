@@ -26,6 +26,7 @@ class MockCellularConnection: CellularConnectionProtocol {
 
     var isAvailableResult: Bool = false
     var makeResult: Result<String, ConnectionError>?
+    var lastReceivedOptions: RequestOptions?
 
     func isAvailable(
         completion: @escaping (Bool) -> Void
@@ -39,6 +40,7 @@ class MockCellularConnection: CellularConnectionProtocol {
         using ipVersion: NWProtocolIP.Options.Version,
         completion: @escaping (Result<String, ConnectionError>) -> Void
     ) {
+        lastReceivedOptions = options
         if let makeResult {
             completion(makeResult)
         } else {

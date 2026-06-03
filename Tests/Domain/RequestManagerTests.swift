@@ -90,4 +90,70 @@ final class RequestManagerTests: XCTestCase {
             }
         )
     }
+
+    func test_processSNAURL_withTimeout_shouldPassTimeoutToNetworkProvider() {
+        // Arrange
+        let mockNetworkProvider = MockNetworkRequestProvider()
+        sut = RequestManager(networkProvider: mockNetworkProvider)
+        let validUrl = "https://mi-sbox.dnlsrv.com/msbox/id/t20AHVnl?data=test"
+        let expectedTimeout: TimeInterval = 15.0
+
+        // Act
+        sut?.processSNAURL(validUrl, timeout: expectedTimeout) { _ in }
+
+        // Assert
+        XCTAssertEqual(mockNetworkProvider.lastReceivedTimeout, expectedTimeout)
+    }
+
+    func test_processSNAURL_withNilTimeout_shouldPassNilToNetworkProvider() {
+        // Arrange
+        let mockNetworkProvider = MockNetworkRequestProvider()
+        sut = RequestManager(networkProvider: mockNetworkProvider)
+        let validUrl = "https://mi-sbox.dnlsrv.com/msbox/id/t20AHVnl?data=test"
+
+        // Act
+        sut?.processSNAURL(validUrl) { _ in }
+
+        // Assert
+        XCTAssertNil(mockNetworkProvider.lastReceivedTimeout)
+    }
+
+    func test_processSNAURL_withTimeout_whenTimeoutError_shouldReturnNetworkingError() {
+        // Arrange
+        let mockConnection = MockCellularConnection()
+        mockConnection.makeResult = .failure(.timeout)
+        let mockNetworkProvider = MockNetworkRequestProvider(connection: mockConnection)
+        sut = RequestManager(networkProvider: mockNetworkProvider)
+        let validUrl = "https://mi-sbox.dnlsrv.com/msbox/id/t20AHVnl?data=test"
+        let expectedError: RequestManager.RequestError = .networkingError(cause: .timeout)
+
+        // Act
+        sut?.processSNAURL(validUrl, timeout: 5.0) { result in
+            // Assert
+            switch result {
+                case .success:
+                    XCTFail("Should not succeed")
+                case .failure(let cause):
+                    XCTAssertEqual(cause, expectedError)
+            }
+        }
+    }
+
+    func test_processRequestResult_withTimeout_shouldPassTimeoutOnRedirect() {
+        // Arrange
+        let mockNetworkProvider = MockNetworkRequestProvider()
+        sut = RequestManager(networkProvider: mockNetworkProvider)
+        let redirectResult = "REDIRECT:https://example.com/next-hop?data=test"
+        let expectedTimeout: TimeInterval = 8.0
+
+        // Act
+        sut?.processRequestResult_forTesting(
+            redirectResult,
+            timeout: expectedTimeout,
+            onComplete: { _ in }
+        )
+
+        // Assert - timeout was passed through to the network provider during redirect
+        XCTAssertEqual(mockNetworkProvider.lastReceivedTimeout, expectedTimeout)
+    }
 }

@@ -85,13 +85,15 @@ final class TwilioVerifySNASession: TwilioVerifySNA {
     ///  - Note: This method work entirely on a background thread and will respond on a background thread.
     /// - Parameters:
     ///   - url: SNA URL provided by your backend.
+    ///   - timeout: Optional timeout in seconds for each request hop.
     ///   - onComplete: Closure with `Result<Void, TwilioVerifySNASession.Error>`.
     func processURL(
         _ url: String,
+        timeout: TimeInterval? = nil,
         onComplete: @escaping ProcessURLCallback
     ) {
         urlRequestQueue.async {
-            self.handleURLRequest(url, onComplete: onComplete)
+            self.handleURLRequest(url, timeout: timeout, onComplete: onComplete)
         }
     }
 
@@ -107,9 +109,9 @@ final class TwilioVerifySNASession: TwilioVerifySNA {
 
     /// `processURL` method  async support.
     @available(iOS 13, *)
-    func processURL(_ url: String) async -> ProcessURLResult {
+    func processURL(_ url: String, timeout: TimeInterval? = nil) async -> ProcessURLResult {
         return await withCheckedContinuation { continuation in
-            processURL(url) { result in
+            processURL(url, timeout: timeout) { result in
                 continuation.resume(returning: result)
             }
         }
@@ -135,9 +137,11 @@ final class TwilioVerifySNASession: TwilioVerifySNA {
     /// for a moment the execution of the method in order to wait the network status.
     /// - Parameters:
     ///   - url: SNA URL provided by your backend
+    ///   - timeout: Optional timeout in seconds for each request hop.
     ///   - completionHandler: Closure with `Result<Void, TwilioVerifySNASession.Error>`
     private func waitForConnectionResultAndContinue(
         with url: String,
+        timeout: TimeInterval?,
         and completionHandler: @escaping ProcessURLCallback
     ) {
         guard waitForConnectionAccumulatedTime < Constants.waitForConnectionToleranceInSeconds else {
@@ -148,21 +152,24 @@ final class TwilioVerifySNASession: TwilioVerifySNA {
             deadline: .now() + Constants.waitForConnectionTimeInSeconds
         ) { [weak self] in
             self?.waitForConnectionAccumulatedTime += Constants.waitForConnectionTimeInSeconds
-            self?.processURL(url, onComplete: completionHandler)
+            self?.processURL(url, timeout: timeout, onComplete: completionHandler)
         }
     }
 
     /// This method will process the SNA URL request and validate that the network is in optimal conditions to perform the network request.
     /// - Parameters:
     ///   - url: SNA URL provided by your backend
+    ///   - timeout: Optional timeout in seconds for each request hop.
     ///   - onComplete: Closure with `Result<Void, TwilioVerifySNASession.Error>`
     private func handleURLRequest(
         _ url: String,
+        timeout: TimeInterval? = nil,
         onComplete: @escaping ProcessURLCallback
     ) {
         if networkStatus == .unknown {
             return waitForConnectionResultAndContinue(
                 with: url,
+                timeout: timeout,
                 and: onComplete
             )
         }
@@ -173,7 +180,7 @@ final class TwilioVerifySNASession: TwilioVerifySNA {
             return onComplete(.failure(.cellularNetworkNotAvailable))
         }
 
-        requestManager.processSNAURL(url) { result in
+        requestManager.processSNAURL(url, timeout: timeout) { result in
             switch result {
                 case.failure(let cause):
                     onComplete(.failure(.requestError(cause: cause)))

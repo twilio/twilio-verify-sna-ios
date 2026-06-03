@@ -52,14 +52,16 @@ public final class RequestManager {
     /// result needs to be redirected and processed again, or if it is completed.
     /// - Parameters:
     ///   - result: Result received from previous request.
+    ///   - timeout: Optional timeout in seconds for each redirect hop.
     ///   - onComplete: Callback used for notify the request result, no return is needed.
     private func processRequestResult(
         _ result: String,
+        timeout: TimeInterval?,
         onComplete: @escaping ProcessSNAURLResult
     ) {
         if result.contains(Constants.redirectionPath), !result.contains(Constants.successPath) {
             let redirectionUrl = getRedirectionUrl(for: result)
-            return processSNAURL(redirectionUrl, onComplete: onComplete)
+            return processSNAURL(redirectionUrl, timeout: timeout, onComplete: onComplete)
         }
 
         guard result.contains(Constants.successPath) else {
@@ -92,9 +94,11 @@ extension RequestManager: RequestManagerProtocol {
     /// Method to process the SNA URL. This method will handle the url via cellular network using the `NetworkRequestProviderProtocol` dependency.
     /// - Parameters:
     ///   - url: SNA URL retrieved from backend
+    ///   - timeout: Optional timeout in seconds for each request hop.
     ///   - onComplete: Closure with Result<Void, Error> to handle scenarios.
     public func processSNAURL(
         _ url: String,
+        timeout: TimeInterval? = nil,
         onComplete: @escaping ProcessSNAURLResult
     ) {
         guard let url = URL(string: url) else {
@@ -102,7 +106,7 @@ extension RequestManager: RequestManagerProtocol {
             return
         }
 
-        networkProvider.performRequest(url: url) { [weak self] result in
+        networkProvider.performRequest(url: url, timeout: timeout) { [weak self] result in
             guard let self = self else {
                 return onComplete(.failure(.instanceNotFound))
             }
@@ -111,7 +115,7 @@ extension RequestManager: RequestManagerProtocol {
                 case .failure(let cause):
                     onComplete(.failure(.networkingError(cause: cause)))
                 case .success(let response):
-                    self.processRequestResult(response, onComplete: onComplete)
+                    self.processRequestResult(response, timeout: timeout, onComplete: onComplete)
             }
         }
     }
@@ -125,9 +129,10 @@ extension RequestManager {
 
     func processRequestResult_forTesting(
         _ result: String,
+        timeout: TimeInterval? = nil,
         onComplete: @escaping ProcessSNAURLResult
     ) {
-        processRequestResult(result, onComplete: onComplete)
+        processRequestResult(result, timeout: timeout, onComplete: onComplete)
     }
 }
 #endif

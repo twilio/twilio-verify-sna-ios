@@ -22,11 +22,12 @@ import Network
 
 @testable import TwilioVerifySNA
 
-struct MockNetworkRequestProvider: NetworkRequestProviderProtocol {
+class MockNetworkRequestProvider: NetworkRequestProviderProtocol {
 
     // MARK: - Properties
 
     let connection: CellularConnectionProtocol
+    var lastReceivedTimeout: TimeInterval?
 
     // MARK: - Initializer
 
@@ -40,7 +41,8 @@ struct MockNetworkRequestProvider: NetworkRequestProviderProtocol {
         connection.isAvailable(completion: completion)
     }
 
-    func performRequest(url: URL, onComplete: @escaping NetworkRequestResult) {
-        connection.makeRequest(url: url, options: .init(), using: .any, completion: onComplete)
+    func performRequest(url: URL, timeout: TimeInterval? = nil, onComplete: @escaping NetworkRequestResult) {
+        lastReceivedTimeout = timeout
+        connection.makeRequest(url: url, options: .init(timeout: timeout), using: .any, completion: onComplete)
     }
 }

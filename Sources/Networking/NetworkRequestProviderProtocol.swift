@@ -31,6 +31,16 @@ public protocol NetworkRequestProviderProtocol {
 
     func performRequest(
         url: URL,
+        timeout: TimeInterval?,
         onComplete: @escaping NetworkRequestResult
     )
+}
+
+public extension NetworkRequestProviderProtocol {
+    func performRequest(
+        url: URL,
+        onComplete: @escaping NetworkRequestResult
+    ) {
+        performRequest(url: url, timeout: nil, onComplete: onComplete)
+    }
 }

@@ -202,16 +202,40 @@ public class CellularConnection: CellularConnectionProtocol {
 
         Logger.log("Request:\n\(requestString)", lineNumber: #line)
 
+        // Set up timeout if specified
+        var timeoutWorkItem: DispatchWorkItem?
+        var hasCompleted = false
+
+        if let timeout = options.timeout {
+            let workItem = DispatchWorkItem { [weak self] in
+                guard !hasCompleted else { return }
+                hasCompleted = true
+                Logger.log("Request timed out after \(timeout)s")
+                self?.connection?.cancel()
+                self?.connection = nil
+                completion(.failure(.timeout))
+            }
+            timeoutWorkItem = workItem
+            DispatchQueue.global(qos: .background).asyncAfter(deadline: .now() + timeout, execute: workItem)
+        }
+
+        let wrappedCompletion: (Result<String, ConnectionError>) -> Void = { result in
+            guard !hasCompleted else { return }
+            hasCompleted = true
+            timeoutWorkItem?.cancel()
+            completion(result)
+        }
+
         connection?.stateUpdateHandler = { [weak self] newState in
             switch newState {
                 case .ready:
-                    self?.sendRequest(requestString, body: options.body, completion: completion)
+                    self?.sendRequest(requestString, body: options.body, completion: wrappedCompletion)
                 case .failed(let error):
                     Logger.log("Failed: \(error)", lineNumber: #line)
-                    completion(.failure(ConnectionError.connectionFailed(error)))
+                    wrappedCompletion(.failure(ConnectionError.connectionFailed(error)))
                 case .waiting(let error):
                     Logger.log("Waiting state: \(error)", lineNumber: #line)
-                    completion(.failure(ConnectionError.connectionFailed(error)))
+                    wrappedCompletion(.failure(ConnectionError.connectionFailed(error)))
                 case .cancelled:
                     Logger.log("Waiting state cancelled", lineNumber: #line)
                 default:
@@ -292,7 +316,7 @@ public class CellularConnection: CellularConnectionProtocol {
     ///   - responseData: Complete response data
     ///   - completion: Closure to be called with the parsed response
     /// - Note: Handles response cancellation, parsing, and redirect detection
-    private func processFullResponse(
+    func processFullResponse(
         _ responseData: Data,
         completion: @escaping (Result<String, ConnectionError>) -> Void
     ) {
@@ -328,7 +352,7 @@ public class CellularConnection: CellularConnectionProtocol {
     ///   - response: Full HTTP response string
     ///   - completion: Closure to be called with the redirect URL or an error
     /// - Note: Uses regex to extract redirect URL from HTTP response
-    private func handleRedirect(
+    func handleRedirect(
         response: String,
         completion: @escaping (Result<String, ConnectionError>) -> Void
     ) {
