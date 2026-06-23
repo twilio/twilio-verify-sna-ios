@@ -1,38 +1,42 @@
 version: 2.1
 
 jobs:
-  build-and-analyze:
+  build-and-test:
     macos:
       xcode: 16.0.0
-    environment:
-      scheme: TwilioVerifySNA
     steps:
       - checkout
       - run:
-          name: Build and Analyze default scheme using xcodebuild
-          command: |
-            if [ "$scheme" = "default" ]; then scheme=$(cat default); fi
-            if [ "$(ls -A | grep -i \.xcworkspace$)" ]; then
-              filetype_parameter="workspace"
-              file_to_build="$(ls -A | grep -i \.xcworkspace$)"
-            else
-              filetype_parameter="project"
-              file_to_build="$(ls -A | grep -i \.xcodeproj$)"
-            fi
-            file_to_build=$(echo $file_to_build | awk '{$1=$1;print}')
-            xcodebuild clean build \
-              -scheme "$scheme" \
-              -"$filetype_parameter" "$file_to_build" | xcpretty
-            exit ${PIPESTATUS[0]}
+          name: Build SDK
+          command: ./scripts/build.sh
       - run:
-          name: Run Unit Tests for TwilioVerifySNA
-          command: |
-            mkdir -p test-results
-            swift test --xunit-output test-results/junit.xml --parallel
+          name: Run Unit Tests
+          command: ./scripts/test.sh test-results
+      - run:
+          name: Generate Code Coverage
+          command: ./scripts/coverage.sh coverage-results
       - store_test_results:
           path: test-results
+      - store_artifacts:
+          path: coverage-results
+          destination: coverage
+
+  sdk-size:
+    macos:
+      xcode: 16.0.0
+    steps:
+      - checkout
+      - run:
+          name: Measure SDK Size
+          command: ./scripts/sdk-size.sh
+      - store_artifacts:
+          path: sizes.txt
+          destination: sdk-size-report
 
 workflows:
   build:
     jobs:
-      - build-and-analyze
+      - build-and-test
+      - sdk-size:
+          requires:
+            - build-and-test

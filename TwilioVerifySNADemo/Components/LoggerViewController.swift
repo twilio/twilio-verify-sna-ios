@@ -6,7 +6,9 @@
 //
 
 import UIKit
+#if canImport(TwilioVerifySNA)
 import TwilioVerifySNA
+#endif
 
 class LoggerViewController: UIViewController {
 
@@ -23,7 +25,9 @@ class LoggerViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        #if canImport(TwilioVerifySNA)
         loggerText = Logger.getText()
+        #endif
         loggerTextView.text = loggerText
     }
 
