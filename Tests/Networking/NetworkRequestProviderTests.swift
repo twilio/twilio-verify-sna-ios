@@ -91,7 +91,7 @@ final class NetworkRequestProviderTests: XCTestCase {
         mockCellularConnection?.makeResult = .failure(.httpResponseParsingFailed)
 
         let urlString = "https://mi-sbox.dnlsrv.com/msbox/id/t20AHVnl?data=l%2BPA0m5y5sPgPl2"
-        
+
         guard let url = URL(string: urlString) else {
             XCTFail("invalid URL")
             return
@@ -111,6 +111,16 @@ final class NetworkRequestProviderTests: XCTestCase {
                 }
             }
         )
+    }
+
+    func test_timeoutError_shouldHaveCorrectDescription() {
+        // Arrange
+        let error = ConnectionError.timeout
+
+        // Assert
+        XCTAssertEqual(error.errorDescription, "Request timed out")
+        XCTAssertEqual(error, ConnectionError.timeout)
+        XCTAssertNotEqual(error, ConnectionError.invalidURL)
     }
 
     func test_isAvailable_withSuccessConnection_shouldReturnTrue() {
@@ -141,5 +151,60 @@ final class NetworkRequestProviderTests: XCTestCase {
 
         // Assert
         waitForExpectations(timeout: 1.0)
+    }
+
+    func test_performRequest_withTimeout_shouldPassTimeoutToCellularConnection() {
+        // Arrange
+        let urlString = "https://mi-sbox.dnlsrv.com/msbox/id/t20AHVnl?data=l%2BPA0m5y5sPgPl2"
+        let expectedTimeout: TimeInterval = 10.0
+
+        guard let url = URL(string: urlString) else {
+            XCTFail("invalid URL")
+            return
+        }
+
+        // Act
+        sut?.performRequest(url: url, timeout: expectedTimeout) { _ in }
+
+        // Assert
+        XCTAssertEqual(mockCellularConnection?.lastReceivedOptions?.timeout, expectedTimeout)
+    }
+
+    func test_performRequest_withNilTimeout_shouldPassNilTimeoutToCellularConnection() {
+        // Arrange
+        let urlString = "https://mi-sbox.dnlsrv.com/msbox/id/t20AHVnl?data=l%2BPA0m5y5sPgPl2"
+
+        guard let url = URL(string: urlString) else {
+            XCTFail("invalid URL")
+            return
+        }
+
+        // Act
+        sut?.performRequest(url: url) { _ in }
+
+        // Assert
+        XCTAssertNil(mockCellularConnection?.lastReceivedOptions?.timeout)
+    }
+
+    func test_performRequest_withTimeout_whenConnectionFails_shouldReturnTimeoutError() {
+        // Arrange
+        mockCellularConnection?.makeResult = .failure(.timeout)
+        let urlString = "https://mi-sbox.dnlsrv.com/msbox/id/t20AHVnl?data=l%2BPA0m5y5sPgPl2"
+
+        guard let url = URL(string: urlString) else {
+            XCTFail("invalid URL")
+            return
+        }
+
+        // Act
+        sut?.performRequest(url: url, timeout: 5.0) { result in
+            // Assert
+            switch result {
+                case .success:
+                    XCTFail("Should not succeed")
+                case .failure(let cause):
+                    XCTAssertEqual(cause, .timeout)
+            }
+        }
     }
 }

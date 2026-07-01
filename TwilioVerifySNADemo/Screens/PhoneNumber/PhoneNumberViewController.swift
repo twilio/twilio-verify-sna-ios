@@ -30,6 +30,7 @@ final class PhoneNumberViewController: UIViewController {
     @IBOutlet private var phoneNumberTextField: UITextField!
     @IBOutlet private var phoneCountryCodeTextField: UITextField!
     @IBOutlet private var activityIndicator: UIActivityIndicatorView!
+    @IBOutlet private var timeoutButton: UIButton!
 
     // MARK: - Properties
 
@@ -47,6 +48,15 @@ final class PhoneNumberViewController: UIViewController {
      */
     private lazy var networkLayer = NetworkLayer()
 
+    /// Optional timeout value in seconds for SDK requests
+    private var requestTimeout: TimeInterval?
+
+    /// Timer used for the countdown display on the timeout button
+    private var countdownTimer: Timer?
+
+    /// Remaining seconds for the countdown display
+    private var countdownRemaining: TimeInterval = 0
+
     // MARK: - View Controller life cycle
 
     override func viewDidLoad() {
@@ -59,6 +69,7 @@ final class PhoneNumberViewController: UIViewController {
 
         configureUI()
         retrieveSavedInput()
+        updateTimeoutButtonAppearance()
 
         view.addGestureRecognizer(
             UITapGestureRecognizer(
@@ -155,6 +166,43 @@ final class PhoneNumberViewController: UIViewController {
         }
     }
 
+    /// Shows an alert controller to set or clear the timeout value.
+    @IBAction private func didTapTimeoutButton(_ sender: Any) {
+        let alert = UIAlertController(
+            title: "Request Timeout",
+            message: "Enter timeout in seconds for each request hop. Leave empty to disable.",
+            preferredStyle: .alert
+        )
+
+        alert.addTextField { [weak self] textField in
+            textField.placeholder = "Seconds (e.g. 10)"
+            textField.keyboardType = .decimalPad
+            if let timeout = self?.requestTimeout {
+                textField.text = "\(Int(timeout))"
+            }
+        }
+
+        alert.addAction(UIAlertAction(title: "Set", style: .default) { [weak self] _ in
+            guard let text = alert.textFields?.first?.text, !text.isEmpty,
+                  let value = TimeInterval(text), value > 0 else {
+                self?.requestTimeout = nil
+                self?.updateTimeoutButtonAppearance()
+                return
+            }
+            self?.requestTimeout = value
+            self?.updateTimeoutButtonAppearance()
+        })
+
+        alert.addAction(UIAlertAction(title: "Clear", style: .destructive) { [weak self] _ in
+            self?.requestTimeout = nil
+            self?.updateTimeoutButtonAppearance()
+        })
+
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+
+        present(alert, animated: true)
+    }
+
     private func processUrl(
         snaUrl: String,
         phoneNumber: String,
@@ -166,11 +214,16 @@ final class PhoneNumberViewController: UIViewController {
          care of all the redirections and is making sure that all the requests are done via cellular network.
          */
 
+        startCountdown()
+
         twilioVerify.processURL(
-            snaUrl
+            snaUrl,
+            timeout: requestTimeout
         ) { [weak self] result in
 
             guard let self = self else { return }
+
+            self.stopCountdown()
 
             /*
              We have to handle the SDK result,
@@ -409,6 +462,49 @@ extension PhoneNumberViewController {
         }
 
         return !validCarriers.isEmpty
+    }
+
+    // MARK: - Timeout Button & Countdown
+
+    /// Updates the timeout button appearance based on whether a timeout is configured.
+    private func updateTimeoutButtonAppearance() {
+        if let timeout = requestTimeout {
+            timeoutButton?.setTitle("\(Int(timeout))s", for: .normal)
+        } else {
+            timeoutButton?.setTitle("Timeout", for: .normal)
+        }
+    }
+
+    /// Starts the countdown timer displayed on the timeout button.
+    private func startCountdown() {
+        guard let timeout = requestTimeout else { return }
+        countdownRemaining = timeout
+
+        DispatchQueue.main.async { [weak self] in
+            self?.timeoutButton?.setTitle("\(Int(timeout))s", for: .normal)
+            self?.timeoutButton?.isEnabled = false
+
+            self?.countdownTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
+                guard let self = self else { return }
+                self.countdownRemaining -= 1
+
+                if self.countdownRemaining <= 0 {
+                    self.stopCountdown()
+                } else {
+                    self.timeoutButton?.setTitle("\(Int(self.countdownRemaining))s", for: .normal)
+                }
+            }
+        }
+    }
+
+    /// Stops the countdown timer and resets the button appearance.
+    private func stopCountdown() {
+        DispatchQueue.main.async { [weak self] in
+            self?.countdownTimer?.invalidate()
+            self?.countdownTimer = nil
+            self?.timeoutButton?.isEnabled = true
+            self?.updateTimeoutButtonAppearance()
+        }
     }
 }
 

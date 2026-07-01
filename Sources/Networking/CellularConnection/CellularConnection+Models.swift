@@ -21,6 +21,8 @@ public enum ConnectionError: Error, LocalizedError, Equatable {
     case invalidResponse
     /// HTTP response parsing encountered an error
     case httpResponseParsingFailed
+    /// Request timed out before receiving a response
+    case timeout
 
     public var errorDescription: String? {
         switch self {
@@ -30,6 +32,7 @@ public enum ConnectionError: Error, LocalizedError, Equatable {
             case .requestFailed(let error): return "Request failed: \(error)"
             case .invalidResponse: return "Invalid response"
             case .httpResponseParsingFailed: return "HTTP response parsing failed"
+            case .timeout: return "Request timed out"
         }
     }
 
@@ -37,7 +40,8 @@ public enum ConnectionError: Error, LocalizedError, Equatable {
         switch (lhs, rhs) {
         case (.invalidURL, .invalidURL),
              (.invalidResponse, .invalidResponse),
-             (.httpResponseParsingFailed, .httpResponseParsingFailed):
+             (.httpResponseParsingFailed, .httpResponseParsingFailed),
+             (.timeout, .timeout):
             return true
         case let (.connectionFailed(lhs), .connectionFailed(rhs)),
              let (.requestFailed(lhs), .requestFailed(rhs)),
@@ -69,19 +73,24 @@ public struct RequestOptions {
     public let headers: [String: String]
     /// Optional request body data
     public let body: Data?
+    /// Optional timeout interval in seconds for the request
+    public let timeout: TimeInterval?
 
     /// Initializes request options with default or custom parameters
     /// - Parameters:
     ///   - method: HTTP method (defaults to GET)
     ///   - headers: Custom request headers (defaults to empty)
     ///   - body: Optional request body data (defaults to nil)
+    ///   - timeout: Optional timeout in seconds (defaults to nil, meaning no timeout)
     public init(
         method: HTTPMethod = .get,
         headers: [String: String] = [:],
-        body: Data? = nil
+        body: Data? = nil,
+        timeout: TimeInterval? = nil
     ) {
         self.method = method
         self.headers = headers
         self.body = body
+        self.timeout = timeout
     }
 }

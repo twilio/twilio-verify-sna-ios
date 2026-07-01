@@ -22,10 +22,17 @@ import Network
 
 @testable import TwilioVerifySNA
 
-struct MockRequestManager: RequestManagerProtocol {
+class MockRequestManager: RequestManagerProtocol {
     let shouldFail: Bool
     var isAvailableResult: Bool = false
     let expectedError: RequestManager.RequestError?
+    var lastReceivedTimeout: TimeInterval?
+
+    init(shouldFail: Bool, isAvailableResult: Bool = false, expectedError: RequestManager.RequestError?) {
+        self.shouldFail = shouldFail
+        self.isAvailableResult = isAvailableResult
+        self.expectedError = expectedError
+    }
 
     func isAvailable(
         completion: @escaping (Bool) -> Void
@@ -35,8 +42,10 @@ struct MockRequestManager: RequestManagerProtocol {
 
     func processSNAURL(
         _ url: String,
+        timeout: TimeInterval? = nil,
         onComplete: @escaping ProcessSNAURLResult
     ) {
+        lastReceivedTimeout = timeout
         if shouldFail {
             let error =  (expectedError ?? .instanceNotFound)
             return onComplete(.failure(error))
@@ -44,7 +53,7 @@ struct MockRequestManager: RequestManagerProtocol {
 
         let networkProvider = MockNetworkRequestProvider()
 
-        networkProvider.performRequest(url: URL(string: url)!) { result in
+        networkProvider.performRequest(url: URL(string: url)!, timeout: timeout) { result in
             switch result {
                 case .success:
                     onComplete(.success)
