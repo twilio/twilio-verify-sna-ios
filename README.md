@@ -227,11 +227,7 @@ Currently it's not possible to test the functionality using a simulator.
 **To validate a phone number:**
 
 - Set the phone number
-  - Available carriers during this phase:
-    - US - Verizon, TMO
-    - UK - EE, Vodafone, O2 and ThreeUK
-    - CA - Bell, Rogers and Telus
-- Set the country code (only US during pilot stage)
+- Set the country code, e.g. +1
 - Set your [sample backend URL](#running-the-sample-backend)
 - Submit the form by using the CTA button
 
