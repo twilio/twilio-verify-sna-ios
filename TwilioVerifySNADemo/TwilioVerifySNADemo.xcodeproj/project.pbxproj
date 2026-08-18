@@ -3,11 +3,12 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 55;
+	objectVersion = 60;
 	objects = {
 
 /* Begin PBXBuildFile section */
 		8672E3A42B509915009F2646 /* LoggerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8672E3A32B509915009F2646 /* LoggerViewController.swift */; };
+		86C5492D2FE35D4D004737B2 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86C5492C2FE35D4D004737B2 /* SceneDelegate.swift */; };
 		97021B9628870B8400200623 /* NetworkLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97021B9528870B8400200623 /* NetworkLayer.swift */; };
 		97021B9828870D4F00200623 /* PhoneNumberViewController+Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97021B9728870D4F00200623 /* PhoneNumberViewController+Models.swift */; };
 		9757522A2885CCDE0097BB73 /* Inter-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 975752212885CCDE0097BB73 /* Inter-Medium.ttf */; };
@@ -29,6 +30,7 @@
 
 /* Begin PBXFileReference section */
 		8672E3A32B509915009F2646 /* LoggerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoggerViewController.swift; sourceTree = "<group>"; };
+		86C5492C2FE35D4D004737B2 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		97021B9528870B8400200623 /* NetworkLayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkLayer.swift; sourceTree = "<group>"; };
 		97021B9728870D4F00200623 /* PhoneNumberViewController+Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PhoneNumberViewController+Models.swift"; sourceTree = "<group>"; };
 		975752212885CCDE0097BB73 /* Inter-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Inter-Medium.ttf"; sourceTree = "<group>"; };
@@ -135,6 +137,7 @@
 			children = (
 				9797B4F928748E8300951B4C /* Info.plist */,
 				9797B4EB28748E8100951B4C /* AppDelegate.swift */,
+				86C5492C2FE35D4D004737B2 /* SceneDelegate.swift */,
 			);
 			path = Configuration;
 			sourceTree = "<group>";
@@ -206,6 +209,9 @@
 				Base,
 			);
 			mainGroup = 9797B4DF28748E8100951B4C;
+			packageReferences = (
+				97C531F82874AA2F008CDB7F /* XCLocalSwiftPackageReference ".." */,
+			);
 			productRefGroup = 9797B4E928748E8100951B4C /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -269,6 +275,7 @@
 				8672E3A42B509915009F2646 /* LoggerViewController.swift in Sources */,
 				97021B9828870D4F00200623 /* PhoneNumberViewController+Models.swift in Sources */,
 				9797B4EC28748E8100951B4C /* AppDelegate.swift in Sources */,
+				86C5492D2FE35D4D004737B2 /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -423,7 +430,7 @@
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UIUserInterfaceStyle = Light;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -454,7 +461,7 @@
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UIUserInterfaceStyle = Light;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -492,6 +499,13 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		97C531F82874AA2F008CDB7F /* XCLocalSwiftPackageReference ".." */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ..;
+		};
+/* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
 		97C531F92874AA2F008CDB7F /* TwilioVerifySNA */ = {
