@@ -196,7 +196,9 @@ extension TwilioVerifySNASession {
     func set(networkStatus: NetworkStatus) {
         monitor.pathUpdateHandler = nil
         monitor.cancel()
-        self.networkStatus = networkStatus
+        internetMonitoringQueue.sync {
+            self.networkStatus = networkStatus
+        }
     }
 }
 #endif

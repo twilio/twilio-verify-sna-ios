@@ -1,0 +1,26 @@
+# Unit test results report
+require "rexml/document"
+
+junit_file = "test-results/junit.xml"
+
+if File.exist?(junit_file)
+  totals = { tests: 0, failures: 0, errors: 0, time: 0.0 }
+  REXML::Document.new(File.read(junit_file)).elements.each("//testsuite") do |suite|
+    totals[:tests]    += suite.attributes["tests"].to_i
+    totals[:failures] += suite.attributes["failures"].to_i
+    totals[:errors]   += suite.attributes["errors"].to_i
+    totals[:time]     += suite.attributes["time"].to_f
+  end
+
+  summary = +"## Unit Test Results\n\n"
+  summary << "| Tests | Failures | Errors | Time |\n"
+  summary << "|------:|---------:|-------:|-----:|\n"
+  summary << "| #{totals[:tests]} | #{totals[:failures]} | #{totals[:errors]} | #{format('%.2f', totals[:time])}s |\n"
+  markdown(summary)
+
+  if (totals[:failures] + totals[:errors]).positive?
+    fail("#{totals[:failures] + totals[:errors]} unit test(s) failed.")
+  end
+else
+  warn("Unit test results (#{junit_file}) not found.")
+end

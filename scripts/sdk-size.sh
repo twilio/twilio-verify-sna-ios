@@ -5,6 +5,8 @@ ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 
 TEAM_ID="${TEAM_ID:?Set TEAM_ID environment variable}"
 BUNDLE_ID="${BUNDLE_ID:-com.twilio.TwilioVerifySNADemo}"
+PROVISIONING_PROFILE_NAME="${PROVISIONING_PROFILE_NAME:?Set PROVISIONING_PROFILE_NAME environment variable}"
+CODE_SIGN_IDENTITY="${CODE_SIGN_IDENTITY:-Apple Development}"
 
 WORKSPACE="$ROOT_DIR/TwilioVerifySNA.xcworkspace"
 OUTPUT_DIR="$ROOT_DIR/IPAs"
@@ -29,7 +31,7 @@ cat > "$EXPORT_OPTIONS" <<EOF
     <key>provisioningProfiles</key>
     <dict>
         <key>${BUNDLE_ID}</key>
-        <string>match Development ${BUNDLE_ID}</string>
+        <string>${PROVISIONING_PROFILE_NAME}</string>
     </dict>
 </dict>
 </plist>
@@ -52,6 +54,8 @@ build_ipa() {
     DEVELOPMENT_TEAM="$TEAM_ID" \
     PRODUCT_BUNDLE_IDENTIFIER="$BUNDLE_ID" \
     CODE_SIGN_STYLE="Manual" \
+    CODE_SIGN_IDENTITY="$CODE_SIGN_IDENTITY" \
+    PROVISIONING_PROFILE_SPECIFIER="$PROVISIONING_PROFILE_NAME" \
     -quiet
 
   echo "==> Exporting $scheme..."
@@ -75,38 +79,32 @@ build_ipa "TwilioVerifySNADemo" "TwilioVerifySNADemo.ipa"
 # Build without SDK (baseline)
 build_ipa "TwilioVerifySNADemoNoSDK" "TwilioVerifySNADemoNoSDK.ipa"
 
+# Convert a KB integer to MB, rounded (not truncated) to 2 decimals.
+to_mb() { printf "%.2f" "$(echo "scale=4; $1 / 1024" | bc)"; }
+
 # Measure IPA sizes
 ipa_size_kb=$(du -sk "$OUTPUT_DIR/TwilioVerifySNADemo.ipa" | cut -f1)
-ipa_size_mb=$(echo "scale=1; $ipa_size_kb / 1024" | bc)
-echo "IPA size: ${ipa_size_mb} MB"
-echo "IPA size: ${ipa_size_mb} MB" > "$SIZES_FILE"
-
 ipa_no_sdk_size_kb=$(du -sk "$OUTPUT_DIR/TwilioVerifySNADemoNoSDK.ipa" | cut -f1)
-ipa_no_sdk_size_mb=$(echo "scale=1; $ipa_no_sdk_size_kb / 1024" | bc)
-echo "IPA without SDK size: ${ipa_no_sdk_size_mb} MB"
-echo "IPA without SDK size: ${ipa_no_sdk_size_mb} MB" >> "$SIZES_FILE"
-
 sdk_impact_kb=$((ipa_size_kb - ipa_no_sdk_size_kb))
-sdk_impact_mb=$(printf "%.1f" "$(echo "scale=2; $sdk_impact_kb / 1024" | bc)")
-echo "SDK size impact: ${sdk_impact_mb} MB"
-echo "SDK size impact: ${sdk_impact_mb} MB" >> "$SIZES_FILE"
+
+{
+  echo "IPA size: $(to_mb "$ipa_size_kb") MB (${ipa_size_kb} KB)"
+  echo "IPA without SDK size: $(to_mb "$ipa_no_sdk_size_kb") MB (${ipa_no_sdk_size_kb} KB)"
+  echo "SDK size impact: ${sdk_impact_kb} KB ($(to_mb "$sdk_impact_kb") MB)"
+} | tee "$SIZES_FILE"
 
 # Extract and measure frameworks
 unzip -q "$OUTPUT_DIR/TwilioVerifySNADemo.ipa" -d "$EXTRACT_DIR"
 
 app_size_kb=$(du -sk "$EXTRACT_DIR/Payload/TwilioVerifySNADemo.app" | cut -f1)
-app_size_mb=$(echo "scale=1; $app_size_kb / 1024" | bc)
-echo "App size: ${app_size_mb} MB"
-echo "App size: ${app_size_mb} MB" >> "$SIZES_FILE"
+echo "App size: $(to_mb "$app_size_kb") MB (${app_size_kb} KB)" | tee -a "$SIZES_FILE"
 
 for framework in "$EXTRACT_DIR/Payload/TwilioVerifySNADemo.app/Frameworks/"*.framework; do
   [ -d "$framework" ] || continue
   fw_name=$(basename "$framework")
   fw_size_kb=$(du -sk "$framework" | cut -f1)
-  fw_size_mb=$(echo "scale=1; $fw_size_kb / 1024" | bc)
-  impact=$(echo "scale=1; ($fw_size_kb * 100) / $app_size_kb" | bc)
-  echo "${fw_name}: ${fw_size_mb} MB, Impact: ${impact}%"
-  echo "${fw_name}: ${fw_size_mb} MB, Impact: ${impact}%" >> "$SIZES_FILE"
+  impact=$(printf "%.1f" "$(echo "scale=3; ($fw_size_kb * 100) / $app_size_kb" | bc)")
+  echo "${fw_name}: $(to_mb "$fw_size_kb") MB (${fw_size_kb} KB), Impact: ${impact}%" | tee -a "$SIZES_FILE"
 done
 
 echo ""
