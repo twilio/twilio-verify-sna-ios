@@ -7,6 +7,23 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		865C17F32FE9F673004DB9B8 /* NetworkLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97021B9528870B8400200623 /* NetworkLayer.swift */; };
+		865C17F42FE9F673004DB9B8 /* PhoneNumberViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9797B4EF28748E8100951B4C /* PhoneNumberViewController.swift */; };
+		865C17F52FE9F673004DB9B8 /* LoggerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8672E3A32B509915009F2646 /* LoggerViewController.swift */; };
+		865C17F62FE9F673004DB9B8 /* PhoneNumberViewController+Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97021B9728870D4F00200623 /* PhoneNumberViewController+Models.swift */; };
+		865C17F72FE9F673004DB9B8 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9797B4EB28748E8100951B4C /* AppDelegate.swift */; };
+		865C17FB2FE9F673004DB9B8 /* Inter-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 975752292885CCDE0097BB73 /* Inter-SemiBold.ttf */; };
+		865C17FC2FE9F673004DB9B8 /* Inter-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 975752222885CCDE0097BB73 /* Inter-Light.ttf */; };
+		865C17FD2FE9F673004DB9B8 /* Inter-ExtraLight.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 975752272885CCDE0097BB73 /* Inter-ExtraLight.ttf */; };
+		865C17FE2FE9F673004DB9B8 /* Inter-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 975752212885CCDE0097BB73 /* Inter-Medium.ttf */; };
+		865C17FF2FE9F673004DB9B8 /* Inter-ExtraBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 975752262885CCDE0097BB73 /* Inter-ExtraBold.ttf */; };
+		865C18002FE9F673004DB9B8 /* Inter-Thin.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 975752232885CCDE0097BB73 /* Inter-Thin.ttf */; };
+		865C18012FE9F673004DB9B8 /* Inter-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 975752242885CCDE0097BB73 /* Inter-Bold.ttf */; };
+		865C18022FE9F673004DB9B8 /* Inter-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 975752282885CCDE0097BB73 /* Inter-Black.ttf */; };
+		865C18032FE9F673004DB9B8 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9797B4F628748E8300951B4C /* LaunchScreen.storyboard */; };
+		865C18042FE9F673004DB9B8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9797B4F428748E8300951B4C /* Assets.xcassets */; };
+		865C18052FE9F673004DB9B8 /* Inter-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 975752252885CCDE0097BB73 /* Inter-Regular.ttf */; };
+		865C18062FE9F673004DB9B8 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9797B4F128748E8100951B4C /* Main.storyboard */; };
 		8672E3A42B509915009F2646 /* LoggerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8672E3A32B509915009F2646 /* LoggerViewController.swift */; };
 		86C5492D2FE35D4D004737B2 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86C5492C2FE35D4D004737B2 /* SceneDelegate.swift */; };
 		97021B9628870B8400200623 /* NetworkLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97021B9528870B8400200623 /* NetworkLayer.swift */; };
@@ -29,6 +46,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		865C180B2FE9F673004DB9B8 /* TwilioVerifySNADemoNoSDK.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TwilioVerifySNADemoNoSDK.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		865C180C2FE9F673004DB9B8 /* TwilioVerifySNADemoNoSDK.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = TwilioVerifySNADemoNoSDK.plist; path = "/Users/aorozcobuiles/Development/Twilio/Secondary/twilio-verify-sna-ios/TwilioVerifySNADemo/Configuration/TwilioVerifySNADemoNoSDK.plist"; sourceTree = "<absolute>"; };
 		8672E3A32B509915009F2646 /* LoggerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoggerViewController.swift; sourceTree = "<group>"; };
 		86C5492C2FE35D4D004737B2 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		97021B9528870B8400200623 /* NetworkLayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkLayer.swift; sourceTree = "<group>"; };
@@ -52,6 +71,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		865C17F82FE9F673004DB9B8 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		9797B4E528748E8100951B4C /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -121,6 +147,7 @@
 			isa = PBXGroup;
 			children = (
 				9797B4E828748E8100951B4C /* TwilioVerifySNADemo.app */,
+				865C180B2FE9F673004DB9B8 /* TwilioVerifySNADemoNoSDK.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -138,6 +165,7 @@
 				9797B4F928748E8300951B4C /* Info.plist */,
 				9797B4EB28748E8100951B4C /* AppDelegate.swift */,
 				86C5492C2FE35D4D004737B2 /* SceneDelegate.swift */,
+				865C180C2FE9F673004DB9B8 /* TwilioVerifySNADemoNoSDK.plist */,
 			);
 			path = Configuration;
 			sourceTree = "<group>";
@@ -164,6 +192,26 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		865C17F02FE9F673004DB9B8 /* TwilioVerifySNADemoNoSDK */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 865C18082FE9F673004DB9B8 /* Build configuration list for PBXNativeTarget "TwilioVerifySNADemoNoSDK" */;
+			buildPhases = (
+				865C17F22FE9F673004DB9B8 /* Sources */,
+				865C17F82FE9F673004DB9B8 /* Frameworks */,
+				865C17FA2FE9F673004DB9B8 /* Resources */,
+				865C18072FE9F673004DB9B8 /* SwiftLint */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = TwilioVerifySNADemoNoSDK;
+			packageProductDependencies = (
+			);
+			productName = TwilioVerifySNADemo;
+			productReference = 865C180B2FE9F673004DB9B8 /* TwilioVerifySNADemoNoSDK.app */;
+			productType = "com.apple.product-type.application";
+		};
 		9797B4E728748E8100951B4C /* TwilioVerifySNADemo */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 9797B4FC28748E8300951B4C /* Build configuration list for PBXNativeTarget "TwilioVerifySNADemo" */;
@@ -217,11 +265,31 @@
 			projectRoot = "";
 			targets = (
 				9797B4E728748E8100951B4C /* TwilioVerifySNADemo */,
+				865C17F02FE9F673004DB9B8 /* TwilioVerifySNADemoNoSDK */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		865C17FA2FE9F673004DB9B8 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				865C17FB2FE9F673004DB9B8 /* Inter-SemiBold.ttf in Resources */,
+				865C17FC2FE9F673004DB9B8 /* Inter-Light.ttf in Resources */,
+				865C17FD2FE9F673004DB9B8 /* Inter-ExtraLight.ttf in Resources */,
+				865C17FE2FE9F673004DB9B8 /* Inter-Medium.ttf in Resources */,
+				865C17FF2FE9F673004DB9B8 /* Inter-ExtraBold.ttf in Resources */,
+				865C18002FE9F673004DB9B8 /* Inter-Thin.ttf in Resources */,
+				865C18012FE9F673004DB9B8 /* Inter-Bold.ttf in Resources */,
+				865C18022FE9F673004DB9B8 /* Inter-Black.ttf in Resources */,
+				865C18032FE9F673004DB9B8 /* LaunchScreen.storyboard in Resources */,
+				865C18042FE9F673004DB9B8 /* Assets.xcassets in Resources */,
+				865C18052FE9F673004DB9B8 /* Inter-Regular.ttf in Resources */,
+				865C18062FE9F673004DB9B8 /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		9797B4E628748E8100951B4C /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -244,6 +312,25 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		865C18072FE9F673004DB9B8 /* SwiftLint */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = SwiftLint;
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "export PATH=\"$PATH:/opt/homebrew/bin\"\nif which swiftlint > /dev/null; then\n  swiftlint\nelse\n  echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi\n";
+		};
 		978F30772874E3D70030668F /* SwiftLint */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
@@ -266,6 +353,18 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		865C17F22FE9F673004DB9B8 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				865C17F32FE9F673004DB9B8 /* NetworkLayer.swift in Sources */,
+				865C17F42FE9F673004DB9B8 /* PhoneNumberViewController.swift in Sources */,
+				865C17F52FE9F673004DB9B8 /* LoggerViewController.swift in Sources */,
+				865C17F62FE9F673004DB9B8 /* PhoneNumberViewController+Models.swift in Sources */,
+				865C17F72FE9F673004DB9B8 /* AppDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		9797B4E428748E8100951B4C /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -301,6 +400,68 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		865C18092FE9F673004DB9B8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Configuration/TwilioVerifySNADemoNoSDK.plist;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UIMainStoryboardFile = Main;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UIUserInterfaceStyle = Light;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.twilio.TwilioVerifySNADemo;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		865C180A2FE9F673004DB9B8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Configuration/TwilioVerifySNADemoNoSDK.plist;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UIMainStoryboardFile = Main;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UIUserInterfaceStyle = Light;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.twilio.TwilioVerifySNADemo;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 		9797B4FA28748E8300951B4C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -480,6 +641,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		865C18082FE9F673004DB9B8 /* Build configuration list for PBXNativeTarget "TwilioVerifySNADemoNoSDK" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				865C18092FE9F673004DB9B8 /* Debug */,
+				865C180A2FE9F673004DB9B8 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		9797B4E328748E8100951B4C /* Build configuration list for PBXProject "TwilioVerifySNADemo" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

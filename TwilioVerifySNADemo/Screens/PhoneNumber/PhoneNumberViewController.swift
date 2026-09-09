@@ -18,7 +18,9 @@
 //
 
 import UIKit
+#if canImport(TwilioVerifySNA)
 import TwilioVerifySNA
+#endif
 import CoreTelephony
 
 final class PhoneNumberViewController: UIViewController {
@@ -40,7 +42,9 @@ final class PhoneNumberViewController: UIViewController {
      in the best practices you will probably create
      this instance on your ViewModel/Presenter or logic layer
      */
+    #if canImport(TwilioVerifySNA)
     private lazy var twilioVerify: TwilioVerifySNA = TwilioVerifySNABuilder.build()
+    #endif
 
     /**
      Network layer to communicate with the backend: (not required for your SDK implementation)
@@ -126,6 +130,7 @@ final class PhoneNumberViewController: UIViewController {
         // appending the country code and number in the same string.
         let completePhoneNumber = phoneCountryCode.appending(phoneNumber)
 
+        #if canImport(TwilioVerifySNA)
         // Lets start a user verification by requesting it to our custom backend (that will call Twilio Verify services)
         Logger.startNewSession()
 
@@ -164,6 +169,7 @@ final class PhoneNumberViewController: UIViewController {
                 self?.showGenericError("Can't reach any server using cellular network")
             }
         }
+        #endif
     }
 
     /// Shows an alert controller to set or clear the timeout value.
@@ -216,6 +222,7 @@ final class PhoneNumberViewController: UIViewController {
 
         startCountdown()
 
+        #if canImport(TwilioVerifySNA)
         twilioVerify.processURL(
             snaUrl,
             timeout: requestTimeout
@@ -246,6 +253,7 @@ final class PhoneNumberViewController: UIViewController {
                     self.showGenericError(error.errorDescription)
             }
         }
+        #endif
     }
 
     private func continueVerification(
@@ -411,8 +419,10 @@ extension PhoneNumberViewController {
             $0?.layer.borderColor = borderColor.cgColor
         }
 
+        #if canImport(TwilioVerifySNA)
         /// Only used for reference
         appVersionLabel.text = "\(appVersionLabel.text ?? "") | SDK: \(TwilioVerifySNAConfig.version) | SAMPLE: \(sampleAppVersion)"
+        #endif
     }
 
     /// Not required for the SDK implementation.

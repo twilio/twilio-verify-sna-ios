@@ -53,3 +53,10 @@ fastlane/report.xml
 
 #Sizer
 temp/
+
+# CI artifacts
+test-results/
+coverage-results/
+IPAs/
+extracted/
+sizes.txt
