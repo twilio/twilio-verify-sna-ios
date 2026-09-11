@@ -1,0 +1,9 @@
+# Code coverage report
+coverage_file = "coverage-results/coverage.txt"
+
+if File.exist?(coverage_file)
+  coverage = File.read(coverage_file).strip
+  markdown("## Code Coverage\n\n```\n#{coverage}\n```")
+else
+  warn("Code coverage report (#{coverage_file}) not found.")
+end

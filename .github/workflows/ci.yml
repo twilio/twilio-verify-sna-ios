@@ -1,0 +1,98 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  build-and-test:
+    runs-on: macos-arm
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+
+      - name: Select Xcode 26.6
+        run: sudo xcode-select -s /Applications/Xcode_26.6.app
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@95ef2b042f9d7a56d8268cba8559e2842e2ad01b
+        with:
+          ruby-version: '3.3'
+          bundler-cache: true
+
+      - name: Install xcpretty
+        run: gem install xcpretty
+
+      - name: Build SDK
+        run: ./scripts/build.sh
+
+      - name: Run Unit Tests
+        run: ./scripts/test.sh test-results
+
+      - name: Generate Code Coverage
+        run: ./scripts/coverage.sh coverage-results
+
+      - name: Publish test & coverage summary
+        if: always()
+        run: ./scripts/summary.sh test-and-coverage
+
+      - name: Report unit test results
+        if: always() && github.event_name == 'pull_request'
+        run: ./scripts/danger_check.sh "--danger_id=unit_tests --dangerfile=dangerfiles/dangerfile_test_results"
+        env:
+          DANGER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Report code coverage
+        if: always() && github.event_name == 'pull_request'
+        run: ./scripts/danger_check.sh "--danger_id=code_coverage --dangerfile=dangerfiles/dangerfile_code_coverage"
+        env:
+          DANGER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  sdk-size:
+    runs-on: macos-arm
+    needs: build-and-test
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+
+      - name: Select Xcode 26.6
+        run: sudo xcode-select -s /Applications/Xcode_26.6.app
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@95ef2b042f9d7a56d8268cba8559e2842e2ad01b
+        with:
+          ruby-version: '3.3'
+          bundler-cache: true
+
+      - name: Install signing certs & profiles
+        run: ./scripts/certificates_setup.sh setup
+        env:
+          VERIFY_SNA_DEMO_CERT: ${{ secrets.VERIFY_SNA_DEMO_CERT }}
+          VERIFY_SNA_DEMO_PROFILE: ${{ secrets.VERIFY_SNA_DEMO_PROFILE }}
+          VERIFY_SNA_DEMO_PASS: ${{ secrets.VERIFY_SNA_DEMO_PASS }}
+          VERIFY_SNA_DEMO_KEYCHAIN_PASS: ${{ secrets.VERIFY_SNA_DEMO_KEYCHAIN_PASS }}
+
+      - name: Measure SDK Size
+        run: ./scripts/sdk-size.sh
+        env:
+          TEAM_ID: ${{ secrets.TEAM_ID }}
+          PROVISIONING_PROFILE_NAME: ${{ secrets.VERIFY_SNA_DEMO_PROFILE_NAME }}
+
+      - name: Publish SDK size summary
+        if: always()
+        run: ./scripts/summary.sh sdk-size
+
+      - name: Report SDK size
+        if: always() && github.event_name == 'pull_request'
+        run: ./scripts/danger_check.sh "--danger_id=ios_sdk_report --dangerfile=dangerfiles/dangerfile_ios_sdk_size_report"
+        env:
+          DANGER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Cleanup signing
+        if: always()
+        run: ./scripts/certificates_setup.sh cleanup

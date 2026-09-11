@@ -1,0 +1,8 @@
+# iOS SDK size report
+sizes_file = "sizes.txt"
+
+if File.exist?(sizes_file)
+  markdown("## iOS SDK Size Report\n\n```\n#{File.read(sizes_file).strip}\n```")
+else
+  warn("iOS SDK size report (#{sizes_file}) not found.")
+end
