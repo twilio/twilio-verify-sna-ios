@@ -1,3 +1,10 @@
+# 1.0.0 (Unreleased)
+
+### Improvements
+
+- Added `NWConnection` based cellular implementation, selectable through `TwilioVerifySNA.cellularImplementation` (or `TwilioVerifySNABuilder.build(cellularImplementation:)`). The socket based implementation remains the default (`.legacy`).
+- `ConnectionError` has a new `legacyFailure` case, and `Logger` is now thread-safe.
+
 # 0.0.9 (18–12-2024)
 
 ### Improvements

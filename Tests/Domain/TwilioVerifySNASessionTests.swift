@@ -186,4 +186,33 @@ final class TwilioVerifySNASessionTests: XCTestCase {
                 XCTFail("Expected timeout error")
         }
     }
+
+    // MARK: - cellularImplementation
+
+    func test_cellularImplementation_defaultsToLegacy() {
+        XCTAssertEqual(sut.cellularImplementation, .legacy)
+        XCTAssertEqual(TwilioVerifySNABuilder.build().cellularImplementation, .legacy)
+    }
+
+    func test_builder_withImplementation_usesIt() {
+        XCTAssertEqual(
+            TwilioVerifySNABuilder.build(cellularImplementation: .networkFramework).cellularImplementation,
+            .networkFramework
+        )
+    }
+
+    func test_cellularImplementation_canBeChangedAfterBuild() {
+        var sna = TwilioVerifySNABuilder.build()
+        sna.cellularImplementation = .networkFramework
+        XCTAssertEqual(sna.cellularImplementation, .networkFramework)
+    }
+
+    func test_cellularImplementation_withCustomRequestManager_isIgnored() {
+        var sna = TwilioVerifySNABuilder.build(
+            cellularImplementation: .networkFramework,
+            requestManager: MockRequestManager(shouldFail: false, expectedError: nil)
+        )
+        sna.cellularImplementation = .networkFramework
+        XCTAssertEqual(sna.cellularImplementation, .legacy)
+    }
 }
