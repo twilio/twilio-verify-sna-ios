@@ -13,11 +13,13 @@ public final class Logger {
 
     // Array to store log entries during a session
     private static var logs: [String] = []
+    private static let lock = NSLock()
 
     // MARK: - Public Methods
 
     /// Start a new session by clearing existing logs
     public static func startNewSession() {
+        lock.lock(); defer { lock.unlock() }
         logs.removeAll()
     }
 
@@ -25,11 +27,13 @@ public final class Logger {
     public static func log(_ message: String, lineNumber: Int = #line) {
         let timestamp = Date()
         let logEntry = "\(timestamp) [Line \(lineNumber)]: \(message)"
+        lock.lock(); defer { lock.unlock() }
         logs.append(logEntry)
     }
 
     /// Get all logs as a single string
     public static func getText() -> String {
+        lock.lock(); defer { lock.unlock() }
         return logs.joined(separator: "\n")
     }
 }

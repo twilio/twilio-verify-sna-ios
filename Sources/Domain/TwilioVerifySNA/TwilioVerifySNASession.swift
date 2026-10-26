@@ -26,6 +26,7 @@ final class TwilioVerifySNASession: TwilioVerifySNA {
 
     private var networkStatus: NetworkStatus = .unknown
     private let requestManager: RequestManagerProtocol
+    private let switchableConnection: SwitchableCellularConnection?
     private var waitForConnectionAccumulatedTime: Double = .zero
 
     enum NetworkStatus {
@@ -57,14 +58,22 @@ final class TwilioVerifySNASession: TwilioVerifySNA {
 
     // MARK: - Class lifecycle
 
-    init(
-        requestManager: RequestManagerProtocol = RequestManager(
-            networkProvider: NetworkRequestProvider(
-                cellularConnection: CellularConnection()
-            )
+    convenience init() {
+        let connection = SwitchableCellularConnection()
+        self.init(
+            requestManager: RequestManager(
+                networkProvider: NetworkRequestProvider(cellularConnection: connection)
+            ),
+            switchableConnection: connection
         )
+    }
+
+    init(
+        requestManager: RequestManagerProtocol,
+        switchableConnection: SwitchableCellularConnection? = nil
     ) {
         self.requestManager = requestManager
+        self.switchableConnection = switchableConnection
         startMonitoringNetwork()
     }
 
@@ -73,6 +82,19 @@ final class TwilioVerifySNASession: TwilioVerifySNA {
     }
 
     // MARK: - Protocol implementation
+
+    /// Cellular transport used to perform requests, `.legacy` by default.
+    /// - Note: Has no effect when the instance was built with a custom `RequestManagerProtocol`.
+    public var cellularImplementation: CellularImplementation {
+        get { switchableConnection?.implementation ?? .legacy }
+        set {
+            guard let switchableConnection else {
+                Logger.log("cellularImplementation ignored: a custom request manager owns the transport")
+                return
+            }
+            switchableConnection.implementation = newValue
+        }
+    }
 
     /// Checks if the SNA service is available over a cellular interface
     /// - Parameters:

@@ -23,6 +23,9 @@ public typealias ProcessURLResult = Result<Void, TwilioVerifySNAError>
 public typealias ProcessURLCallback = (ProcessURLResult) -> Void
 
 public protocol TwilioVerifySNA {
+    /// Cellular transport used to perform requests. Defaults to `.legacy`; set it right after building the SDK.
+    var cellularImplementation: CellularImplementation { get set }
+
     func isAvailable(
         completion: @escaping (Bool) -> Void
     )

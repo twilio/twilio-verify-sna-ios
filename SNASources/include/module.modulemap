@@ -1,0 +1,4 @@
+module SNANetworking {
+    header "CellularSession.h"
+    header "SNALogger.h"
+}

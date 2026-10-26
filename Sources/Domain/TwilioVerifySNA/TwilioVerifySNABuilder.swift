@@ -20,13 +20,25 @@
 import Foundation
 
 public class TwilioVerifySNABuilder {
+    /// Builds a `TwilioVerifySNA` instance.
+    /// - Parameters:
+    ///   - cellularImplementation: Cellular transport to start with, defaults to `.legacy`. It can be changed later
+    ///   through `TwilioVerifySNA.cellularImplementation`.
+    ///   - requestManager: Custom request manager. When provided, it owns its transport and `cellularImplementation` is ignored.
     public static func build(
-        requestManager: RequestManagerProtocol = RequestManager(
-            networkProvider: NetworkRequestProvider(
-                cellularConnection: CellularConnection()
-            )
-        )
+        cellularImplementation: CellularImplementation = .legacy,
+        requestManager: RequestManagerProtocol? = nil
     ) -> TwilioVerifySNA {
-        TwilioVerifySNASession(requestManager: requestManager)
+        if let requestManager {
+            return TwilioVerifySNASession(requestManager: requestManager)
+        }
+
+        let connection = SwitchableCellularConnection(implementation: cellularImplementation)
+        return TwilioVerifySNASession(
+            requestManager: RequestManager(
+                networkProvider: NetworkRequestProvider(cellularConnection: connection)
+            ),
+            switchableConnection: connection
+        )
     }
 }

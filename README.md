@@ -111,6 +111,28 @@ import TwilioVerifySNA
 private lazy var twilioVerify: TwilioVerifySNA = TwilioVerifySNABuilder.build()
 ```
 
+2.1. Choose the cellular implementation (optional):
+
+The SDK ships two cellular transports:
+
+| Implementation | Description |
+| --- | --- |
+| `.legacy` (default) | Socket based implementation used by all previous versions. |
+| `.networkFramework` | `NWConnection` based implementation (Network.framework). |
+
+Set the flag right after building the SDK, before calling `isAvailable` or `processURL`:
+
+```swift
+var twilioVerify = TwilioVerifySNABuilder.build()
+twilioVerify.cellularImplementation = .networkFramework
+
+// or at build time
+let sdk = TwilioVerifySNABuilder.build(cellularImplementation: .networkFramework)
+```
+
+Changing the value affects only subsequent requests. It is ignored when you inject your own `RequestManagerProtocol`.
+Note: with `.legacy`, `timeout` stops waiting for the result but cannot cancel the underlying socket.
+
 3. Check cellular connectivity availability before attempting an SNA authentication (optional):
 
 ```swift

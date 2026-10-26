@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SNANetworking
 
 /// Represents possible errors that can occur during cellular network connections
 public enum ConnectionError: Error, LocalizedError, Equatable {
@@ -23,6 +24,8 @@ public enum ConnectionError: Error, LocalizedError, Equatable {
     case httpResponseParsingFailed
     /// Request timed out before receiving a response
     case timeout
+    /// The legacy (socket based) cellular implementation finished with a failure status
+    case legacyFailure(CellularSessionStatus)
 
     public var errorDescription: String? {
         switch self {
@@ -33,6 +36,7 @@ public enum ConnectionError: Error, LocalizedError, Equatable {
             case .invalidResponse: return "Invalid response"
             case .httpResponseParsingFailed: return "HTTP response parsing failed"
             case .timeout: return "Request timed out"
+            case .legacyFailure(let status): return "Legacy cellular request failed, status: \(status.rawValue)"
         }
     }
 
@@ -43,6 +47,8 @@ public enum ConnectionError: Error, LocalizedError, Equatable {
              (.httpResponseParsingFailed, .httpResponseParsingFailed),
              (.timeout, .timeout):
             return true
+        case let (.legacyFailure(lhs), .legacyFailure(rhs)):
+            return lhs == rhs
         case let (.connectionFailed(lhs), .connectionFailed(rhs)),
              let (.requestFailed(lhs), .requestFailed(rhs)),
              let (.redirectionFailed(lhs), .redirectionFailed(rhs)):
@@ -93,4 +99,12 @@ public struct RequestOptions {
         self.body = body
         self.timeout = timeout
     }
+}
+
+/// Cellular transport used by the SDK to perform SNA requests.
+public enum CellularImplementation: Equatable {
+    /// Socket based implementation (Objective-C). Default, validated across all carriers.
+    case legacy
+    /// `NWConnection` based implementation (Network.framework).
+    case networkFramework
 }
